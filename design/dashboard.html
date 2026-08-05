@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — VitaePro</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF8F3; --paper-dim:#F3F0E7; --surface:#FFFFFF; --ink:#1B1D1B; --ink-soft:#55584F; --ink-faint:#8B8D82;
+    --emerald:#1F4D3D; --emerald-bright:#2F7A5C; --emerald-wash:#EAF1EC;
+    --gold:#B08D3E; --gold-wash:#F6EFDD; --line:#E4E0D3; --line-strong:#D3CDBB;
+    --radius-s:8px; --radius-m:14px; --radius-l:22px;
+    --shadow-s:0 1px 2px rgba(27,29,27,0.06); --shadow-m:0 8px 24px rgba(27,29,27,0.08);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ font-family:'Inter',sans-serif; color:var(--ink); background:var(--paper); font-size:15px; }
+  h1,h2,h3,.serif{ font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+  a{ color:inherit; text-decoration:none; }
+  :focus-visible{ outline:2px solid var(--emerald-bright); outline-offset:2px; border-radius:4px; }
+  button{ font-family:'Inter',sans-serif; cursor:pointer; }
+
+  .app{ display:grid; grid-template-columns:252px 1fr; min-height:100vh; }
+
+  /* SIDEBAR */
+  .sidebar{ background:var(--surface); border-right:1px solid var(--line); display:flex; flex-direction:column; padding:22px 16px; }
+  .side-logo{ display:flex; align-items:center; gap:10px; font-family:'Fraunces',serif; font-weight:600; font-size:1.12rem; padding:6px 10px 22px; }
+  .logo-mark{ width:26px; height:26px; border-radius:7px; background:var(--emerald); color:var(--paper); display:flex; align-items:center; justify-content:center; font-size:14px; font-family:'Fraunces',serif; }
+  .side-section-label{ font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--ink-faint); padding:14px 12px 8px; }
+  .side-link{ display:flex; align-items:center; gap:11px; padding:9px 12px; border-radius:var(--radius-s); font-size:0.88rem; font-weight:500; color:var(--ink-soft); margin-bottom:2px; transition:all .13s; }
+  .side-link:hover{ background:var(--paper-dim); color:var(--ink); }
+  .side-link.active{ background:var(--emerald-wash); color:var(--emerald); font-weight:600; }
+  .side-link .ic{ width:18px; text-align:center; opacity:0.85; }
+  .side-spacer{ flex:1; }
+  .side-profile{ display:flex; align-items:center; gap:10px; padding:12px; border-top:1px solid var(--line); margin-top:8px; }
+  .avatar{ width:34px; height:34px; border-radius:50%; background:var(--gold-wash); color:var(--gold); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; }
+  .profile-meta .name{ font-size:0.85rem; font-weight:600; }
+  .profile-meta .plan{ font-size:0.72rem; color:var(--ink-faint); }
+
+  /* MAIN */
+  .main{ padding:36px 44px 60px; max-width:1220px; }
+  .topbar{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:32px; }
+  .topbar h1{ font-size:1.7rem; margin-bottom:6px; }
+  .topbar p{ color:var(--ink-soft); font-size:0.94rem; }
+  .btn{ display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border-radius:999px; font-size:0.86rem; font-weight:600; border:1px solid transparent; transition:all .15s; }
+  .btn-primary{ background:var(--emerald); color:var(--paper); }
+  .btn-primary:hover{ background:var(--emerald-bright); }
+  .btn-outline{ border-color:var(--line-strong); background:var(--surface); color:var(--ink); }
+  .btn-outline:hover{ border-color:var(--emerald); background:var(--emerald-wash); }
+
+  /* SCORE ROW */
+  .score-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:30px; }
+  .score-card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m); padding:22px 22px 20px; }
+  .score-card .top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; }
+  .score-card .label{ font-size:0.78rem; color:var(--ink-soft); font-weight:600; }
+  .score-card .num{ font-family:'IBM Plex Mono',monospace; font-size:1.9rem; font-weight:500; }
+  .score-card .num.gold{ color:var(--gold); }
+  .score-card .num.emerald{ color:var(--emerald); }
+  .ring{ width:32px; height:32px; border-radius:50%; }
+  .bar-track{ height:6px; background:var(--paper-dim); border-radius:4px; overflow:hidden; margin-top:6px; }
+  .bar-fill{ height:100%; background:var(--emerald-bright); border-radius:4px; }
+  .score-sub{ font-size:0.78rem; color:var(--ink-faint); margin-top:8px; }
+
+  /* GRID LAYOUT */
+  .grid-2{ display:grid; grid-template-columns:1.6fr 1fr; gap:22px; align-items:start; }
+  .panel{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m); padding:24px 24px 8px; margin-bottom:22px; }
+  .panel-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+  .panel-head h2{ font-size:1.08rem; font-weight:600; font-family:'Inter',sans-serif; }
+  .panel-head .view-all{ font-size:0.8rem; color:var(--emerald); font-weight:600; }
+
+  /* Doc list */
+  .doc-row{ display:flex; align-items:center; gap:14px; padding:13px 0; border-bottom:1px solid var(--line); }
+  .doc-row:last-child{ border-bottom:none; }
+  .doc-thumb{ width:38px; height:50px; background:var(--paper-dim); border-radius:5px; border:1px solid var(--line); flex-shrink:0; position:relative; overflow:hidden; }
+  .doc-thumb::before{ content:''; position:absolute; top:8px; left:6px; right:6px; height:3px; background:var(--emerald); opacity:0.5; border-radius:2px;}
+  .doc-info{ flex:1; }
+  .doc-info .title{ font-size:0.9rem; font-weight:600; margin-bottom:2px; }
+  .doc-info .meta{ font-size:0.78rem; color:var(--ink-faint); }
+  .doc-score{ font-family:'IBM Plex Mono',monospace; font-size:0.85rem; color:var(--emerald); background:var(--emerald-wash); padding:4px 9px; border-radius:6px; }
+  .doc-menu{ color:var(--ink-faint); padding:6px 10px; border-radius:6px; }
+  .doc-menu:hover{ background:var(--paper-dim); }
+
+  /* Suggestions */
+  .suggest-row{ display:flex; gap:12px; padding:13px 0; border-bottom:1px solid var(--line); }
+  .suggest-row:last-child{ border-bottom:none; }
+  .suggest-dot{ width:7px; height:7px; border-radius:50%; background:var(--gold); margin-top:6px; flex-shrink:0; }
+  .suggest-text{ font-size:0.86rem; line-height:1.45; }
+  .suggest-text b{ font-weight:600; }
+  .suggest-text .cta{ display:block; font-size:0.78rem; color:var(--emerald); font-weight:600; margin-top:4px; }
+
+  /* Quick actions */
+  .qa-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:8px; }
+  .qa-card{ border:1px solid var(--line); border-radius:var(--radius-s); padding:16px; background:var(--paper-dim); transition:all .15s; }
+  .qa-card:hover{ border-color:var(--emerald); background:var(--emerald-wash); transform:translateY(-2px); }
+  .qa-card .ic{ font-size:1.2rem; margin-bottom:8px; display:block; }
+  .qa-card .t{ font-size:0.84rem; font-weight:600; }
+
+  /* Activity */
+  .activity-row{ display:flex; gap:12px; padding:11px 0; border-bottom:1px solid var(--line); font-size:0.84rem; }
+  .activity-row:last-child{ border-bottom:none; }
+  .activity-row .time{ color:var(--ink-faint); font-size:0.76rem; white-space:nowrap; }
+
+  /* Profile completion */
+  .profile-ring-wrap{ display:flex; align-items:center; gap:18px; padding-bottom:20px; }
+  .ring-svg{ transform:rotate(-90deg); }
+  .ring-bg{ fill:none; stroke:var(--paper-dim); stroke-width:8; }
+  .ring-fg{ fill:none; stroke:var(--emerald); stroke-width:8; stroke-linecap:round; }
+  .ring-center-txt{ font-family:'IBM Plex Mono',monospace; font-size:1.3rem; }
+  .checklist{ font-size:0.82rem; }
+  .checklist div{ display:flex; align-items:center; gap:8px; margin-bottom:8px; color:var(--ink-soft); }
+  .checklist .done{ color:var(--emerald); }
+  .checklist .check{ width:14px; height:14px; border-radius:50%; border:1.5px solid var(--line-strong); flex-shrink:0; }
+  .checklist .done .check{ background:var(--emerald); border-color:var(--emerald); }
+
+  @media (max-width:1080px){
+    .app{ grid-template-columns:1fr; }
+    .sidebar{ display:none; }
+    .score-row{ grid-template-columns:1fr 1fr; }
+    .grid-2{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="side-logo"><span class="logo-mark">V</span>VitaePro</div>
+    <div>
+      <a href="dashboard.html" class="side-link active"><span class="ic">▤</span>Dashboard</a>
+      <a href="cv-editor.html" class="side-link"><span class="ic">▥</span>My CVs</a>
+      <a href="templates.html" class="side-link"><span class="ic">▦</span>Templates</a>
+      <a href="cover-letter.html" class="side-link"><span class="ic">✉</span>Cover Letters</a>
+      <a href="#" class="side-link"><span class="ic">✦</span>AI Assistant</a>
+    </div>
+    <div class="side-section-label">Account</div>
+    <a href="#" class="side-link"><span class="ic">⚙</span>Settings</a>
+    <a href="#" class="side-link"><span class="ic">?</span>Help</a>
+    <div class="side-spacer"></div>
+    <div class="side-profile">
+      <div class="avatar">A</div>
+      <div class="profile-meta">
+        <div class="name">Amara Okafor</div>
+        <div class="plan">Free plan</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1>Good morning, Amara.</h1>
+        <p>Here's where your job search stands today.</p>
+      </div>
+      <a href="cv-editor.html" class="btn btn-primary">+ New CV</a>
+    </div>
+
+    <div class="score-row">
+      <div class="score-card">
+        <div class="top"><span class="label">Resume Score</span></div>
+        <div class="num emerald">84<span style="font-size:1rem;color:var(--ink-faint);">/100</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:84%;"></div></div>
+        <div class="score-sub">Up 6 pts since your last edit</div>
+      </div>
+      <div class="score-card">
+        <div class="top"><span class="label">ATS Score</span></div>
+        <div class="num gold">92<span style="font-size:1rem;color:var(--ink-faint);">/100</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:92%;background:var(--gold);"></div></div>
+        <div class="score-sub">Passes 9 of 10 tracking systems</div>
+      </div>
+      <div class="score-card">
+        <div class="top"><span class="label">Applications Sent</span></div>
+        <div class="num">14</div>
+        <div class="score-sub" style="margin-top:14px;">4 this week · 3 in interview</div>
+      </div>
+      <div class="score-card">
+        <div class="top"><span class="label">AI Suggestions Used</span></div>
+        <div class="num">37</div>
+        <div class="score-sub" style="margin-top:14px;">Across 3 documents</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="panel">
+          <div class="panel-head"><h2>Recent CVs</h2><a href="#" class="view-all">View all →</a></div>
+          <div class="doc-row">
+            <div class="doc-thumb"></div>
+            <div class="doc-info"><div class="title">Senior Product Designer</div><div class="meta">Edited 2 hours ago · Meridian template</div></div>
+            <span class="doc-score">92</span>
+            <span class="doc-menu">⋯</span>
+          </div>
+          <div class="doc-row">
+            <div class="doc-thumb"></div>
+            <div class="doc-info"><div class="title">Product Designer — Fintech</div><div class="meta">Edited yesterday · Ledger template</div></div>
+            <span class="doc-score">88</span>
+            <span class="doc-menu">⋯</span>
+          </div>
+          <div class="doc-row">
+            <div class="doc-thumb"></div>
+            <div class="doc-info"><div class="title">Design Lead — Draft</div><div class="meta">Edited 4 days ago · Bureau template</div></div>
+            <span class="doc-score">71</span>
+            <span class="doc-menu">⋯</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Recent Cover Letters</h2><a href="#" class="view-all">View all →</a></div>
+          <div class="doc-row">
+            <div class="doc-thumb"></div>
+            <div class="doc-info"><div class="title">Cover Letter — Northwind, Sr. Product Designer</div><div class="meta">Generated 2 hours ago</div></div>
+            <span class="doc-menu">⋯</span>
+          </div>
+          <div class="doc-row">
+            <div class="doc-thumb"></div>
+            <div class="doc-info"><div class="title">Cover Letter — Halcyon, Design Lead</div><div class="meta">Generated 5 days ago</div></div>
+            <span class="doc-menu">⋯</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Recent Activity</h2></div>
+          <div class="activity-row"><div>Accepted an AI rewrite in <b>Experience</b> — Senior Product Designer CV</div><div class="time">2h ago</div></div>
+          <div class="activity-row"><div>Generated a cover letter for <b>Northwind</b></div><div class="time">2h ago</div></div>
+          <div class="activity-row"><div>Applied ATS fixes to <b>Product Designer — Fintech</b></div><div class="time">1d ago</div></div>
+          <div class="activity-row"><div>Created new CV from <b>Ledger</b> template</div><div class="time">4d ago</div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel">
+          <div class="panel-head"><h2>Profile Completion</h2></div>
+          <div class="profile-ring-wrap">
+            <svg class="ring-svg" width="76" height="76" viewBox="0 0 76 76">
+              <circle class="ring-bg" cx="38" cy="38" r="32"></circle>
+              <circle class="ring-fg" cx="38" cy="38" r="32" stroke-dasharray="201" stroke-dashoffset="34"></circle>
+            </svg>
+            <div>
+              <div class="ring-center-txt">83%</div>
+              <div style="font-size:0.78rem; color:var(--ink-faint);">Almost there</div>
+            </div>
+          </div>
+          <div class="checklist">
+            <div class="done"><span class="check"></span>Personal information</div>
+            <div class="done"><span class="check"></span>Professional summary</div>
+            <div class="done"><span class="check"></span>Work experience</div>
+            <div><span class="check"></span>Certifications</div>
+            <div><span class="check"></span>References</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Suggested Improvements</h2></div>
+          <div class="suggest-row">
+            <span class="suggest-dot"></span>
+            <div class="suggest-text"><b>Add a metric</b> to your first Experience bullet — quantified results score 23% higher with recruiters.<span class="cta">Fix in editor →</span></div>
+          </div>
+          <div class="suggest-row">
+            <span class="suggest-dot"></span>
+            <div class="suggest-text">Your <b>Skills section</b> is missing 2 keywords common in Product Design postings.<span class="cta">Review suggestions →</span></div>
+          </div>
+          <div class="suggest-row">
+            <span class="suggest-dot"></span>
+            <div class="suggest-text">Consider adding a <b>Certifications section</b> — 68% of similar profiles include one.<span class="cta">Add section →</span></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Quick Actions</h2></div>
+          <div class="qa-grid">
+            <button class="qa-card"><span class="ic">✦</span><span class="t">Improve with AI</span></button>
+            <button class="qa-card"><span class="ic">✉</span><span class="t">New cover letter</span></button>
+            <button class="qa-card"><span class="ic">▦</span><span class="t">Browse templates</span></button>
+            <button class="qa-card"><span class="ic">◔</span><span class="t">Track application</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

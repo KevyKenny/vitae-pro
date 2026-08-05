@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Templates — VitaePro</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF8F3; --paper-dim:#F3F0E7; --surface:#FFFFFF; --ink:#1B1D1B; --ink-soft:#55584F; --ink-faint:#8B8D82;
+    --emerald:#1F4D3D; --emerald-bright:#2F7A5C; --emerald-wash:#EAF1EC;
+    --gold:#B08D3E; --gold-wash:#F6EFDD; --line:#E4E0D3; --line-strong:#D3CDBB;
+    --radius-s:8px; --radius-m:14px; --radius-l:20px;
+    --shadow-s:0 1px 2px rgba(27,29,27,0.06); --shadow-m:0 10px 28px rgba(27,29,27,0.12);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ font-family:'Inter',sans-serif; color:var(--ink); background:var(--paper); font-size:15px; }
+  h1,h2,h3,.serif{ font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em; }
+  a{ color:inherit; text-decoration:none; }
+  button{ font-family:'Inter',sans-serif; cursor:pointer; }
+  :focus-visible{ outline:2px solid var(--emerald-bright); outline-offset:2px; border-radius:4px; }
+
+  .app{ display:grid; grid-template-columns:252px 1fr; min-height:100vh; }
+  .sidebar{ background:var(--surface); border-right:1px solid var(--line); display:flex; flex-direction:column; padding:22px 16px; }
+  .side-logo{ display:flex; align-items:center; gap:10px; font-family:'Fraunces',serif; font-weight:600; font-size:1.12rem; padding:6px 10px 22px; }
+  .logo-mark{ width:26px; height:26px; border-radius:7px; background:var(--emerald); color:var(--paper); display:flex; align-items:center; justify-content:center; font-size:14px; font-family:'Fraunces',serif; }
+  .side-link{ display:flex; align-items:center; gap:11px; padding:9px 12px; border-radius:var(--radius-s); font-size:0.88rem; font-weight:500; color:var(--ink-soft); margin-bottom:2px; }
+  .side-link:hover{ background:var(--paper-dim); color:var(--ink); }
+  .side-link.active{ background:var(--emerald-wash); color:var(--emerald); font-weight:600; }
+  .side-link .ic{ width:18px; text-align:center; opacity:0.85; }
+  .side-spacer{ flex:1; }
+
+  .main{ padding:36px 44px 60px; max-width:1240px; }
+  .topbar{ margin-bottom:28px; }
+  .topbar h1{ font-size:1.7rem; margin-bottom:6px; }
+  .topbar p{ color:var(--ink-soft); font-size:0.94rem; }
+
+  .filter-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; gap:20px; flex-wrap:wrap; }
+  .filter-chips{ display:flex; gap:8px; flex-wrap:wrap; }
+  .fchip{ font-size:0.83rem; font-weight:600; padding:8px 16px; border-radius:999px; border:1px solid var(--line-strong); color:var(--ink-soft); background:var(--surface); transition:all .15s; }
+  .fchip.active{ background:var(--emerald); border-color:var(--emerald); color:var(--paper); }
+  .fchip:hover:not(.active){ border-color:var(--emerald); color:var(--emerald); }
+  .search-box{ display:flex; align-items:center; gap:8px; border:1px solid var(--line-strong); border-radius:999px; padding:9px 16px; background:var(--surface); font-size:0.85rem; color:var(--ink-faint); min-width:220px; }
+  .search-box input{ border:none; outline:none; font-family:'Inter',sans-serif; font-size:0.85rem; background:transparent; flex:1; color:var(--ink); }
+
+  .tmpl-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
+  .tmpl-card{ border-radius:var(--radius-m); overflow:hidden; border:1px solid var(--line); background:var(--surface); cursor:pointer; transition:transform .2s, box-shadow .2s, border-color .2s; }
+  .tmpl-card:hover{ transform:translateY(-5px); box-shadow:var(--shadow-m); border-color:var(--line-strong); }
+  .tmpl-thumb{ aspect-ratio:3/4; background:var(--paper-dim); padding:18px; position:relative; overflow:hidden; }
+  .tmpl-thumb .mini-line{ height:5px; background:rgba(27,29,27,0.09); border-radius:2px; margin-bottom:7px; }
+  .thumb-overlay{
+    position:absolute; inset:0; background:rgba(31,77,61,0.88); display:flex; align-items:center; justify-content:center;
+    opacity:0; transition:opacity .2s; gap:10px;
+  }
+  .tmpl-card:hover .thumb-overlay{ opacity:1; }
+  .overlay-btn{ font-size:0.78rem; font-weight:600; padding:9px 16px; border-radius:999px; background:var(--paper); color:var(--emerald); }
+  .overlay-btn.outline{ background:transparent; color:var(--paper); border:1px solid rgba(250,248,243,0.5); }
+  .tmpl-meta{ padding:14px 16px; display:flex; align-items:center; justify-content:space-between; }
+  .tmpl-meta .name{ font-size:0.9rem; font-weight:600; }
+  .tmpl-meta .cat{ font-size:0.74rem; color:var(--ink-faint); margin-top:2px; }
+  .badge{ font-size:0.64rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:4px 8px; border-radius:6px; white-space:nowrap; }
+  .badge-ats{ background:var(--emerald-wash); color:var(--emerald); }
+  .badge-popular{ background:var(--gold-wash); color:var(--gold); }
+  .badge-exec{ background:#EFE9F4; color:#6B4A8A; }
+  .badge-creative{ background:#FDEBE3; color:#B5562B; }
+
+  @media (max-width:1180px){ .tmpl-grid{ grid-template-columns:repeat(3,1fr); } }
+  @media (max-width:900px){ .app{ grid-template-columns:1fr; } .sidebar{ display:none; } .tmpl-grid{ grid-template-columns:repeat(2,1fr); } }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="side-logo"><span class="logo-mark">V</span>VitaePro</div>
+    <a href="dashboard.html" class="side-link"><span class="ic">▤</span>Dashboard</a>
+    <a href="cv-editor.html" class="side-link"><span class="ic">▥</span>My CVs</a>
+    <a href="templates.html" class="side-link active"><span class="ic">▦</span>Templates</a>
+    <a href="cover-letter.html" class="side-link"><span class="ic">✉</span>Cover Letters</a>
+    <a href="#" class="side-link"><span class="ic">✦</span>AI Assistant</a>
+    <div class="side-spacer"></div>
+    <a href="#" class="side-link"><span class="ic">⚙</span>Settings</a>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <h1>Templates</h1>
+      <p>Fourteen layouts, each checked against real applicant tracking systems.</p>
+    </div>
+
+    <div class="filter-row">
+      <div class="filter-chips">
+        <span class="fchip active">All</span>
+        <span class="fchip">ATS-friendly</span>
+        <span class="fchip">Modern</span>
+        <span class="fchip">Executive</span>
+        <span class="fchip">Creative</span>
+        <span class="fchip">Popular</span>
+      </div>
+      <div class="search-box">🔍<input placeholder="Search templates..."></div>
+    </div>
+
+    <div class="tmpl-grid" id="grid"></div>
+  </main>
+</div>
+
+<script>
+  const templates = [
+    {name:'Meridian', cat:'Modern', badge:'ats', accent:'#1F4D3D'},
+    {name:'Ledger', cat:'Simple', badge:'popular', accent:'#B08D3E'},
+    {name:'Bureau', cat:'Executive', badge:'exec', accent:'#1B1D1B'},
+    {name:'Atelier', cat:'Creative', badge:'creative', accent:'#2F7A5C'},
+    {name:'Cordial', cat:'Modern', badge:'ats', accent:'#3E6B5C'},
+    {name:'Foundry', cat:'Executive', badge:'exec', accent:'#4A4238'},
+    {name:'Halcyon', cat:'Simple', badge:'ats', accent:'#6B7A63'},
+    {name:'Marquee', cat:'Creative', badge:'popular', accent:'#B5562B'},
+    {name:'Vantage', cat:'Modern', badge:'ats', accent:'#2F7A5C'},
+    {name:'Print Row', cat:'Executive', badge:'exec', accent:'#3D3A2E'},
+    {name:'Kiln', cat:'Creative', badge:'creative', accent:'#A8622E'},
+    {name:'Overleaf', cat:'Simple', badge:'ats', accent:'#4E6E5D'},
+  ];
+  const badgeMap = { ats:['ATS','badge-ats'], popular:['Popular','badge-popular'], exec:['Executive','badge-exec'], creative:['Creative','badge-creative'] };
+  const grid = document.getElementById('grid');
+  grid.innerHTML = templates.map(t=>{
+    const [label, cls] = badgeMap[t.badge];
+    const widths = [60,90,40,75,65,80];
+    let lines = `<div class="mini-line" style="width:${widths[0]}%;height:11px;background:${t.accent};opacity:.85;margin-bottom:12px;"></div>`;
+    lines += `<div class="mini-line" style="width:${widths[1]}%;"></div>`;
+    lines += `<div class="mini-line" style="width:${widths[2]}%; margin-bottom:14px;"></div>`;
+    for(let i=3;i<6;i++) lines += `<div class="mini-line" style="width:${widths[i]}%;"></div>`;
+    return `<div class="tmpl-card">
+      <div class="tmpl-thumb">
+        ${lines}
+        <div class="thumb-overlay">
+          <span class="overlay-btn">Use template</span>
+          <span class="overlay-btn outline">Preview</span>
+        </div>
+      </div>
+      <div class="tmpl-meta">
+        <div><div class="name">${t.name}</div><div class="cat">${t.cat}</div></div>
+        <span class="badge ${cls}">${label}</span>
+      </div>
+    </div>`;
+  }).join('');
+</script>
+</body>
+</html>

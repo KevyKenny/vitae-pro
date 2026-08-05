@@ -1,0 +1,259 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ─────────────────────────────────────────────────────────────
+   VitatePro Design Tokens — matched to Claude design system
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  /* Surfaces */
+  --paper: #faf8f3;
+  --paper-dim: #f3f0e7;
+  --surface: #ffffff;
+
+  /* Ink */
+  --ink: #1b1d1b;
+  --ink-soft: #55584f;
+  --ink-faint: #8b8d82;
+
+  /* Brand */
+  --emerald: #1f4d3d;
+  --emerald-bright: #2f7a5c;
+  --emerald-wash: #eaf1ec;
+  --gold: #b08d3e;
+  --gold-wash: #f6efdd;
+
+  /* Lines */
+  --line: #e4e0d3;
+  --line-strong: #d3cdbb;
+
+  /* Radii (8px grid aware) */
+  --radius-s: 8px;
+  --radius-m: 14px;
+  --radius-l: 22px;
+
+  /* Shadows */
+  --shadow-s: 0 1px 2px rgba(27, 29, 27, 0.06);
+  --shadow-m: 0 8px 24px rgba(27, 29, 27, 0.08);
+  --shadow-l: 0 24px 64px rgba(27, 29, 27, 0.14);
+
+  /* Spacing scale (8px grid) */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+  --space-8: 64px;
+
+  /* Sidebar */
+  --sidebar-width: 252px;
+  --sidebar-collapsed-width: 72px;
+
+  /* shadcn semantic aliases → VitatePro tokens */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--emerald);
+  --primary-foreground: var(--paper);
+  --secondary: var(--paper-dim);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper-dim);
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--emerald-wash);
+  --accent-foreground: var(--emerald);
+  --destructive: #b42318;
+  --destructive-foreground: #fffaf8;
+  --success: #2f7a5c;
+  --success-wash: #eaf1ec;
+  --warning: #b08d3e;
+  --warning-wash: #f6efdd;
+  --error: #b42318;
+  --error-wash: #fdeceb;
+  --info: #2c5f8a;
+  --info-wash: #e8f0f6;
+  --border: var(--line);
+  --input: var(--line-strong);
+  --ring: var(--emerald-bright);
+  --radius: var(--radius-s);
+}
+
+.dark {
+  --paper: #121412;
+  --paper-dim: #1a1c1a;
+  --surface: #1e201e;
+  --ink: #f3f0e7;
+  --ink-soft: #b4b7ae;
+  --ink-faint: #8b8d82;
+  --emerald: #3d8f6f;
+  --emerald-bright: #4eaa85;
+  --emerald-wash: #1b2f28;
+  --gold: #c9a54f;
+  --gold-wash: #2a2418;
+  --line: #2c2f2b;
+  --line-strong: #3a3e38;
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--emerald);
+  --primary-foreground: #faf8f3;
+  --secondary: var(--paper-dim);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper-dim);
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--emerald-wash);
+  --accent-foreground: var(--emerald-bright);
+  --destructive: #e5736a;
+  --destructive-foreground: #1b1d1b;
+  --success: #4eaa85;
+  --success-wash: #1b2f28;
+  --warning: #c9a54f;
+  --warning-wash: #2a2418;
+  --error: #e5736a;
+  --error-wash: #3a1f1c;
+  --info: #6a9fc4;
+  --info-wash: #1a2833;
+  --border: var(--line);
+  --input: var(--line-strong);
+  --ring: var(--emerald-bright);
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-dim: var(--paper-dim);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-emerald: var(--emerald);
+  --color-emerald-bright: var(--emerald-bright);
+  --color-emerald-wash: var(--emerald-wash);
+  --color-gold: var(--gold);
+  --color-gold-wash: var(--gold-wash);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-wash: var(--success-wash);
+  --color-warning: var(--warning);
+  --color-warning-wash: var(--warning-wash);
+  --color-error: var(--error);
+  --color-error-wash: var(--error-wash);
+  --color-info: var(--info);
+  --color-info-wash: var(--info-wash);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
+
+  --radius-sm: var(--radius-s);
+  --radius-md: var(--radius-m);
+  --radius-lg: var(--radius-l);
+  --radius-full: 9999px;
+
+  --shadow-sm: var(--shadow-s);
+  --shadow-md: var(--shadow-m);
+  --shadow-lg: var(--shadow-l);
+
+  --spacing-sidebar: var(--sidebar-width);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  h1,
+  h2,
+  h3,
+  .serif {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .mono {
+    font-family: var(--font-mono);
+    letter-spacing: 0.02em;
+  }
+
+  ::selection {
+    background: var(--emerald);
+    color: var(--paper);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--emerald-bright);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font-family: inherit;
+  }
+}
+
+@layer utilities {
+  .shadow-s {
+    box-shadow: var(--shadow-s);
+  }
+  .shadow-m {
+    box-shadow: var(--shadow-m);
+  }
+  .shadow-l {
+    box-shadow: var(--shadow-l);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

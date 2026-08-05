@@ -1,0 +1,161 @@
+import type {
+  CoverLetter,
+  Template,
+  Notification,
+  AISuggestion,
+} from "@/types";
+
+export const mockCoverLetters: CoverLetter[] = [
+  {
+    id: "cl_1",
+    title: "Northline — Senior Product Designer",
+    company: "Northline",
+    role: "Senior Product Designer",
+    updatedAt: "2026-08-03T09:20:00.000Z",
+    status: "sent",
+  },
+  {
+    id: "cl_2",
+    title: "Orbit Pay — Product Designer",
+    company: "Orbit Pay",
+    role: "Product Designer",
+    updatedAt: "2026-08-01T18:05:00.000Z",
+    status: "draft",
+  },
+  {
+    id: "cl_3",
+    title: "Helix Health — UX Lead",
+    company: "Helix Health",
+    role: "UX Lead",
+    updatedAt: "2026-07-29T12:10:00.000Z",
+    status: "draft",
+  },
+];
+
+export const mockTemplates: Template[] = [
+  {
+    id: "tpl_meridian",
+    name: "Meridian",
+    category: "Modern",
+    description: "Clean serif headings with measured whitespace for senior roles.",
+    isPremium: false,
+  },
+  {
+    id: "tpl_ledger",
+    name: "Ledger",
+    category: "Corporate",
+    description: "Structured columns suited to fintech and consulting applications.",
+    isPremium: false,
+  },
+  {
+    id: "tpl_atelier",
+    name: "Atelier",
+    category: "Creative",
+    description: "Editorial layout with accent rules for design and brand roles.",
+    isPremium: true,
+  },
+  {
+    id: "tpl_folio",
+    name: "Folio",
+    category: "Minimal",
+    description: "Single-column ATS-safe layout with crisp mono score treatment.",
+    isPremium: false,
+  },
+  {
+    id: "tpl_signal",
+    name: "Signal",
+    category: "Tech",
+    description: "Compact density for engineering and product management CVs.",
+    isPremium: true,
+  },
+];
+
+export const mockNotifications: Notification[] = [
+  {
+    id: "nt_1",
+    title: "Resume exported",
+    body: "Senior Product Designer.pdf downloaded successfully.",
+    createdAt: "2026-08-05T16:10:00.000Z",
+    read: false,
+    type: "success",
+  },
+  {
+    id: "nt_2",
+    title: "ATS score improved",
+    body: "Your Fintech CV is now 91 — up 5 points this week.",
+    createdAt: "2026-08-05T13:40:00.000Z",
+    read: false,
+    type: "success",
+  },
+  {
+    id: "nt_3",
+    title: "Weekly career tip",
+    body: "Lead bullets with verbs and end with numbers recruiters can scan.",
+    createdAt: "2026-08-05T08:00:00.000Z",
+    read: false,
+    type: "tip",
+  },
+  {
+    id: "nt_4",
+    title: "New template available",
+    body: "Signal is ready for product and engineering applications.",
+    createdAt: "2026-08-04T12:20:00.000Z",
+    read: true,
+    type: "system",
+  },
+  {
+    id: "nt_5",
+    title: "Profile reminder",
+    body: "Add your portfolio link to reach 85% profile completion.",
+    createdAt: "2026-08-03T09:45:00.000Z",
+    read: true,
+    type: "suggestion",
+  },
+];
+
+export const mockAISuggestions: AISuggestion[] = [
+  {
+    id: "ai_1",
+    section: "Experience",
+    category: "Achievements",
+    title: "Quantify your impact",
+    body: "Your CV could be stronger with measurable achievements in the Northline role.",
+    ctaLabel: "Improve",
+    severity: "improve",
+    priority: "high",
+    impact: "+6 resume score",
+  },
+  {
+    id: "ai_2",
+    section: "Summary",
+    category: "Clarity",
+    title: "Shorten your summary",
+    body: "Your summary could be shortened to three lines without losing seniority signals.",
+    ctaLabel: "Rewrite",
+    severity: "info",
+    priority: "medium",
+    impact: "+3 readability",
+  },
+  {
+    id: "ai_3",
+    section: "Skills",
+    category: "Keywords",
+    title: "Add technical keywords",
+    body: "Add more technical keywords — design systems and facilitation appear in target posts.",
+    ctaLabel: "Insert skills",
+    severity: "critical",
+    priority: "high",
+    impact: "+8% ATS",
+  },
+  {
+    id: "ai_4",
+    section: "ATS",
+    category: "Optimization",
+    title: "Lift ATS match",
+    body: "Your ATS score can increase by 8% with clearer section headings.",
+    ctaLabel: "Optimize",
+    severity: "improve",
+    priority: "medium",
+    impact: "+8% ATS",
+  },
+];

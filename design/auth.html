@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — VitaePro</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF8F3; --surface:#FFFFFF; --ink:#1B1D1B; --ink-soft:#55584F; --ink-faint:#8B8D82;
+    --emerald:#1F4D3D; --emerald-bright:#2F7A5C; --emerald-wash:#EAF1EC;
+    --gold:#B08D3E; --line:#E4E0D3; --line-strong:#D3CDBB;
+    --radius-s:8px; --radius-m:14px; --radius-l:22px;
+    --shadow-s:0 1px 2px rgba(27,29,27,0.06); --shadow-m:0 8px 24px rgba(27,29,27,0.08);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ font-family:'Inter',sans-serif; color:var(--ink); background:var(--paper); }
+  h1,.serif{ font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em; }
+  a{ color:inherit; }
+  :focus-visible{ outline:2px solid var(--emerald-bright); outline-offset:2px; border-radius:4px; }
+
+  .shell{ display:grid; grid-template-columns:1fr 1fr; min-height:100vh; }
+
+  /* LEFT BRAND PANEL */
+  .brand{
+    background:var(--emerald); color:var(--paper); position:relative; overflow:hidden;
+    display:flex; flex-direction:column; justify-content:space-between; padding:48px 56px;
+  }
+  .brand::before{
+    content:''; position:absolute; inset:0;
+    background-image: radial-gradient(circle at 85% 12%, rgba(250,248,243,0.08), transparent 45%),
+                       radial-gradient(circle at 10% 90%, rgba(176,141,62,0.18), transparent 40%);
+  }
+  .brand-top{ position:relative; display:flex; align-items:center; gap:10px; font-family:'Fraunces',serif; font-weight:600; font-size:1.2rem; }
+  .logo-mark{ width:26px; height:26px; border-radius:7px; background:rgba(250,248,243,0.16); display:flex; align-items:center; justify-content:center; font-size:14px; }
+
+  .brand-mid{ position:relative; }
+  .brand-mid h1{ font-size:2.3rem; line-height:1.18; max-width:420px; margin-bottom:20px; }
+  .brand-mid p{ color:rgba(250,248,243,0.72); max-width:380px; font-size:0.98rem; line-height:1.6; }
+
+  .brand-card{
+    position:relative; margin-top:36px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14);
+    border-radius:var(--radius-m); padding:22px 22px 20px; max-width:400px; backdrop-filter:blur(6px);
+  }
+  .note-tag{ font-size:0.68rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); margin-bottom:9px; display:flex; align-items:center; gap:6px;}
+  .note-tag .dot{ width:6px; height:6px; border-radius:50%; background:var(--gold); }
+  .brand-card p{ color:rgba(250,248,243,0.88); font-size:0.9rem; line-height:1.55; margin:0; }
+
+  .brand-bottom{ position:relative; display:flex; gap:32px; font-size:0.82rem; color:rgba(250,248,243,0.55); }
+
+  /* RIGHT FORM PANEL */
+  .form-side{ display:flex; align-items:center; justify-content:center; padding:48px; }
+  .form-box{ width:100%; max-width:400px; }
+  .form-tabs{ display:flex; background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:4px; margin-bottom:34px; }
+  .form-tab{ flex:1; text-align:center; padding:10px 0; border-radius:999px; font-size:0.88rem; font-weight:600; cursor:pointer; color:var(--ink-soft); transition:all .15s; }
+  .form-tab.active{ background:var(--emerald); color:var(--paper); }
+
+  .form-box h1{ font-size:1.7rem; margin-bottom:8px; }
+  .form-sub{ color:var(--ink-soft); font-size:0.92rem; margin-bottom:30px; }
+
+  .social-row{ display:flex; gap:12px; margin-bottom:24px; }
+  .social-btn{
+    flex:1; display:flex; align-items:center; justify-content:center; gap:9px;
+    padding:12px 0; border:1px solid var(--line-strong); border-radius:var(--radius-s);
+    background:var(--surface); font-size:0.86rem; font-weight:600; cursor:pointer; transition:all .15s;
+  }
+  .social-btn:hover{ border-color:var(--emerald); background:var(--emerald-wash); }
+
+  .divider{ display:flex; align-items:center; gap:14px; color:var(--ink-faint); font-size:0.78rem; margin-bottom:24px; }
+  .divider::before, .divider::after{ content:''; flex:1; height:1px; background:var(--line); }
+
+  .field{ margin-bottom:18px; }
+  .field label{ display:block; font-size:0.82rem; font-weight:600; margin-bottom:7px; color:var(--ink); }
+  .field input{
+    width:100%; padding:12px 14px; border:1px solid var(--line-strong); border-radius:var(--radius-s);
+    font-family:'Inter',sans-serif; font-size:0.92rem; background:var(--surface); color:var(--ink);
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .field input:focus{ border-color:var(--emerald-bright); box-shadow:0 0 0 3px var(--emerald-wash); outline:none; }
+  .field-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .field-row label{ margin:0; }
+  .link-sm{ font-size:0.8rem; color:var(--emerald); font-weight:600; }
+
+  .btn{
+    width:100%; padding:13px 0; border-radius:var(--radius-s); font-size:0.94rem; font-weight:600;
+    border:none; cursor:pointer; transition:all .15s; font-family:'Inter',sans-serif;
+  }
+  .btn-primary{ background:var(--emerald); color:var(--paper); margin-top:6px; }
+  .btn-primary:hover{ background:var(--emerald-bright); }
+
+  .fine{ text-align:center; font-size:0.8rem; color:var(--ink-faint); margin-top:22px; }
+  .fine a{ color:var(--emerald); font-weight:600; }
+
+  .terms{ font-size:0.76rem; color:var(--ink-faint); text-align:center; margin-top:16px; line-height:1.5; }
+
+  @media (max-width:880px){
+    .shell{ grid-template-columns:1fr; }
+    .brand{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="brand">
+    <div class="brand-top"><span class="logo-mark">V</span>VitaePro</div>
+    <div class="brand-mid">
+      <h1>Your career coach is already reading your draft.</h1>
+      <p>Sign in to pick up where you left off — VitaePro autosaves every change and keeps a full version history.</p>
+      <div class="brand-card">
+        <div class="note-tag"><span class="dot"></span>Welcome back note</div>
+        <p>Your Product Designer CV is 87% complete. Your Experience section still needs one quantified result.</p>
+      </div>
+    </div>
+    <div class="brand-bottom">
+      <span>★ 4.9 rating</span>
+      <span>12,400+ CVs built</span>
+      <span>Bank-level encryption</span>
+    </div>
+  </aside>
+
+  <section class="form-side">
+    <div class="form-box">
+      <div class="form-tabs">
+        <div class="form-tab active">Sign in</div>
+        <div class="form-tab">Create account</div>
+      </div>
+
+      <h1>Welcome back</h1>
+      <p class="form-sub">Sign in to continue building your CV.</p>
+
+      <div class="social-row">
+        <button class="social-btn">◐ Google</button>
+        <button class="social-btn">▢ LinkedIn</button>
+      </div>
+
+      <div class="divider">or continue with email</div>
+
+      <form onsubmit="return false;">
+        <div class="field">
+          <label for="email">Email address</label>
+          <input id="email" type="email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="field">
+          <div class="field-row">
+            <label for="password">Password</label>
+            <a href="#" class="link-sm">Forgot password?</a>
+          </div>
+          <input id="password" type="password" placeholder="Enter your password" autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary">Sign in</button>
+      </form>
+
+      <p class="fine">Don't have an account? <a href="#">Create one free</a></p>
+      <p class="terms">By continuing, you agree to VitaePro's Terms of Service and Privacy Policy.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.form-tab');
+  const heading = document.querySelector('.form-box h1');
+  const sub = document.querySelector('.form-sub');
+  tabs.forEach((t,i)=>{
+    t.addEventListener('click', ()=>{
+      tabs.forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      if(i===0){ heading.textContent='Welcome back'; sub.textContent='Sign in to continue building your CV.'; }
+      else { heading.textContent='Create your account'; sub.textContent='Start building your CV with an AI coach, free.'; }
+    });
+  });
+</script>
+</body>
+</html>

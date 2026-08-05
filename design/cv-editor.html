@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Senior Product Designer — CV Editor — VitaePro</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF8F3; --paper-dim:#F3F0E7; --surface:#FFFFFF; --ink:#1B1D1B; --ink-soft:#55584F; --ink-faint:#8B8D82;
+    --emerald:#1F4D3D; --emerald-bright:#2F7A5C; --emerald-wash:#EAF1EC;
+    --gold:#B08D3E; --gold-wash:#F6EFDD; --line:#E4E0D3; --line-strong:#D3CDBB;
+    --radius-s:8px; --radius-m:14px; --radius-l:20px;
+    --shadow-s:0 1px 2px rgba(27,29,27,0.06); --shadow-m:0 8px 24px rgba(27,29,27,0.10); --shadow-l:0 20px 50px rgba(27,29,27,0.16);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ font-family:'Inter',sans-serif; color:var(--ink); background:var(--paper); font-size:15px; overflow:hidden; height:100vh; }
+  h1,h2,h3,.serif{ font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+  a{ color:inherit; text-decoration:none; }
+  button{ font-family:'Inter',sans-serif; cursor:pointer; }
+  input, textarea{ font-family:'Inter',sans-serif; }
+  :focus-visible{ outline:2px solid var(--emerald-bright); outline-offset:2px; border-radius:4px; }
+
+  .app{ display:grid; grid-template-columns:224px 1fr 380px; height:100vh; }
+
+  /* SIDEBAR (collapsed/minimal for editor) */
+  .sidebar{ background:var(--surface); border-right:1px solid var(--line); display:flex; flex-direction:column; padding:20px 14px; overflow-y:auto; }
+  .side-logo{ display:flex; align-items:center; gap:9px; font-family:'Fraunces',serif; font-weight:600; font-size:1.05rem; padding:4px 8px 20px; }
+  .logo-mark{ width:24px; height:24px; border-radius:6px; background:var(--emerald); color:var(--paper); display:flex; align-items:center; justify-content:center; font-size:13px; font-family:'Fraunces',serif; }
+  .side-link{ display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:var(--radius-s); font-size:0.84rem; font-weight:500; color:var(--ink-soft); margin-bottom:2px; }
+  .side-link:hover{ background:var(--paper-dim); color:var(--ink); }
+  .side-link.active{ background:var(--emerald-wash); color:var(--emerald); font-weight:600; }
+  .side-link .ic{ width:16px; text-align:center; opacity:0.85; font-size:0.9em; }
+  .side-spacer{ flex:1; }
+
+  .outline-label{ font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-faint); padding:16px 10px 8px; }
+  .outline-item{ display:flex; align-items:center; gap:8px; padding:6px 10px; font-size:0.8rem; color:var(--ink-soft); border-radius:6px; }
+  .outline-item:hover{ background:var(--paper-dim); }
+  .outline-item .dot{ width:5px; height:5px; border-radius:50%; background:var(--line-strong); flex-shrink:0; }
+  .outline-item.current{ color:var(--emerald); font-weight:600; }
+  .outline-item.current .dot{ background:var(--emerald); }
+
+  /* CENTER WORKSPACE */
+  .workspace{ overflow-y:auto; border-right:1px solid var(--line); background:var(--paper); }
+  .ws-topbar{ position:sticky; top:0; z-index:5; background:rgba(250,248,243,0.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); padding:14px 32px; display:flex; align-items:center; justify-content:space-between; }
+  .doc-title-row{ display:flex; align-items:center; gap:10px; }
+  .doc-title-row h1{ font-size:1.05rem; }
+  .save-status{ font-size:0.74rem; color:var(--ink-faint); display:flex; align-items:center; gap:6px; }
+  .save-status .dot{ width:6px; height:6px; border-radius:50%; background:var(--emerald-bright); }
+  .ws-actions{ display:flex; align-items:center; gap:8px; }
+  .icon-btn{ width:32px; height:32px; border-radius:8px; border:1px solid var(--line-strong); background:var(--surface); display:flex; align-items:center; justify-content:center; font-size:0.85rem; color:var(--ink-soft); }
+  .icon-btn:hover{ background:var(--paper-dim); }
+  .btn{ display:inline-flex; align-items:center; gap:7px; padding:9px 16px; border-radius:999px; font-size:0.82rem; font-weight:600; border:1px solid transparent; }
+  .btn-primary{ background:var(--emerald); color:var(--paper); }
+  .btn-primary:hover{ background:var(--emerald-bright); }
+
+  .ws-body{ padding:28px 32px 120px; max-width:760px; margin:0 auto; }
+
+  .section-card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m); margin-bottom:18px; overflow:hidden; transition:box-shadow .15s, border-color .15s; }
+  .section-card:hover{ box-shadow:var(--shadow-s); }
+  .section-card.focused{ border-color:var(--emerald-bright); box-shadow:0 0 0 3px var(--emerald-wash); }
+  .sc-head{ display:flex; align-items:center; gap:10px; padding:16px 18px; border-bottom:1px solid var(--line); }
+  .drag-handle{ color:var(--ink-faint); cursor:grab; font-size:0.9rem; letter-spacing:-1px; }
+  .sc-head h3{ font-family:'Inter',sans-serif; font-size:0.92rem; font-weight:600; flex:1; }
+  .sc-head .sc-tools{ display:flex; gap:4px; }
+  .sc-tool{ width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; color:var(--ink-faint); font-size:0.8rem; }
+  .sc-tool:hover{ background:var(--paper-dim); color:var(--ink-soft); }
+  .sc-body{ padding:18px; }
+
+  .field-block{ margin-bottom:16px; position:relative; }
+  .field-block:last-child{ margin-bottom:0; }
+  .field-label-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:7px; }
+  .field-label{ font-size:0.76rem; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.04em; }
+  .ai-btn{
+    display:inline-flex; align-items:center; gap:5px; font-size:0.74rem; font-weight:600; color:var(--emerald);
+    background:var(--emerald-wash); padding:4px 10px; border-radius:999px; border:none; transition:all .15s;
+  }
+  .ai-btn:hover{ background:var(--emerald); color:var(--paper); }
+  textarea, input.f{
+    width:100%; border:1px solid var(--line); border-radius:var(--radius-s); padding:10px 12px;
+    font-size:0.88rem; color:var(--ink); background:var(--paper); resize:vertical; line-height:1.55;
+  }
+  textarea:focus, input.f:focus{ outline:none; border-color:var(--emerald-bright); background:var(--surface); }
+  .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+  .field-block.highlighted textarea{ background:var(--emerald-wash); border-color:var(--emerald-bright); }
+
+  .bullet-list{ display:flex; flex-direction:column; gap:10px; }
+  .bullet-row{ display:flex; gap:8px; align-items:flex-start; }
+  .bullet-row .bmark{ color:var(--ink-faint); margin-top:11px; font-size:0.7rem; }
+  .bullet-row textarea{ flex:1; }
+  .add-bullet{ font-size:0.8rem; color:var(--emerald); font-weight:600; margin-top:2px; align-self:flex-start; }
+
+  .add-section-btn{
+    width:100%; padding:14px; border:1.5px dashed var(--line-strong); border-radius:var(--radius-m);
+    background:transparent; color:var(--ink-faint); font-size:0.86rem; font-weight:600; transition:all .15s;
+  }
+  .add-section-btn:hover{ border-color:var(--emerald-bright); color:var(--emerald); background:var(--emerald-wash); }
+
+  /* RIGHT: split into preview (top) handled separately below via grid col 3, but we want AI panel overlay */
+  .right-col{ display:flex; flex-direction:column; background:var(--surface); overflow:hidden; }
+  .preview-topbar{ padding:14px 20px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; }
+  .preview-topbar h2{ font-family:'Inter',sans-serif; font-size:0.88rem; font-weight:600; }
+  .zoom-controls{ display:flex; align-items:center; gap:6px; font-size:0.78rem; color:var(--ink-soft); }
+  .zoom-controls button{ width:22px; height:22px; border-radius:5px; border:1px solid var(--line-strong); background:var(--surface); }
+  .tmpl-switch{ display:flex; gap:6px; padding:10px 20px; border-bottom:1px solid var(--line); overflow-x:auto; }
+  .tmpl-chip{ font-size:0.74rem; font-weight:600; padding:5px 11px; border-radius:999px; border:1px solid var(--line-strong); color:var(--ink-soft); white-space:nowrap; }
+  .tmpl-chip.active{ background:var(--emerald); border-color:var(--emerald); color:var(--paper); }
+
+  .preview-scroll{ flex:1; overflow-y:auto; padding:24px; background:var(--paper-dim); position:relative; }
+  .preview-page{
+    background:var(--surface); width:100%; max-width:300px; margin:0 auto; aspect-ratio:8.5/11;
+    box-shadow:var(--shadow-m); padding:28px 24px; font-size:0.6rem; border-radius:2px;
+  }
+  .pv-name{ font-family:'Fraunces',serif; font-size:1rem; font-weight:600; margin-bottom:2px; }
+  .pv-role{ color:var(--ink-soft); font-size:0.62rem; margin-bottom:14px; }
+  .pv-label{ font-size:0.5rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--emerald); border-bottom:1px solid var(--line); padding-bottom:3px; margin-bottom:7px; margin-top:14px; font-weight:700; }
+  .pv-line{ height:5px; background:var(--paper-dim); border-radius:2px; margin-bottom:5px; }
+  .pv-line.w90{width:90%;} .pv-line.w70{width:70%;} .pv-line.w60{width:60%;} .pv-line.w80{width:80%;}
+  .pv-line.glow{ background:var(--emerald-wash); }
+
+  .preview-footer{ padding:14px 20px; border-top:1px solid var(--line); display:flex; gap:8px; }
+  .preview-footer .btn{ flex:1; justify-content:center; }
+  .btn-outline{ border-color:var(--line-strong); background:var(--surface); color:var(--ink); }
+  .btn-outline:hover{ border-color:var(--emerald); background:var(--emerald-wash); }
+
+  /* AI MARGIN NOTE — signature interaction */
+  .ai-note{
+    position:absolute; z-index:30; width:320px; background:var(--surface); border:1px solid var(--line-strong);
+    border-radius:var(--radius-m); box-shadow:var(--shadow-l); padding:0; opacity:0; pointer-events:none;
+    transform:translateX(-8px); transition:opacity .18s ease, transform .18s ease;
+  }
+  .ai-note.open{ opacity:1; pointer-events:auto; transform:translateX(0); }
+  .ai-note-head{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px 10px; border-bottom:1px solid var(--line); }
+  .ai-note-tag{ display:flex; align-items:center; gap:7px; font-size:0.72rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:var(--emerald); }
+  .ai-note-tag .dot{ width:6px; height:6px; border-radius:50%; background:var(--gold); }
+  .ai-close{ color:var(--ink-faint); font-size:0.9rem; width:22px; height:22px; display:flex; align-items:center; justify-content:center; border-radius:6px; }
+  .ai-close:hover{ background:var(--paper-dim); }
+
+  .ai-note-body{ padding:14px 16px; }
+  .ai-suggest-text{ font-size:0.86rem; line-height:1.55; color:var(--ink); background:var(--emerald-wash); border-radius:8px; padding:12px; margin-bottom:12px; }
+  .ai-why{ font-size:0.78rem; color:var(--ink-soft); line-height:1.5; margin-bottom:14px; }
+  .ai-why b{ color:var(--ink); font-weight:600; }
+  .ai-tools-row{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+  .ai-tool-chip{ font-size:0.72rem; font-weight:600; padding:5px 10px; border-radius:999px; border:1px solid var(--line-strong); color:var(--ink-soft); background:var(--surface); }
+  .ai-tool-chip:hover{ border-color:var(--emerald); color:var(--emerald); }
+  .ai-note-actions{ display:flex; gap:8px; padding:12px 16px 16px; border-top:1px solid var(--line); }
+  .ai-note-actions .btn{ flex:1; justify-content:center; padding:9px 0; font-size:0.8rem; }
+  .btn-sm-outline{ border:1px solid var(--line-strong); background:var(--surface); color:var(--ink-soft); }
+  .ai-note-foot{ display:flex; justify-content:space-between; padding:0 16px 14px; font-size:0.74rem; color:var(--ink-faint); }
+  .ai-note-foot a{ color:var(--emerald); font-weight:600; }
+
+  @media (max-width:1200px){
+    .app{ grid-template-columns:60px 1fr 340px; }
+    .sidebar .side-logo span:last-child, .sidebar .side-link span:last-child, .outline-label, .outline-item span:last-child{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="side-logo"><span class="logo-mark">V</span><span>VitaePro</span></div>
+    <a href="dashboard.html" class="side-link"><span class="ic">▤</span><span>Dashboard</span></a>
+    <a href="cv-editor.html" class="side-link active"><span class="ic">▥</span><span>My CVs</span></a>
+    <a href="templates.html" class="side-link"><span class="ic">▦</span><span>Templates</span></a>
+    <a href="cover-letter.html" class="side-link"><span class="ic">✉</span><span>Cover Letters</span></a>
+    <a href="#" class="side-link"><span class="ic">✦</span><span>AI Assistant</span></a>
+
+    <div class="outline-label">On this page</div>
+    <div class="outline-item"><span class="dot"></span><span>Personal Info</span></div>
+    <div class="outline-item current"><span class="dot"></span><span>Summary</span></div>
+    <div class="outline-item"><span class="dot"></span><span>Experience</span></div>
+    <div class="outline-item"><span class="dot"></span><span>Education</span></div>
+    <div class="outline-item"><span class="dot"></span><span>Skills</span></div>
+
+    <div class="side-spacer"></div>
+    <a href="#" class="side-link"><span class="ic">⚙</span><span>Settings</span></a>
+  </aside>
+
+  <section class="workspace">
+    <div class="ws-topbar">
+      <div class="doc-title-row">
+        <h1 class="serif">Senior Product Designer</h1>
+        <span class="save-status"><span class="dot"></span>Saved</span>
+      </div>
+      <div class="ws-actions">
+        <button class="icon-btn" title="Undo">↺</button>
+        <button class="icon-btn" title="Redo">↻</button>
+        <button class="icon-btn" title="Version history">◔</button>
+        <button class="btn btn-primary">Download PDF</button>
+      </div>
+    </div>
+
+    <div class="ws-body">
+
+      <div class="section-card">
+        <div class="sc-head">
+          <span class="drag-handle">⠿</span>
+          <h3>Personal Information</h3>
+          <div class="sc-tools">
+            <span class="sc-tool">⤢</span><span class="sc-tool">⧉</span><span class="sc-tool">⌄</span>
+          </div>
+        </div>
+        <div class="sc-body">
+          <div class="two-col" style="margin-bottom:12px;">
+            <div class="field-block" style="margin-bottom:0;">
+              <div class="field-label-row"><span class="field-label">Full name</span></div>
+              <input class="f" value="Amara Okafor">
+            </div>
+            <div class="field-block" style="margin-bottom:0;">
+              <div class="field-label-row"><span class="field-label">Title</span></div>
+              <input class="f" value="Senior Product Designer">
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="field-block" style="margin-bottom:0;">
+              <div class="field-label-row"><span class="field-label">Email</span></div>
+              <input class="f" value="amara.okafor@email.com">
+            </div>
+            <div class="field-block" style="margin-bottom:0;">
+              <div class="field-label-row"><span class="field-label">Phone</span></div>
+              <input class="f" value="+1 (415) 555-0182">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card focused" id="summaryCard">
+        <div class="sc-head">
+          <span class="drag-handle">⠿</span>
+          <h3>Professional Summary</h3>
+          <div class="sc-tools">
+            <span class="sc-tool">⤢</span><span class="sc-tool">⧉</span><span class="sc-tool">⌄</span>
+          </div>
+        </div>
+        <div class="sc-body">
+          <div class="field-block highlighted" id="summaryField">
+            <div class="field-label-row">
+              <span class="field-label">Summary</span>
+              <button class="ai-btn" onclick="toggleNote(event,'summaryNote','summaryField')">✨ Improve</button>
+            </div>
+            <textarea rows="4">Product designer with 8 years of experience leading design for consumer apps. Responsible for onboarding flows and design systems work across cross-functional teams.</textarea>
+            <div class="ai-note" id="summaryNote">
+              <div class="ai-note-head">
+                <span class="ai-note-tag"><span class="dot"></span>AI Suggestion</span>
+                <span class="ai-close" onclick="closeNote('summaryNote')">✕</span>
+              </div>
+              <div class="ai-note-body">
+                <div class="ai-suggest-text">"Product designer with 8 years leading onboarding and design-systems work for consumer apps used by 2M+ people — most recently lifting activation 34% at Northwind."</div>
+                <div class="ai-why"><b>Why this is stronger:</b> Opens with scope (2M+ users), closes with a quantified result, and cuts passive phrasing like "responsible for."</div>
+                <div class="ai-tools-row">
+                  <span class="ai-tool-chip">Shorten</span>
+                  <span class="ai-tool-chip">More executive</span>
+                  <span class="ai-tool-chip">Fix grammar</span>
+                </div>
+              </div>
+              <div class="ai-note-actions">
+                <button class="btn btn-sm-outline" onclick="closeNote('summaryNote')">Regenerate</button>
+                <button class="btn btn-primary" onclick="closeNote('summaryNote')">Accept</button>
+              </div>
+              <div class="ai-note-foot">
+                <a href="#">Edit prompt</a>
+                <a href="#">Compare versions</a>
+                <a href="#">History</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="sc-head">
+          <span class="drag-handle">⠿</span>
+          <h3>Experience</h3>
+          <div class="sc-tools">
+            <span class="sc-tool">⤢</span><span class="sc-tool">⧉</span><span class="sc-tool">⌄</span>
+          </div>
+        </div>
+        <div class="sc-body">
+          <div class="two-col" style="margin-bottom:12px;">
+            <div class="field-block" style="margin-bottom:0;">
+              <div class="field-label-row"><span class="field-label">Role</span></div>
+              <input class="f" value="Senior Product Designer, Northwind">
+            </div>
+            <div class="field-block" style="margin-bottom:0;">
+              <div class="field-label-row"><span class="field-label">Dates</span></div>
+              <input class="f" value="Jan 2022 — Present">
+            </div>
+          </div>
+          <div class="field-block">
+            <div class="field-label-row">
+              <span class="field-label">Achievements</span>
+              <button class="ai-btn" onclick="toggleNote(event,'bulletNote','bulletField')">✨ Rewrite</button>
+            </div>
+            <div class="bullet-list" id="bulletField">
+              <div class="bullet-row"><span class="bmark">—</span><textarea rows="2">Responsible for redesigning the onboarding flow for the mobile app.</textarea></div>
+              <div class="bullet-row"><span class="bmark">—</span><textarea rows="2">Worked with engineering and PM teams to ship a new design system.</textarea></div>
+              <a href="#" class="add-bullet">+ Add achievement</a>
+            </div>
+            <div class="ai-note" id="bulletNote">
+              <div class="ai-note-head">
+                <span class="ai-note-tag"><span class="dot"></span>AI Suggestion</span>
+                <span class="ai-close" onclick="closeNote('bulletNote')">✕</span>
+              </div>
+              <div class="ai-note-body">
+                <div class="ai-suggest-text">"Redesigned the mobile onboarding flow end-to-end, lifting 30-day activation 34% across 60K monthly signups."</div>
+                <div class="ai-why"><b>Why this is stronger:</b> Leads with an action verb, states the outcome as a number, and gives scale for context.</div>
+                <div class="ai-tools-row">
+                  <span class="ai-tool-chip">Make ATS-friendly</span>
+                  <span class="ai-tool-chip">Stronger verb</span>
+                  <span class="ai-tool-chip">Expand</span>
+                </div>
+              </div>
+              <div class="ai-note-actions">
+                <button class="btn btn-sm-outline" onclick="closeNote('bulletNote')">Regenerate</button>
+                <button class="btn btn-primary" onclick="closeNote('bulletNote')">Replace</button>
+              </div>
+              <div class="ai-note-foot">
+                <a href="#">Insert below</a>
+                <a href="#">Undo</a>
+                <a href="#">Copy</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="sc-head">
+          <span class="drag-handle">⠿</span>
+          <h3>Skills</h3>
+          <div class="sc-tools">
+            <span class="sc-tool">⤢</span><span class="sc-tool">⧉</span><span class="sc-tool">⌄</span>
+          </div>
+        </div>
+        <div class="sc-body">
+          <div class="field-block">
+            <div class="field-label-row">
+              <span class="field-label">Skills</span>
+              <button class="ai-btn">✨ Optimize</button>
+            </div>
+            <input class="f" value="Product Strategy, Design Systems, Figma, User Research, Prototyping, A/B Testing">
+          </div>
+        </div>
+      </div>
+
+      <button class="add-section-btn">+ Add section — Certifications, References, Projects, and more</button>
+    </div>
+  </section>
+
+  <aside class="right-col">
+    <div class="preview-topbar">
+      <h2>Live Preview</h2>
+      <div class="zoom-controls">
+        <button>−</button><span>100%</span><button>+</button>
+      </div>
+    </div>
+    <div class="tmpl-switch">
+      <span class="tmpl-chip active">Meridian</span>
+      <span class="tmpl-chip">Ledger</span>
+      <span class="tmpl-chip">Bureau</span>
+      <span class="tmpl-chip">Atelier</span>
+    </div>
+    <div class="preview-scroll">
+      <div class="preview-page">
+        <div class="pv-name">Amara Okafor</div>
+        <div class="pv-role">Senior Product Designer · San Francisco, CA</div>
+        <div class="pv-label">Professional Summary</div>
+        <div class="pv-line w90 glow"></div>
+        <div class="pv-line w80 glow"></div>
+        <div class="pv-line w60 glow"></div>
+        <div class="pv-label">Experience</div>
+        <div class="pv-line w70"></div>
+        <div class="pv-line w90"></div>
+        <div class="pv-line w80"></div>
+        <div class="pv-line w60"></div>
+        <div class="pv-label">Education</div>
+        <div class="pv-line w70"></div>
+        <div class="pv-line w60"></div>
+        <div class="pv-label">Skills</div>
+        <div class="pv-line w90"></div>
+      </div>
+    </div>
+    <div class="preview-footer">
+      <button class="btn btn-outline">Print</button>
+      <button class="btn btn-primary">Download PDF</button>
+    </div>
+  </aside>
+</div>
+
+<script>
+  function closeNote(id){
+    document.getElementById(id).classList.remove('open');
+  }
+  function toggleNote(e, noteId, anchorId){
+    document.querySelectorAll('.ai-note.open').forEach(n=>{ if(n.id!==noteId) n.classList.remove('open'); });
+    const note = document.getElementById(noteId);
+    const anchor = document.getElementById(anchorId);
+    const btnRect = e.currentTarget.getBoundingClientRect();
+    const parentRect = anchor.getBoundingClientRect();
+    note.style.top = (e.currentTarget.offsetParent ? 0 : 0) + 'px';
+    // position relative to field-block (which is position:relative)
+    note.style.left = 'calc(100% + 16px)';
+    note.style.top = '0px';
+    note.classList.toggle('open');
+  }
+</script>
+
+</body>
+</html>

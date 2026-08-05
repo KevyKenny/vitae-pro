@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cover Letter Builder — VitaePro</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF8F3; --paper-dim:#F3F0E7; --surface:#FFFFFF; --ink:#1B1D1B; --ink-soft:#55584F; --ink-faint:#8B8D82;
+    --emerald:#1F4D3D; --emerald-bright:#2F7A5C; --emerald-wash:#EAF1EC;
+    --gold:#B08D3E; --gold-wash:#F6EFDD; --line:#E4E0D3; --line-strong:#D3CDBB;
+    --radius-s:8px; --radius-m:14px; --radius-l:20px;
+    --shadow-s:0 1px 2px rgba(27,29,27,0.06); --shadow-m:0 8px 24px rgba(27,29,27,0.10);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ font-family:'Inter',sans-serif; color:var(--ink); background:var(--paper); font-size:15px; height:100vh; overflow:hidden; }
+  h1,h2,h3,.serif{ font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em; }
+  a{ color:inherit; text-decoration:none; }
+  button{ font-family:'Inter',sans-serif; cursor:pointer; }
+  :focus-visible{ outline:2px solid var(--emerald-bright); outline-offset:2px; border-radius:4px; }
+
+  .app{ display:grid; grid-template-columns:224px 1fr; height:100vh; }
+  .sidebar{ background:var(--surface); border-right:1px solid var(--line); display:flex; flex-direction:column; padding:20px 14px; }
+  .side-logo{ display:flex; align-items:center; gap:9px; font-family:'Fraunces',serif; font-weight:600; font-size:1.05rem; padding:4px 8px 20px; }
+  .logo-mark{ width:24px; height:24px; border-radius:6px; background:var(--emerald); color:var(--paper); display:flex; align-items:center; justify-content:center; font-size:13px; font-family:'Fraunces',serif; }
+  .side-link{ display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:var(--radius-s); font-size:0.84rem; font-weight:500; color:var(--ink-soft); margin-bottom:2px; }
+  .side-link:hover{ background:var(--paper-dim); color:var(--ink); }
+  .side-link.active{ background:var(--emerald-wash); color:var(--emerald); font-weight:600; }
+  .side-link .ic{ width:16px; text-align:center; opacity:0.85; }
+  .side-spacer{ flex:1; }
+
+  .content{ display:grid; grid-template-columns:420px 1fr; overflow:hidden; }
+
+  /* LEFT FORM */
+  .form-pane{ border-right:1px solid var(--line); overflow-y:auto; padding:30px 32px 60px; }
+  .form-pane h1{ font-size:1.4rem; margin-bottom:4px; }
+  .form-pane .sub{ color:var(--ink-soft); font-size:0.88rem; margin-bottom:28px; }
+
+  .fgroup{ margin-bottom:20px; }
+  .fgroup label{ display:block; font-size:0.78rem; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px; }
+  .fgroup input, .fgroup textarea, .fgroup select{
+    width:100%; border:1px solid var(--line-strong); border-radius:var(--radius-s); padding:11px 13px;
+    font-size:0.88rem; font-family:'Inter',sans-serif; background:var(--surface); color:var(--ink);
+  }
+  .fgroup input:focus, .fgroup textarea:focus, .fgroup select:focus{ outline:none; border-color:var(--emerald-bright); box-shadow:0 0 0 3px var(--emerald-wash); }
+  .fgroup textarea{ resize:vertical; line-height:1.55; }
+  .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+  .chip-select{ display:flex; gap:8px; flex-wrap:wrap; }
+  .chip{ font-size:0.8rem; font-weight:600; padding:8px 14px; border-radius:999px; border:1px solid var(--line-strong); color:var(--ink-soft); background:var(--surface); }
+  .chip.active{ background:var(--emerald); border-color:var(--emerald); color:var(--paper); }
+
+  .slider-row{ display:flex; align-items:center; gap:12px; }
+  .slider-row input[type=range]{ flex:1; accent-color:var(--emerald); }
+  .slider-labels{ display:flex; justify-content:space-between; font-size:0.72rem; color:var(--ink-faint); margin-top:6px; }
+
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 20px; border-radius:999px; font-size:0.88rem; font-weight:600; border:1px solid transparent; width:100%; }
+  .btn-primary{ background:var(--emerald); color:var(--paper); }
+  .btn-primary:hover{ background:var(--emerald-bright); }
+
+  /* RIGHT PREVIEW */
+  .preview-pane{ display:flex; flex-direction:column; overflow:hidden; background:var(--paper-dim); }
+  .pv-topbar{ background:var(--surface); border-bottom:1px solid var(--line); padding:14px 28px; display:flex; align-items:center; justify-content:space-between; }
+  .pv-topbar h2{ font-family:'Inter',sans-serif; font-size:0.92rem; font-weight:600; }
+  .pv-actions{ display:flex; gap:8px; }
+  .btn-sm{ padding:8px 14px; font-size:0.8rem; width:auto; }
+  .btn-outline{ border-color:var(--line-strong); background:var(--surface); color:var(--ink); }
+  .btn-outline:hover{ border-color:var(--emerald); background:var(--emerald-wash); }
+  .btn-ghost-icon{ width:34px; height:34px; border-radius:8px; border:1px solid var(--line-strong); background:var(--surface); display:flex; align-items:center; justify-content:center; color:var(--ink-soft); }
+
+  .letter-scroll{ flex:1; overflow-y:auto; padding:40px; display:flex; justify-content:center; }
+  .letter-page{ background:var(--surface); width:100%; max-width:560px; box-shadow:var(--shadow-m); padding:56px 52px; font-size:0.86rem; line-height:1.75; color:var(--ink); height:fit-content; }
+  .letter-head{ margin-bottom:32px; }
+  .letter-head .name{ font-family:'Fraunces',serif; font-weight:600; font-size:1.1rem; }
+  .letter-head .meta{ color:var(--ink-faint); font-size:0.8rem; margin-top:2px; }
+  .letter-date{ color:var(--ink-soft); font-size:0.82rem; margin-bottom:26px; }
+  .letter-body p{ margin-bottom:16px; color:var(--ink); }
+  .letter-sign{ margin-top:22px; }
+
+  .ai-inline-actions{ display:flex; gap:8px; padding:16px 28px; background:var(--surface); border-top:1px solid var(--line); }
+  .ai-chip{ font-size:0.78rem; font-weight:600; padding:7px 13px; border-radius:999px; border:1px solid var(--line-strong); color:var(--emerald); background:var(--emerald-wash); border-color:transparent; }
+  .ai-chip:hover{ background:var(--emerald); color:var(--paper); }
+
+  @media (max-width:1200px){
+    .content{ grid-template-columns:380px 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="side-logo"><span class="logo-mark">V</span>VitaePro</div>
+    <a href="dashboard.html" class="side-link"><span class="ic">▤</span>Dashboard</a>
+    <a href="cv-editor.html" class="side-link"><span class="ic">▥</span>My CVs</a>
+    <a href="templates.html" class="side-link"><span class="ic">▦</span>Templates</a>
+    <a href="cover-letter.html" class="side-link active"><span class="ic">✉</span>Cover Letters</a>
+    <a href="#" class="side-link"><span class="ic">✦</span>AI Assistant</a>
+    <div class="side-spacer"></div>
+    <a href="#" class="side-link"><span class="ic">⚙</span>Settings</a>
+  </aside>
+
+  <div class="content">
+    <section class="form-pane">
+      <h1>Cover Letter</h1>
+      <p class="sub">Tell VitaePro about the role — it'll draft a letter matched to it.</p>
+
+      <div class="fgroup">
+        <label for="jobdesc">Job description</label>
+        <textarea id="jobdesc" rows="6" placeholder="Paste the job posting here...">We're looking for a Senior Product Designer to lead onboarding and growth surfaces, partnering closely with PM and engineering to ship end-to-end experiences for 2M+ users...</textarea>
+      </div>
+
+      <div class="two-col">
+        <div class="fgroup">
+          <label for="company">Company</label>
+          <input id="company" value="Northwind">
+        </div>
+        <div class="fgroup">
+          <label for="role">Role</label>
+          <input id="role" value="Senior Product Designer">
+        </div>
+      </div>
+
+      <div class="fgroup">
+        <label for="hm">Hiring manager (optional)</label>
+        <input id="hm" placeholder="e.g. Jordan Ruiz">
+      </div>
+
+      <div class="fgroup">
+        <label>Tone</label>
+        <div class="chip-select">
+          <span class="chip">Formal</span>
+          <span class="chip active">Confident</span>
+          <span class="chip">Warm</span>
+          <span class="chip">Direct</span>
+        </div>
+      </div>
+
+      <div class="fgroup">
+        <label for="len">Length</label>
+        <div class="slider-row">
+          <input id="len" type="range" min="1" max="3" value="2">
+        </div>
+        <div class="slider-labels"><span>Concise</span><span>Standard</span><span>Detailed</span></div>
+      </div>
+
+      <div class="fgroup">
+        <label for="extra">Extra instructions (optional)</label>
+        <textarea id="extra" rows="3" placeholder="e.g. Mention my design systems experience specifically"></textarea>
+      </div>
+
+      <button class="btn btn-primary">✨ Generate cover letter</button>
+    </section>
+
+    <section class="preview-pane">
+      <div class="pv-topbar">
+        <h2>Live Preview</h2>
+        <div class="pv-actions">
+          <button class="btn-ghost-icon" title="Regenerate">↻</button>
+          <button class="btn btn-outline btn-sm">Improve</button>
+          <button class="btn btn-primary btn-sm">Download</button>
+        </div>
+      </div>
+      <div class="letter-scroll">
+        <div class="letter-page">
+          <div class="letter-head">
+            <div class="name">Amara Okafor</div>
+            <div class="meta">amara.okafor@email.com · +1 (415) 555-0182 · San Francisco, CA</div>
+          </div>
+          <div class="letter-date">August 5, 2026</div>
+          <div class="letter-body">
+            <p>Dear Hiring Team,</p>
+            <p>When I read that Northwind is looking for someone to lead onboarding and growth surfaces for a 2M-user product, it matched almost exactly what I've spent the last three years doing at scale — most recently redesigning a mobile onboarding flow that lifted 30-day activation by 34%.</p>
+            <p>I lead with systems thinking: every flow I design is built to hold up as a product grows, which is why I built and shipped a company-wide design system alongside engineering and PM partners. I'd bring that same rigor to Northwind's growth surfaces.</p>
+            <p>I'd welcome the chance to talk about how that experience applies to your roadmap.</p>
+          </div>
+          <div class="letter-sign">Sincerely,<br>Amara Okafor</div>
+        </div>
+      </div>
+      <div class="ai-inline-actions">
+        <span class="ai-chip">✨ More concise</span>
+        <span class="ai-chip">✨ More formal</span>
+        <span class="ai-chip">✨ Emphasize leadership</span>
+        <span class="ai-chip">✨ Fix grammar</span>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.chip-select .chip').forEach(c=>{
+    c.addEventListener('click', ()=>{
+      c.parentElement.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+      c.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

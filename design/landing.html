@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VitaePro — Your career, drafted with a coach at your shoulder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF8F3;
+    --paper-dim:#F3F0E7;
+    --surface:#FFFFFF;
+    --ink:#1B1D1B;
+    --ink-soft:#55584F;
+    --ink-faint:#8B8D82;
+    --emerald:#1F4D3D;
+    --emerald-bright:#2F7A5C;
+    --emerald-wash:#EAF1EC;
+    --gold:#B08D3E;
+    --gold-wash:#F6EFDD;
+    --line:#E4E0D3;
+    --line-strong:#D3CDBB;
+    --radius-s:8px;
+    --radius-m:14px;
+    --radius-l:22px;
+    --shadow-s:0 1px 2px rgba(27,29,27,0.06);
+    --shadow-m:0 8px 24px rgba(27,29,27,0.08);
+    --shadow-l:0 24px 64px rgba(27,29,27,0.14);
+    font-size:16px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif{ font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em; }
+  .mono{ font-family:'IBM Plex Mono',monospace; letter-spacing:0.02em; }
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 32px; }
+  ::selection{ background:var(--emerald); color:var(--paper); }
+  :focus-visible{ outline:2px solid var(--emerald-bright); outline-offset:3px; border-radius:4px; }
+
+  /* NAV */
+  header.nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(250,248,243,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{ max-width:1180px; margin:0 auto; padding:20px 32px; display:flex; align-items:center; justify-content:space-between; }
+  .logo{ display:flex; align-items:center; gap:10px; font-family:'Fraunces',serif; font-weight:600; font-size:1.25rem; }
+  .logo-mark{ width:28px; height:28px; border-radius:7px; background:var(--emerald); display:flex; align-items:center; justify-content:center; color:var(--paper); font-family:'Fraunces',serif; font-size:15px; font-weight:600; }
+  nav.links{ display:flex; gap:36px; }
+  nav.links a{ font-size:0.94rem; color:var(--ink-soft); font-weight:500; transition:color .15s; }
+  nav.links a:hover{ color:var(--ink); }
+  .nav-cta{ display:flex; align-items:center; gap:18px; }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:11px 22px; border-radius:999px; font-size:0.92rem; font-weight:600;
+    border:1px solid transparent; cursor:pointer; transition:all .18s ease;
+    font-family:'Inter',sans-serif;
+  }
+  .btn-primary{ background:var(--emerald); color:var(--paper); box-shadow:var(--shadow-s); }
+  .btn-primary:hover{ background:var(--emerald-bright); transform:translateY(-1px); box-shadow:var(--shadow-m); }
+  .btn-ghost{ color:var(--ink-soft); }
+  .btn-ghost:hover{ color:var(--ink); }
+  .btn-outline{ border-color:var(--line-strong); color:var(--ink); background:var(--surface); }
+  .btn-outline:hover{ border-color:var(--emerald); background:var(--emerald-wash); }
+
+  /* HERO */
+  .hero{ padding:88px 0 60px; position:relative; overflow:hidden; }
+  .hero-grid{ display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; font-size:0.78rem; font-weight:600;
+    letter-spacing:0.08em; text-transform:uppercase; color:var(--emerald);
+    background:var(--emerald-wash); padding:7px 14px; border-radius:999px; margin-bottom:24px;
+  }
+  .hero h1{ font-size:3.4rem; line-height:1.06; margin-bottom:24px; }
+  .hero h1 em{ font-style:italic; color:var(--emerald); }
+  .hero p.lead{ font-size:1.14rem; color:var(--ink-soft); max-width:480px; margin-bottom:34px; }
+  .hero-actions{ display:flex; gap:14px; align-items:center; margin-bottom:36px; }
+  .btn-lg{ padding:15px 28px; font-size:1rem; }
+  .hero-trust{ display:flex; gap:28px; align-items:center; color:var(--ink-faint); font-size:0.85rem; }
+  .hero-trust .stars{ color:var(--gold); letter-spacing:2px; }
+
+  /* HERO VISUAL — margin note signature */
+  .hero-visual{ position:relative; }
+  .paper-card{
+    background:var(--surface); border-radius:var(--radius-l); box-shadow:var(--shadow-l);
+    padding:40px 40px 36px; border:1px solid var(--line);
+    position:relative;
+  }
+  .paper-card::before{
+    content:''; position:absolute; inset:0; border-radius:var(--radius-l);
+    background:linear-gradient(180deg, transparent 0%, transparent 100%);
+    pointer-events:none;
+  }
+  .doc-name{ font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-faint); margin-bottom:6px; }
+  .doc-title{ font-family:'Fraunces',serif; font-size:1.5rem; font-weight:600; margin-bottom:2px;}
+  .doc-role{ color:var(--ink-soft); font-size:0.92rem; margin-bottom:22px; }
+  .doc-section-label{ font-size:0.7rem; text-transform:uppercase; letter-spacing:0.09em; color:var(--ink-faint); margin-bottom:10px; border-bottom:1px solid var(--line); padding-bottom:6px; }
+  .doc-line{ height:9px; background:var(--paper-dim); border-radius:4px; margin-bottom:9px; }
+  .doc-line.w80{ width:80%; } .doc-line.w95{ width:95%; } .doc-line.w60{ width:60%; } .doc-line.w70{width:70%;}
+  .doc-para{ background:var(--emerald-wash); border-radius:8px; padding:4px 6px; margin: -4px -6px 9px; }
+  .doc-para .doc-line{ background:rgba(31,77,61,0.14); }
+
+  .margin-note{
+    position:absolute; right:-34px; top:168px; width:250px;
+    background:var(--surface); border:1px solid var(--line-strong); border-radius:var(--radius-m);
+    box-shadow:var(--shadow-m); padding:18px 18px 16px;
+  }
+  .margin-note::before{
+    content:''; position:absolute; left:-58px; top:22px; width:58px; height:2px; background:var(--emerald-bright);
+  }
+  .margin-note::after{
+    content:''; position:absolute; left:-60px; top:19px; width:8px; height:8px; border-radius:50%; background:var(--emerald-bright);
+  }
+  .note-tag{ display:inline-flex; align-items:center; gap:6px; font-size:0.7rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:var(--emerald); margin-bottom:9px; }
+  .note-tag .dot{ width:6px; height:6px; border-radius:50%; background:var(--gold); }
+  .note-text{ font-size:0.85rem; color:var(--ink); margin-bottom:12px; line-height:1.5; }
+  .note-actions{ display:flex; gap:8px; }
+  .chip-btn{ font-size:0.75rem; font-weight:600; padding:6px 12px; border-radius:999px; cursor:pointer; border:1px solid transparent; }
+  .chip-accept{ background:var(--emerald); color:var(--paper); }
+  .chip-again{ background:var(--paper-dim); color:var(--ink-soft); border-color:var(--line); }
+
+  .float-score{
+    position:absolute; left:-28px; bottom:-24px; background:var(--ink); color:var(--paper);
+    border-radius:var(--radius-m); padding:16px 20px; box-shadow:var(--shadow-l); display:flex; gap:16px; align-items:center;
+  }
+  .float-score .num{ font-family:'IBM Plex Mono',monospace; font-size:1.7rem; color:var(--gold); font-weight:500; }
+  .float-score .label{ font-size:0.72rem; color:#C8CABF; line-height:1.3; max-width:110px; }
+
+  /* LOGO STRIP */
+  .logostrip{ padding:36px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .logostrip .wrap{ display:flex; align-items:center; justify-content:space-between; }
+  .logostrip .caption{ font-size:0.78rem; color:var(--ink-faint); white-space:nowrap; margin-right:40px; }
+  .logo-row{ display:flex; gap:44px; align-items:center; flex-wrap:wrap; opacity:0.55; }
+  .logo-row span{ font-family:'Fraunces',serif; font-weight:600; font-size:1.05rem; color:var(--ink-soft); }
+
+  /* SECTION HEADERS */
+  .section{ padding:96px 0; }
+  .section-head{ max-width:600px; margin-bottom:56px; }
+  .section-head .eyebrow{ margin-bottom:18px; }
+  .section-head h2{ font-size:2.3rem; line-height:1.15; margin-bottom:16px; }
+  .section-head p{ color:var(--ink-soft); font-size:1.04rem; }
+
+  /* FEATURES */
+  .feature-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  .feature-card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m); padding:30px 26px; transition:box-shadow .2s, transform .2s, border-color .2s; }
+  .feature-card:hover{ box-shadow:var(--shadow-m); transform:translateY(-3px); border-color:var(--line-strong); }
+  .feature-icon{ width:42px; height:42px; border-radius:11px; background:var(--emerald-wash); display:flex; align-items:center; justify-content:center; margin-bottom:18px; color:var(--emerald); }
+  .feature-card h3{ font-size:1.08rem; margin-bottom:9px; font-weight:600; }
+  .feature-card p{ font-size:0.9rem; color:var(--ink-soft); }
+
+  /* HOW IT WORKS */
+  .how{ background:var(--surface); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .how-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; position:relative; }
+  .how-step{ padding:0 30px 0 0; position:relative; }
+  .how-step:not(:last-child)::after{
+    content:''; position:absolute; top:22px; right:-12px; width:24px; height:1px; background:var(--line-strong);
+  }
+  .step-num{ font-family:'IBM Plex Mono',monospace; color:var(--gold); font-size:0.85rem; margin-bottom:16px; display:block; }
+  .how-step h3{ font-size:1.15rem; margin-bottom:10px; }
+  .how-step p{ color:var(--ink-soft); font-size:0.92rem; }
+
+  /* TEMPLATE SHOWCASE */
+  .tmpl-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:22px; }
+  .tmpl-card{ border-radius:var(--radius-m); overflow:hidden; border:1px solid var(--line); background:var(--surface); cursor:pointer; transition:transform .2s, box-shadow .2s; }
+  .tmpl-card:hover{ transform:translateY(-4px); box-shadow:var(--shadow-m); }
+  .tmpl-thumb{ aspect-ratio:3/4; background:var(--paper-dim); padding:16px; }
+  .tmpl-thumb .mini-line{ height:5px; background:rgba(27,29,27,0.09); border-radius:2px; margin-bottom:6px; }
+  .tmpl-meta{ padding:14px 16px; display:flex; align-items:center; justify-content:space-between; }
+  .tmpl-meta .name{ font-size:0.88rem; font-weight:600; }
+  .badge{ font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:4px 8px; border-radius:6px; }
+  .badge-ats{ background:var(--emerald-wash); color:var(--emerald); }
+  .badge-popular{ background:var(--gold-wash); color:var(--gold); }
+
+  /* TESTIMONIAL */
+  .testimonial{ background:var(--emerald); color:var(--paper); border-radius:var(--radius-l); padding:64px; position:relative; overflow:hidden; }
+  .testimonial::before{ content:'"'; position:absolute; top:-40px; left:32px; font-family:'Fraunces',serif; font-size:220px; color:rgba(250,248,243,0.06); line-height:1; }
+  .testimonial blockquote{ font-family:'Fraunces',serif; font-size:1.7rem; line-height:1.4; font-weight:500; max-width:760px; margin-bottom:28px; position:relative; }
+  .testimonial .who{ display:flex; align-items:center; gap:12px; }
+  .avatar{ width:40px; height:40px; border-radius:50%; background:rgba(250,248,243,0.16); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:0.85rem; }
+  .who-meta .name{ font-weight:600; font-size:0.92rem; }
+  .who-meta .role{ font-size:0.8rem; color:rgba(250,248,243,0.65); }
+
+  /* CTA */
+  .cta{ text-align:center; padding:110px 0 120px; }
+  .cta h2{ font-size:2.6rem; max-width:640px; margin:0 auto 20px; line-height:1.15; }
+  .cta p{ color:var(--ink-soft); margin-bottom:36px; }
+
+  /* FOOTER */
+  footer{ border-top:1px solid var(--line); padding:56px 0 40px; }
+  .footer-grid{ display:grid; grid-template-columns:2fr repeat(4,1fr); gap:32px; margin-bottom:48px; }
+  .footer-col h4{ font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-faint); margin-bottom:16px; }
+  .footer-col a{ display:block; font-size:0.88rem; color:var(--ink-soft); margin-bottom:11px; }
+  .footer-col a:hover{ color:var(--ink); }
+  .footer-bottom{ display:flex; justify-content:space-between; align-items:center; padding-top:28px; border-top:1px solid var(--line); font-size:0.8rem; color:var(--ink-faint); }
+
+  @media (max-width:980px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .feature-grid, .how-grid{ grid-template-columns:1fr; }
+    .tmpl-grid{ grid-template-columns:repeat(2,1fr); }
+    .footer-grid{ grid-template-columns:1fr 1fr; }
+    nav.links{ display:none; }
+    .hero h1{ font-size:2.4rem; }
+    .margin-note{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#" class="logo"><span class="logo-mark">V</span>VitaePro</a>
+    <nav class="links">
+      <a href="#features">Product</a>
+      <a href="#templates">Templates</a>
+      <a href="#how">How it works</a>
+      <a href="#">Pricing</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="auth.html" class="btn btn-ghost">Log in</a>
+      <a href="auth.html" class="btn btn-primary">Start free</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">AI career coach, built in</span>
+      <h1>Write a CV<br>with someone <em>reading</em><br>over your shoulder.</h1>
+      <p class="lead">VitaePro pairs a distraction-free editor with an AI that annotates your draft like a coach — not a chatbot. Every suggestion arrives in context, with a reason attached.</p>
+      <div class="hero-actions">
+        <a href="auth.html" class="btn btn-primary btn-lg">Build my CV — it's free</a>
+        <a href="cv-editor.html" class="btn btn-outline btn-lg">See the editor →</a>
+      </div>
+      <div class="hero-trust">
+        <span class="stars">★★★★★</span>
+        <span>4.9 from 12,400 job seekers</span>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="paper-card">
+        <div class="doc-name">CV Preview</div>
+        <div class="doc-title">Amara Okafor</div>
+        <div class="doc-role">Senior Product Designer</div>
+        <div class="doc-section-label">Professional Summary</div>
+        <div class="doc-para">
+          <div class="doc-line w95"></div>
+          <div class="doc-line w80"></div>
+        </div>
+        <div class="doc-section-label" style="margin-top:22px;">Experience</div>
+        <div class="doc-line w70"></div>
+        <div class="doc-line w95"></div>
+        <div class="doc-line w60"></div>
+      </div>
+      <div class="margin-note">
+        <div class="note-tag"><span class="dot"></span>AI Suggestion</div>
+        <div class="note-text">Lead with the outcome. Try: "Redesigned onboarding, lifting activation 34% across 60K monthly users."</div>
+        <div class="note-actions">
+          <button class="chip-btn chip-accept">Accept</button>
+          <button class="chip-btn chip-again">Regenerate</button>
+        </div>
+      </div>
+      <div class="float-score">
+        <div class="num">92</div>
+        <div class="label">ATS compatibility score</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="logostrip">
+  <div class="wrap">
+    <span class="caption">Trusted by candidates who joined</span>
+    <div class="logo-row">
+      <span>Northwind</span><span>Halcyon</span><span>Fablehouse</span><span>Meridian</span><span>Cobalt&nbsp;Labs</span><span>Ostrom</span>
+    </div>
+  </div>
+</div>
+
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">The AI experience</span>
+      <h2>Suggestions that explain themselves.</h2>
+      <p>Click ✨ next to any field and VitaePro proposes a rewrite in your margin — with the reasoning attached, so you learn what makes a line stronger, not just get handed new words.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">✎</div>
+        <h3>Rewrite &amp; strengthen</h3>
+        <p>Turn a flat duty into an achievement statement with measurable impact, in your own voice.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">◧</div>
+        <h3>ATS optimization</h3>
+        <p>Flags formatting and phrasing that applicant tracking systems misread, before a recruiter ever sees it.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✓</div>
+        <h3>Grammar &amp; tone</h3>
+        <p>Fixes grammar and lets you dial tone — more technical, more executive, more concise — in one click.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">≡</div>
+        <h3>Section guidance</h3>
+        <p>Notices what's missing — a projects section, quantified results — and tells you why it's worth adding.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✉</div>
+        <h3>Cover letters</h3>
+        <p>Generates a letter matched to the job description and company, ready to refine in your own tone.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">◐</div>
+        <h3>Interview prep</h3>
+        <p>Builds likely interview questions from your finished CV, with talking points drawn from your own achievements.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="wrap section" style="padding:96px 0;">
+    <div class="section-head">
+      <span class="eyebrow">How it works</span>
+      <h2>From blank page to offer-ready.</h2>
+    </div>
+    <div class="how-grid">
+      <div class="how-step">
+        <span class="step-num mono">01</span>
+        <h3>Bring what you have</h3>
+        <p>Paste an old CV or LinkedIn profile, or start from a guided blank page. VitaePro structures it into sections instantly.</p>
+      </div>
+      <div class="how-step">
+        <span class="step-num mono">02</span>
+        <h3>Let the coach annotate</h3>
+        <p>Work through margin notes on weak lines, missing metrics, and tone — accepting, editing, or asking for another pass.</p>
+      </div>
+      <div class="how-step">
+        <span class="step-num mono">03</span>
+        <h3>Export, matched to the job</h3>
+        <p>Pick a template, generate a tailored cover letter, and download an ATS-checked PDF in minutes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="templates">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Templates</span>
+      <h2>Every layout, ATS-checked first.</h2>
+      <p>Fourteen templates spanning simple, modern, executive, and creative — each tested against real applicant tracking systems.</p>
+    </div>
+    <div class="tmpl-grid">
+      <div class="tmpl-card">
+        <div class="tmpl-thumb">
+          <div class="mini-line" style="width:60%;height:10px;background:#1F4D3D;opacity:.8;margin-bottom:10px;"></div>
+          <div class="mini-line" style="width:40%;"></div>
+          <div class="mini-line" style="width:80%; margin-top:14px;"></div>
+          <div class="mini-line" style="width:70%;"></div>
+          <div class="mini-line" style="width:75%;"></div>
+        </div>
+        <div class="tmpl-meta"><span class="name">Meridian</span><span class="badge badge-ats">ATS</span></div>
+      </div>
+      <div class="tmpl-card">
+        <div class="tmpl-thumb">
+          <div class="mini-line" style="width:50%;height:10px;background:#B08D3E;opacity:.7;margin-bottom:10px;"></div>
+          <div class="mini-line" style="width:65%;"></div>
+          <div class="mini-line" style="width:80%; margin-top:14px;"></div>
+          <div class="mini-line" style="width:60%;"></div>
+          <div class="mini-line" style="width:70%;"></div>
+        </div>
+        <div class="tmpl-meta"><span class="name">Ledger</span><span class="badge badge-popular">Popular</span></div>
+      </div>
+      <div class="tmpl-card">
+        <div class="tmpl-thumb">
+          <div class="mini-line" style="width:70%;height:10px;background:#1B1D1B;opacity:.75;margin-bottom:10px;"></div>
+          <div class="mini-line" style="width:45%;"></div>
+          <div class="mini-line" style="width:85%; margin-top:14px;"></div>
+          <div class="mini-line" style="width:65%;"></div>
+          <div class="mini-line" style="width:75%;"></div>
+        </div>
+        <div class="tmpl-meta"><span class="name">Bureau</span><span class="badge badge-ats">ATS</span></div>
+      </div>
+      <div class="tmpl-card">
+        <div class="tmpl-thumb">
+          <div class="mini-line" style="width:55%;height:10px;background:#2F7A5C;opacity:.8;margin-bottom:10px;"></div>
+          <div class="mini-line" style="width:60%;"></div>
+          <div class="mini-line" style="width:78%; margin-top:14px;"></div>
+          <div class="mini-line" style="width:68%;"></div>
+          <div class="mini-line" style="width:72%;"></div>
+        </div>
+        <div class="tmpl-meta"><span class="name">Atelier</span><span class="badge badge-popular">Creative</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="testimonial">
+      <blockquote>"I stopped guessing whether a line was strong enough. The margin notes explained why, so by the third rewrite I was writing the good version myself."</blockquote>
+      <div class="who">
+        <div class="avatar">R</div>
+        <div class="who-meta">
+          <div class="name">Rhea Kapoor</div>
+          <div class="role">Product Manager, hired via VitaePro CV</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <span class="eyebrow">Free to start</span>
+    <h2>Your next role starts with a better first page.</h2>
+    <p>No credit card. Export your first CV in under ten minutes.</p>
+    <a href="auth.html" class="btn btn-primary btn-lg">Build my CV, free</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <a href="#" class="logo" style="margin-bottom:14px; display:inline-flex;"><span class="logo-mark">V</span>VitaePro</a>
+        <p style="font-size:0.86rem; color:var(--ink-soft); max-width:220px;">An AI career coach for your CV, cover letters, and interviews.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="cv-editor.html">CV Editor</a>
+        <a href="cover-letter.html">Cover Letters</a>
+        <a href="templates.html">Templates</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About</a>
+        <a href="#">Careers</a>
+        <a href="#">Blog</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="#">Help Center</a>
+        <a href="#">CV Examples</a>
+        <a href="#">ATS Guide</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 VitaePro. All rights reserved.</span>
+      <span>Made for people, reviewed by AI.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

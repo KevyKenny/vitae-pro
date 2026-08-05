@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VitaePro — Logo System</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF8F3; --paper-dim:#F3F0E7; --surface:#FFFFFF; --ink:#1B1D1B; --ink-soft:#55584F; --ink-faint:#8B8D82;
+    --emerald:#1F4D3D; --emerald-bright:#2F7A5C; --emerald-wash:#EAF1EC;
+    --gold:#B08D3E; --gold-wash:#F6EFDD; --line:#E4E0D3; --line-strong:#D3CDBB;
+    --radius-m:14px; --radius-l:22px;
+    --shadow-m:0 8px 24px rgba(27,29,27,0.08); --shadow-l:0 24px 64px rgba(27,29,27,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ font-family:'Inter',sans-serif; background:var(--paper); color:var(--ink); line-height:1.6; }
+  h1,h2,h3,.serif{ font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em; }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+  .wrap{ max-width:1080px; margin:0 auto; padding:0 32px; }
+
+  header.hero{ padding:80px 0 56px; border-bottom:1px solid var(--line); }
+  .eyebrow{ display:inline-flex; align-items:center; gap:8px; font-size:0.76rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--emerald); background:var(--emerald-wash); padding:7px 14px; border-radius:999px; margin-bottom:22px; }
+  header.hero h1{ font-size:2.6rem; max-width:640px; line-height:1.15; margin-bottom:18px; }
+  header.hero p{ color:var(--ink-soft); max-width:560px; font-size:1.02rem; }
+
+  .section{ padding:64px 0; border-bottom:1px solid var(--line); }
+  .section h2{ font-size:1.5rem; margin-bottom:10px; }
+  .section .lede{ color:var(--ink-soft); max-width:640px; margin-bottom:36px; font-size:0.96rem; }
+
+  /* Big mark display */
+  .mark-stage{ background:var(--emerald); border-radius:var(--radius-l); padding:64px; display:flex; align-items:center; justify-content:center; margin-bottom:36px; }
+  .mark-stage svg{ width:180px; height:180px; }
+
+  .anatomy{ display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center; }
+  .anatomy-visual{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m); padding:40px; display:flex; justify-content:center; }
+  .anatomy-visual svg{ width:150px; height:150px; }
+  .anatomy-list{ display:flex; flex-direction:column; gap:20px; }
+  .anatomy-item{ display:flex; gap:14px; }
+  .anatomy-dot{ width:8px; height:8px; border-radius:50%; background:var(--gold); margin-top:8px; flex-shrink:0; }
+  .anatomy-item b{ display:block; font-size:0.94rem; margin-bottom:3px; }
+  .anatomy-item span{ font-size:0.87rem; color:var(--ink-soft); }
+
+  /* Grid of variants */
+  .variant-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  .variant-card{ border:1px solid var(--line); border-radius:var(--radius-m); overflow:hidden; background:var(--surface); }
+  .variant-stage{ height:150px; display:flex; align-items:center; justify-content:center; }
+  .variant-stage svg{ width:70px; height:70px; }
+  .variant-stage.dark{ background:var(--ink); }
+  .variant-stage.emerald{ background:var(--emerald); }
+  .variant-stage.paper{ background:var(--paper-dim); }
+  .variant-stage.white{ background:var(--surface); }
+  .variant-label{ padding:14px 16px; border-top:1px solid var(--line); }
+  .variant-label .name{ font-size:0.85rem; font-weight:600; margin-bottom:2px; }
+  .variant-label .use{ font-size:0.76rem; color:var(--ink-faint); }
+
+  /* Lockups */
+  .lockup-row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:18px; }
+  .lockup-card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m); padding:40px; display:flex; align-items:center; justify-content:center; min-height:150px; }
+  .lockup-label{ text-align:center; margin-top:14px; font-size:0.82rem; color:var(--ink-faint); }
+
+  /* Size / legibility test */
+  .size-row{ display:flex; align-items:flex-end; gap:36px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m); padding:36px; }
+  .size-item{ text-align:center; }
+  .size-item .cap{ display:flex; align-items:center; justify-content:center; background:var(--emerald); border-radius:20%; margin:0 auto 10px; }
+  .size-item .label{ font-size:0.76rem; color:var(--ink-faint); }
+  .size-item .label b{ display:block; color:var(--ink); font-size:0.82rem; }
+
+  /* Clear space */
+  .clearspace-stage{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m); padding:56px; display:flex; justify-content:center; }
+  .cs-box{ position:relative; width:220px; height:220px; }
+  .cs-grid{ position:absolute; inset:0; border:1.5px dashed var(--line-strong); }
+  .cs-mark{ position:absolute; top:40px; left:40px; width:140px; height:140px; }
+
+  /* Do / Don't */
+  .dd-grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .dd-card{ border-radius:var(--radius-m); padding:28px; border:1px solid var(--line); background:var(--surface); }
+  .dd-card.dont{ background:#FBF2EE; border-color:#EAD3C6; }
+  .dd-stage{ height:110px; display:flex; align-items:center; justify-content:center; margin-bottom:16px; }
+  .dd-stage svg{ width:64px; height:64px; }
+  .dd-tag{ font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; display:block; }
+  .dd-card:not(.dont) .dd-tag{ color:var(--emerald); }
+  .dd-card.dont .dd-tag{ color:#B5562B; }
+  .dd-card p{ font-size:0.86rem; color:var(--ink-soft); }
+
+  footer{ padding:48px 0; text-align:center; color:var(--ink-faint); font-size:0.84rem; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Brand mark</span>
+    <h1>The mark is the product's own signature, distilled.</h1>
+    <p>VitaePro's whole interface runs on one idea: a small gold mark landing where the AI has something to say. The logo is that same gesture — a single calligraphic stroke forming a V and a checkmark at once, finished with the same dot.</p>
+  </div>
+</header>
+
+<section class="section">
+  <div class="wrap">
+    <h2>Primary mark</h2>
+    <p class="lede">An asymmetric V, weighted like a pen stroke — thick on the down-stroke, tapering on the way up — so it reads as handwritten rather than engineered. It doubles as a checkmark: an approved, offer-ready CV.</p>
+    <div class="mark-stage">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" rx="24" fill="#1F4D3D"/>
+        <path d="M26,32 L46,75" stroke="#FAF8F3" stroke-width="14" stroke-linecap="round" fill="none"/>
+        <path d="M46,75 L75,30" stroke="#FAF8F3" stroke-width="9" stroke-linecap="round" fill="none"/>
+        <circle cx="77.5" cy="25" r="6.5" fill="#B08D3E"/>
+      </svg>
+    </div>
+
+    <div class="anatomy">
+      <div class="anatomy-visual">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M26,32 L46,75" stroke="#1F4D3D" stroke-width="14" stroke-linecap="round" fill="none"/>
+          <path d="M46,75 L75,30" stroke="#2F7A5C" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <circle cx="77.5" cy="25" r="6.5" fill="#B08D3E"/>
+        </svg>
+      </div>
+      <div class="anatomy-list">
+        <div class="anatomy-item"><span class="anatomy-dot"></span><div><b>The heavy down-stroke</b><span>Grounds the mark — the weight of a document taken seriously.</span></div></div>
+        <div class="anatomy-item"><span class="anatomy-dot"></span><div><b>The tapering up-stroke</b><span>Reads as a checkmark: reviewed, strengthened, ready.</span></div></div>
+        <div class="anatomy-item"><span class="anatomy-dot"></span><div><b>The gold dot</b><span>The same mark used for every AI suggestion in the product — here, applied to the brand itself.</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2>Color variants</h2>
+    <p class="lede">One mark, four contexts. The reversed and mono versions carry the same proportions exactly — nothing is redrawn.</p>
+    <div class="variant-grid">
+      <div class="variant-card">
+        <div class="variant-stage emerald">
+          <svg viewBox="0 0 100 100"><rect width="100" height="100" rx="24" fill="#1F4D3D"/><path d="M26,32 L46,75" stroke="#FAF8F3" stroke-width="14" stroke-linecap="round" fill="none"/><path d="M46,75 L75,30" stroke="#FAF8F3" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="77.5" cy="25" r="6.5" fill="#B08D3E"/></svg>
+        </div>
+        <div class="variant-label"><div class="name">Primary</div><div class="use">App icon, favicon, default use</div></div>
+      </div>
+      <div class="variant-card">
+        <div class="variant-stage dark">
+          <svg viewBox="0 0 100 100"><path d="M26,32 L46,75" stroke="#FAF8F3" stroke-width="14" stroke-linecap="round" fill="none"/><path d="M46,75 L75,30" stroke="#FAF8F3" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="77.5" cy="25" r="6.5" fill="#D9B876"/></svg>
+        </div>
+        <div class="variant-label"><div class="name">Reversed</div><div class="use">Dark backgrounds, video, decks</div></div>
+      </div>
+      <div class="variant-card">
+        <div class="variant-stage white">
+          <svg viewBox="0 0 100 100"><path d="M26,32 L46,75" stroke="#1B1D1B" stroke-width="14" stroke-linecap="round" fill="none"/><path d="M46,75 L75,30" stroke="#1B1D1B" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="77.5" cy="25" r="6.5" fill="#1B1D1B"/></svg>
+        </div>
+        <div class="variant-label"><div class="name">Monochrome</div><div class="use">Letterhead, single-color print, watermark</div></div>
+      </div>
+      <div class="variant-card">
+        <div class="variant-stage paper">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100" height="100" rx="22" fill="#1F4D3D"/>
+            <path d="M24,30 L47,76" stroke="#FAF8F3" stroke-width="18" stroke-linecap="round" fill="none"/>
+            <path d="M47,76 L78,28" stroke="#FAF8F3" stroke-width="13" stroke-linecap="round" fill="none"/>
+            <circle cx="80" cy="22" r="9" fill="#B08D3E"/>
+          </svg>
+        </div>
+        <div class="variant-label"><div class="name">Favicon build</div><div class="use">Bolder strokes for legibility at 16–32px</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2>Lockups</h2>
+    <p class="lede">Horizontal for navigation and headers; stacked for splash screens, title slides, and centered layouts.</p>
+    <div class="lockup-row">
+      <div>
+        <div class="lockup-card">
+          <svg width="220" height="56" viewBox="0 0 220 56" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(0,4)">
+              <rect width="48" height="48" rx="12" fill="#1F4D3D"/>
+              <path d="M13,15 L23,37" stroke="#FAF8F3" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <path d="M23,37 L37,14" stroke="#FAF8F3" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+              <circle cx="38.3" cy="11.5" r="3.3" fill="#B08D3E"/>
+            </g>
+            <text x="62" y="34" font-family="Fraunces, Georgia, serif" font-weight="600" font-size="27" fill="#1B1D1B" letter-spacing="-0.3">VitaePro</text>
+          </svg>
+        </div>
+        <div class="lockup-label">Horizontal — nav bars, footers, letterhead</div>
+      </div>
+      <div>
+        <div class="lockup-card">
+          <svg width="160" height="140" viewBox="0 0 160 140" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(46,10)">
+              <rect width="68" height="68" rx="17" fill="#1F4D3D"/>
+              <path d="M19,22 L32,52" stroke="#FAF8F3" stroke-width="9.5" stroke-linecap="round" fill="none"/>
+              <path d="M32,52 L53,20" stroke="#FAF8F3" stroke-width="6.1" stroke-linecap="round" fill="none"/>
+              <circle cx="54.8" cy="17" r="4.4" fill="#B08D3E"/>
+            </g>
+            <text x="80" y="118" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-weight="600" font-size="27" fill="#1B1D1B" letter-spacing="-0.3">VitaePro</text>
+          </svg>
+        </div>
+        <div class="lockup-label">Stacked — splash screens, title slides</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2>Minimum size &amp; clear space</h2>
+    <p class="lede">Below 24px, switch to the favicon build — its bolder strokes hold up where the primary mark starts to blur.</p>
+    <div class="size-row">
+      <div class="size-item">
+        <div class="cap" style="width:16px; height:16px;">
+          <svg viewBox="0 0 100 100" width="16" height="16"><rect width="100" height="100" rx="22" fill="#1F4D3D"/><path d="M24,30 L47,76" stroke="#FAF8F3" stroke-width="18" stroke-linecap="round" fill="none"/><path d="M47,76 L78,28" stroke="#FAF8F3" stroke-width="13" stroke-linecap="round" fill="none"/><circle cx="80" cy="22" r="9" fill="#B08D3E"/></svg>
+        </div>
+        <div class="label"><b>16px</b>Browser tab</div>
+      </div>
+      <div class="size-item">
+        <div class="cap" style="width:24px; height:24px;">
+          <svg viewBox="0 0 100 100" width="24" height="24"><rect width="100" height="100" rx="22" fill="#1F4D3D"/><path d="M24,30 L47,76" stroke="#FAF8F3" stroke-width="18" stroke-linecap="round" fill="none"/><path d="M47,76 L78,28" stroke="#FAF8F3" stroke-width="13" stroke-linecap="round" fill="none"/><circle cx="80" cy="22" r="9" fill="#B08D3E"/></svg>
+        </div>
+        <div class="label"><b>24px</b>Toolbar</div>
+      </div>
+      <div class="size-item">
+        <div class="cap" style="width:40px; height:40px;">
+          <svg viewBox="0 0 100 100" width="40" height="40"><rect width="100" height="100" rx="24" fill="#1F4D3D"/><path d="M26,32 L46,75" stroke="#FAF8F3" stroke-width="14" stroke-linecap="round" fill="none"/><path d="M46,75 L75,30" stroke="#FAF8F3" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="77.5" cy="25" r="6.5" fill="#B08D3E"/></svg>
+        </div>
+        <div class="label"><b>40px</b>Sidebar</div>
+      </div>
+      <div class="size-item">
+        <div class="cap" style="width:64px; height:64px;">
+          <svg viewBox="0 0 100 100" width="64" height="64"><rect width="100" height="100" rx="24" fill="#1F4D3D"/><path d="M26,32 L46,75" stroke="#FAF8F3" stroke-width="14" stroke-linecap="round" fill="none"/><path d="M46,75 L75,30" stroke="#FAF8F3" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="77.5" cy="25" r="6.5" fill="#B08D3E"/></svg>
+        </div>
+        <div class="label"><b>64px</b>App icon</div>
+      </div>
+      <div class="size-item">
+        <div class="cap" style="width:96px; height:96px;">
+          <svg viewBox="0 0 100 100" width="96" height="96"><rect width="100" height="100" rx="24" fill="#1F4D3D"/><path d="M26,32 L46,75" stroke="#FAF8F3" stroke-width="14" stroke-linecap="round" fill="none"/><path d="M46,75 L75,30" stroke="#FAF8F3" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="77.5" cy="25" r="6.5" fill="#B08D3E"/></svg>
+        </div>
+        <div class="label"><b>96px</b>Marketing use</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2>Usage</h2>
+    <div class="dd-grid">
+      <div class="dd-card">
+        <span class="dd-tag">Do</span>
+        <div class="dd-stage">
+          <svg viewBox="0 0 100 100"><rect width="100" height="100" rx="24" fill="#1F4D3D"/><path d="M26,32 L46,75" stroke="#FAF8F3" stroke-width="14" stroke-linecap="round" fill="none"/><path d="M46,75 L75,30" stroke="#FAF8F3" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="77.5" cy="25" r="6.5" fill="#B08D3E"/></svg>
+        </div>
+        <p>Keep the gold dot gold, even in reversed or dark layouts. It's the one accent the mark is allowed to keep.</p>
+      </div>
+      <div class="dd-card dont">
+        <span class="dd-tag">Don't</span>
+        <div class="dd-stage">
+          <svg viewBox="0 0 100 100"><rect width="100" height="100" rx="24" fill="#1F4D3D"/><path d="M26,32 L46,75" stroke="#FAF8F3" stroke-width="14" stroke-linecap="round" fill="none"/><path d="M46,75 L75,30" stroke="#FAF8F3" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="77.5" cy="25" r="6.5" fill="#E85D4A"/></svg>
+        </div>
+        <p>Don't recolor the dot to match a campaign palette — it breaks the link back to the product's own AI mark.</p>
+      </div>
+      <div class="dd-card">
+        <span class="dd-tag">Do</span>
+        <div class="dd-stage">
+          <svg viewBox="0 0 100 100"><path d="M26,32 L46,75" stroke="#1F4D3D" stroke-width="14" stroke-linecap="round" fill="none"/><path d="M46,75 L75,30" stroke="#1F4D3D" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="77.5" cy="25" r="6.5" fill="#B08D3E"/></svg>
+        </div>
+        <p>Drop the container on paper backgrounds — the mark stands fine on its own for letterhead or watermarks.</p>
+      </div>
+      <div class="dd-card dont">
+        <span class="dd-tag">Don't</span>
+        <div class="dd-stage">
+          <svg viewBox="0 0 100 100"><rect width="100" height="100" rx="24" fill="#1F4D3D"/><path d="M26,32 L46,75" stroke="#FAF8F3" stroke-width="14" stroke-linecap="round" fill="none" transform="scale(1,-1) translate(0,-100)"/><path d="M46,75 L75,30" stroke="#FAF8F3" stroke-width="9" stroke-linecap="round" fill="none" transform="scale(1,-1) translate(0,-100)"/><circle cx="77.5" cy="75" r="6.5" fill="#B08D3E"/></svg>
+        </div>
+        <p>Don't flip or rotate the mark — the asymmetry is deliberate and reads as a specific, handwritten gesture.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>VitaePro Brand Mark · v1.0</footer>
+
+</body>
+</html>

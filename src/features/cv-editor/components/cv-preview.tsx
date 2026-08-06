@@ -1,16 +1,168 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Download, Minus, Plus, Printer } from "lucide-react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { TemplateSelector } from "@/features/cv-editor/components/template-selector";
+import { EducationPreview } from "@/features/cv-editor/components/education/education-preview";
+import { ExperiencePreview } from "@/features/cv-editor/components/experience/experience-preview";
 import { useEditor } from "@/features/cv-editor/context/editor-context";
+import type { CvDocument } from "@/features/cv-editor/types";
 import { cn } from "@/lib/utils";
+
+/** Preview is always A4 (210 × 297 mm → aspect ≈ 1 : 1.414). */
+export const CV_PAGE_SIZE = "a4" as const;
+const PAGE_ASPECT = 1.414;
+const BASE_PAGE_WIDTH = 420;
+const PAGE_GAP = 16;
+/** Click-to-zoom cycle: full → 70% → 50% → full (CSS scale only). */
+const ZOOM_STEPS = [100, 70, 50] as const;
 
 export function CVPreview({ className }: { className?: string }) {
   const { document, zoom, setZoom } = useEditor();
+  const stageRef = useRef<HTMLDivElement>(null);
+  const measureRef = useRef<HTMLDivElement>(null);
+  const [stageWidth, setStageWidth] = useState(BASE_PAGE_WIDTH);
+  const [contentHeight, setContentHeight] = useState(0);
+
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const update = () => {
+      setStageWidth(Math.max(240, el.clientWidth - 8));
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const zoomScale =
+    ZOOM_STEPS.includes(zoom as (typeof ZOOM_STEPS)[number]) ? zoom : 100;
+  const scale = zoomScale / 100;
+  const pageWidth = stageWidth;
+  const sheetHeight = Math.round(pageWidth * PAGE_ASPECT);
+  const fontSize = `${0.62 * (pageWidth / BASE_PAGE_WIDTH)}rem`;
+  const pagePadX = Math.round(28 * (pageWidth / BASE_PAGE_WIDTH));
+  const pagePadY = Math.round(32 * (pageWidth / BASE_PAGE_WIDTH));
+
+  useEffect(() => {
+    const el = measureRef.current;
+    if (!el) return;
+    const update = () => setContentHeight(el.scrollHeight);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [document, pageWidth, fontSize, pagePadX, pagePadY]);
+
+  const pageCount = Math.max(1, Math.ceil((contentHeight || sheetHeight) / sheetHeight));
+  const stackHeight =
+    pageCount * sheetHeight + Math.max(0, pageCount - 1) * PAGE_GAP;
+
+  const cycleZoom = () => {
+    const index = ZOOM_STEPS.indexOf(
+      zoomScale as (typeof ZOOM_STEPS)[number],
+    );
+    const next = ZOOM_STEPS[(index + 1) % ZOOM_STEPS.length];
+    setZoom(next);
+  };
+
+  const sheetClass = cn(
+    "relative overflow-hidden bg-surface shadow-m",
+    document.templateId === "creative" && "border-t-4 border-t-gold",
+    document.templateId === "executive" && "border-l-4 border-l-emerald",
+  );
+
+  return (
+    <div className={cn("flex h-full min-h-0 w-full flex-col bg-surface", className)}>
+      <div className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b border-line px-3 py-2.5 sm:px-4">
+        <h2 className="shrink-0 font-sans text-[0.88rem] font-semibold text-ink">
+          Preview
+        </h2>
+        <TemplateSelector compact className="min-w-0 flex-1" />
+        {pageCount > 1 ? (
+          <p className="shrink-0 text-[0.72rem] tabular-nums text-ink-faint">
+            {pageCount} pages
+          </p>
+        ) : null}
+      </div>
+
+      <div
+        ref={stageRef}
+        className="min-h-0 flex-1 overflow-auto bg-paper-dim px-1 py-1 sm:py-2"
+      >
+        {/* Off-screen measure: full content height at the live page width */}
+        <div
+          ref={measureRef}
+          aria-hidden
+          className="pointer-events-none absolute -left-[9999px] top-0 opacity-0"
+          style={{
+            width: pageWidth,
+            padding: `${pagePadY}px ${pagePadX}px`,
+            fontSize,
+          }}
+        >
+          <CvPageBody document={document} />
+        </div>
+
+        <div
+          className="mx-auto"
+          style={{
+            width: Math.round(pageWidth * scale),
+            height: Math.round(stackHeight * scale),
+          }}
+        >
+          <motion.div
+            role="button"
+            tabIndex={0}
+            aria-label={`CV preview at ${zoomScale}% — ${pageCount} A4 page${pageCount === 1 ? "" : "s"} — click to zoom`}
+            title={`Click to zoom (${zoomScale}%)`}
+            onClick={cycleZoom}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                cycleZoom();
+              }
+            }}
+            initial={{ opacity: 0.6 }}
+            animate={{ opacity: 1, scale }}
+            transition={{ duration: 0.22 }}
+            className={cn(
+              "origin-top-left outline-none focus-visible:ring-2 focus-visible:ring-emerald/40",
+              zoomScale === 50 ? "cursor-zoom-in" : "cursor-zoom-out",
+            )}
+            style={{ width: pageWidth }}
+          >
+            <div className="flex flex-col" style={{ gap: PAGE_GAP }}>
+              {Array.from({ length: pageCount }, (_, pageIndex) => (
+                <div
+                  key={pageIndex}
+                  className={sheetClass}
+                  style={{ width: pageWidth, height: sheetHeight }}
+                >
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: -pageIndex * sheetHeight,
+                      left: 0,
+                      width: pageWidth,
+                      padding: `${pagePadY}px ${pagePadX}px`,
+                      fontSize,
+                    }}
+                  >
+                    <CvPageBody document={document} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CvPageBody({ document }: { document: CvDocument }) {
   const { personal, summary, experience, education, skills, projects } =
     document;
   const visible = new Set(
@@ -18,185 +170,81 @@ export function CVPreview({ className }: { className?: string }) {
   );
 
   return (
-    <div className={cn("flex h-full flex-col bg-surface", className)}>
-      <div className="flex items-center justify-between border-b border-line px-4 py-3">
-        <h2 className="font-sans text-[0.88rem] font-semibold text-ink">
-          Live preview
-        </h2>
-        <div className="flex items-center gap-1 text-[0.78rem] text-ink-soft">
-          <Button
-            type="button"
-            variant="outline"
-            size="icon-sm"
-            shape="soft"
-            aria-label="Zoom out"
-            onClick={() => setZoom(Math.max(70, zoom - 10))}
-          >
-            <Minus className="size-3.5" />
-          </Button>
-          <span className="w-10 text-center">{zoom}%</span>
-          <Button
-            type="button"
-            variant="outline"
-            size="icon-sm"
-            shape="soft"
-            aria-label="Zoom in"
-            onClick={() => setZoom(Math.min(130, zoom + 10))}
-          >
-            <Plus className="size-3.5" />
-          </Button>
-        </div>
-      </div>
+    <>
+      {visible.has("personal") ? (
+        <>
+          <h1 className="font-serif text-[1.15em] font-semibold text-ink">
+            {personal.fullName}
+          </h1>
+          <p className="text-[0.72em] text-ink-soft">{personal.title}</p>
+          <p className="mt-1 text-[0.62em] text-ink-faint">
+            {[personal.email, personal.phone, personal.location]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+          <p className="text-[0.62em] text-ink-faint">
+            {[personal.linkedin, personal.portfolio].filter(Boolean).join(" · ")}
+          </p>
+        </>
+      ) : null}
 
-      <TemplateSelector />
+      {visible.has("summary") && summary ? (
+        <>
+          <p className="mt-3 border-b border-line pb-1 text-[0.58em] font-bold tracking-[0.08em] text-emerald uppercase">
+            Summary
+          </p>
+          <p className="mt-1.5 text-[0.68em] leading-relaxed text-ink">
+            {summary}
+          </p>
+        </>
+      ) : null}
 
-      <div className="flex-1 overflow-y-auto bg-paper-dim p-5">
-        <motion.article
-          key={document.templateId}
-          initial={{ opacity: 0.6, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
-          className={cn(
-            "mx-auto origin-top bg-surface shadow-m",
-            document.templateId === "creative" && "border-t-4 border-t-gold",
-            document.templateId === "executive" && "border-l-4 border-l-emerald",
-          )}
-          style={{
-            width: `${Math.round(320 * (zoom / 100))}px`,
-            padding: `${Math.round(28 * (zoom / 100))}px ${Math.round(24 * (zoom / 100))}px`,
-            minHeight: `${Math.round(452 * (zoom / 100))}px`,
-            fontSize: `${0.6 * (zoom / 100)}rem`,
-          }}
-        >
-          {visible.has("personal") ? (
-            <>
-              <h1 className="font-serif text-[1.05rem] font-semibold text-ink">
-                {personal.fullName}
-              </h1>
-              <p className="text-[0.65rem] text-ink-soft">{personal.title}</p>
-              <p className="mt-1 text-[0.55rem] text-ink-faint">
-                {[personal.email, personal.phone, personal.location]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </p>
-              <p className="text-[0.55rem] text-ink-faint">
-                {[personal.linkedin, personal.portfolio]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </p>
-            </>
-          ) : null}
+      {visible.has("experience") ? (
+        <>
+          <p className="mt-3 border-b border-line pb-1 text-[0.58em] font-bold tracking-[0.08em] text-emerald uppercase">
+            Experience
+          </p>
+          <div className="text-[1em]">
+            <ExperiencePreview experience={experience} />
+          </div>
+        </>
+      ) : null}
 
-          {visible.has("summary") && summary ? (
-            <>
-              <p className="mt-3 border-b border-line pb-1 text-[0.5rem] font-bold tracking-[0.08em] text-emerald uppercase">
-                Summary
-              </p>
-              <p className="mt-1.5 text-[0.58rem] leading-relaxed text-ink">
-                {summary}
-              </p>
-            </>
-          ) : null}
+      {visible.has("education") ? (
+        <>
+          <p className="mt-3 border-b border-line pb-1 text-[0.58em] font-bold tracking-[0.08em] text-emerald uppercase">
+            Education
+          </p>
+          <div className="text-[1em]">
+            <EducationPreview education={education} />
+          </div>
+        </>
+      ) : null}
 
-          {visible.has("experience") ? (
-            <>
-              <p className="mt-3 border-b border-line pb-1 text-[0.5rem] font-bold tracking-[0.08em] text-emerald uppercase">
-                Experience
-              </p>
-              {experience.map((exp) => (
-                <div key={exp.id} className="mt-2">
-                  <p className="text-[0.58rem] font-semibold text-ink">
-                    {exp.position}
-                    {exp.company ? ` · ${exp.company}` : ""}
-                  </p>
-                  <p className="text-[0.5rem] text-ink-faint">
-                    {exp.startDate}
-                    {exp.current ? " — Present" : exp.endDate ? ` — ${exp.endDate}` : ""}
-                    {exp.location ? ` · ${exp.location}` : ""}
-                  </p>
-                  <ul className="mt-1 space-y-0.5">
-                    {exp.bullets.filter(Boolean).map((b, i) => (
-                      <li key={i} className="text-[0.55rem] text-ink-soft">
-                        — {b}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </>
-          ) : null}
+      {visible.has("skills") ? (
+        <>
+          <p className="mt-3 border-b border-line pb-1 text-[0.58em] font-bold tracking-[0.08em] text-emerald uppercase">
+            Skills
+          </p>
+          <p className="mt-1.5 text-[0.65em] text-ink-soft">
+            {skills.map((s) => s.name).join(" · ")}
+          </p>
+        </>
+      ) : null}
 
-          {visible.has("education") ? (
-            <>
-              <p className="mt-3 border-b border-line pb-1 text-[0.5rem] font-bold tracking-[0.08em] text-emerald uppercase">
-                Education
-              </p>
-              {education.map((edu) => (
-                <div key={edu.id} className="mt-1.5">
-                  <p className="text-[0.58rem] font-semibold text-ink">
-                    {edu.degree}
-                    {edu.field ? ` · ${edu.field}` : ""}
-                  </p>
-                  <p className="text-[0.5rem] text-ink-faint">
-                    {edu.institution}
-                    {edu.endDate ? ` · ${edu.endDate}` : ""}
-                  </p>
-                </div>
-              ))}
-            </>
-          ) : null}
-
-          {visible.has("skills") ? (
-            <>
-              <p className="mt-3 border-b border-line pb-1 text-[0.5rem] font-bold tracking-[0.08em] text-emerald uppercase">
-                Skills
-              </p>
-              <p className="mt-1.5 text-[0.55rem] text-ink-soft">
-                {skills.map((s) => s.name).join(" · ")}
-              </p>
-            </>
-          ) : null}
-
-          {visible.has("projects") && projects.length > 0 ? (
-            <>
-              <p className="mt-3 border-b border-line pb-1 text-[0.5rem] font-bold tracking-[0.08em] text-emerald uppercase">
-                Projects
-              </p>
-              {projects.map((p) => (
-                <div key={p.id} className="mt-1.5">
-                  <p className="text-[0.58rem] font-semibold text-ink">{p.name}</p>
-                  <p className="text-[0.55rem] text-ink-soft">{p.description}</p>
-                </div>
-              ))}
-            </>
-          ) : null}
-        </motion.article>
-      </div>
-
-      <div className="flex gap-2 border-t border-line p-3">
-        <Button
-          type="button"
-          variant="outline"
-          shape="soft"
-          className="flex-1 rounded-[8px]"
-          onClick={() => toast.message("Print preview (UI only)")}
-        >
-          <Printer className="size-4" />
-          Print
-        </Button>
-        <Button
-          type="button"
-          shape="soft"
-          className="flex-1 rounded-[8px]"
-          onClick={() => toast.success("Download PDF (UI only)")}
-        >
-          <Download className="size-4" />
-          PDF
-        </Button>
-      </div>
-      <div className="px-4 pb-3">
-        <Badge variant="outline">A4 · Real-time</Badge>
-      </div>
-    </div>
+      {visible.has("projects") && projects.length > 0 ? (
+        <>
+          <p className="mt-3 border-b border-line pb-1 text-[0.58em] font-bold tracking-[0.08em] text-emerald uppercase">
+            Projects
+          </p>
+          {projects.map((p) => (
+            <div key={p.id} className="mt-1.5">
+              <p className="text-[0.68em] font-semibold text-ink">{p.name}</p>
+              <p className="text-[0.65em] text-ink-soft">{p.description}</p>
+            </div>
+          ))}
+        </>
+      ) : null}
+    </>
   );
 }

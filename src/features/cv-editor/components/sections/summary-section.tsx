@@ -18,7 +18,6 @@ export function SummarySection() {
             action === "Rewrite" ||
             action === "Make More Professional" ||
             action === "Make More Concise" ||
-            action === "Make ATS Friendly" ||
             action === "Generate"
           ) {
             requestAi("summary_improve");

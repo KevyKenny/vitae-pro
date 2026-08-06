@@ -31,7 +31,7 @@ export function ToneSelector({
   onChange: (tone: LetterTone) => void;
 }) {
   return (
-    <div className="grid gap-2 sm:grid-cols-2">
+    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
       {toneOptions.map((tone) => {
         const Icon = ICONS[tone.icon] ?? Briefcase;
         const selected = value === tone.id;
@@ -44,7 +44,7 @@ export function ToneSelector({
             onClick={() => onChange(tone.id)}
             aria-pressed={selected}
             className={cn(
-              "rounded-[14px] border p-3.5 text-left transition-colors",
+              "rounded-[14px] border p-3 text-left transition-colors sm:p-3.5",
               selected
                 ? "border-emerald bg-emerald-wash shadow-s"
                 : "border-line-strong bg-surface hover:border-emerald/40",
@@ -53,7 +53,7 @@ export function ToneSelector({
             <div className="flex items-start gap-2.5">
               <span
                 className={cn(
-                  "flex size-8 shrink-0 items-center justify-center rounded-[8px]",
+                  "flex size-9 shrink-0 items-center justify-center rounded-[8px] sm:size-8",
                   selected ? "bg-emerald text-paper" : "bg-paper-dim text-emerald",
                 )}
               >

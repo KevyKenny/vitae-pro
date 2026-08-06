@@ -127,11 +127,6 @@ export const mockAiPreferences = [
     description: "Draft professional profile intros.",
   },
   {
-    key: "optimizeAts" as const,
-    title: "Optimize ATS",
-    description: "Align keywords with job posts.",
-  },
-  {
     key: "rewriteProfessionally" as const,
     title: "Rewrite professionally",
     description: "Elevate tone without sounding generic.",

@@ -109,7 +109,6 @@ export type LetterTemplate = {
   id: LetterTemplateId;
   name: string;
   description: string;
-  atsFriendly: boolean;
 };
 
 export type GenerationStep = {

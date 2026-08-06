@@ -2,7 +2,6 @@
 
 import { cn } from "@/lib/utils";
 import type {
-  AtsLevel,
   CareerLevel,
   Industry,
   TemplateStyle,
@@ -12,7 +11,6 @@ export type TemplateFiltersState = {
   style: TemplateStyle | "all";
   careerLevel: CareerLevel | "all";
   industry: Industry | "all";
-  ats: AtsLevel | "all" | "any";
 };
 
 const STYLES: { id: TemplateStyle | "all"; label: string }[] = [
@@ -45,12 +43,6 @@ const INDUSTRIES: { id: Industry | "all"; label: string }[] = [
   { id: "design", label: "Design" },
 ];
 
-const ATS: { id: TemplateFiltersState["ats"]; label: string }[] = [
-  { id: "any", label: "Any ATS" },
-  { id: "friendly", label: "ATS Friendly" },
-  { id: "highly-optimized", label: "Highly Optimized" },
-];
-
 export function TemplateFilter({
   filters,
   onChange,
@@ -78,12 +70,6 @@ export function TemplateFilter({
         value={filters.industry}
         onSelect={(industry) => onChange({ ...filters, industry })}
       />
-      <FilterRow
-        label="ATS compatibility"
-        options={ATS}
-        value={filters.ats}
-        onSelect={(ats) => onChange({ ...filters, ats })}
-      />
     </div>
   );
 }
@@ -104,7 +90,7 @@ function FilterRow<T extends string>({
       <p className="mb-2 text-[0.72rem] font-bold tracking-[0.04em] text-ink-faint uppercase">
         {label}
       </p>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex max-w-full min-w-0 touch-pan-x gap-2 overflow-x-auto overscroll-x-contain pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] sm:flex-wrap sm:overflow-visible [&::-webkit-scrollbar]:hidden">
         {options.map((opt) => {
           const active = value === opt.id;
           return (
@@ -114,7 +100,7 @@ function FilterRow<T extends string>({
               aria-pressed={active}
               onClick={() => onSelect(opt.id)}
               className={cn(
-                "rounded-full border px-3.5 py-1.5 text-[0.8rem] font-semibold transition-colors",
+                "shrink-0 whitespace-nowrap rounded-full border px-3.5 py-2 text-[0.8rem] font-semibold transition-colors sm:py-1.5",
                 active
                   ? "border-emerald bg-emerald text-paper"
                   : "border-line-strong bg-surface text-ink-soft hover:border-emerald/50 hover:text-emerald",

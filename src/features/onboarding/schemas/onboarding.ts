@@ -51,7 +51,6 @@ export const aiPreferencesSchema = z.object({
   improveGrammar: z.boolean(),
   suggestAchievements: z.boolean(),
   generateSummaries: z.boolean(),
-  optimizeAts: z.boolean(),
   rewriteProfessionally: z.boolean(),
   improveReadability: z.boolean(),
   createCoverLetters: z.boolean(),

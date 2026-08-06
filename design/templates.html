@@ -59,7 +59,6 @@
   .tmpl-meta .name{ font-size:0.9rem; font-weight:600; }
   .tmpl-meta .cat{ font-size:0.74rem; color:var(--ink-faint); margin-top:2px; }
   .badge{ font-size:0.64rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:4px 8px; border-radius:6px; white-space:nowrap; }
-  .badge-ats{ background:var(--emerald-wash); color:var(--emerald); }
   .badge-popular{ background:var(--gold-wash); color:var(--gold); }
   .badge-exec{ background:#EFE9F4; color:#6B4A8A; }
   .badge-creative{ background:#FDEBE3; color:#B5562B; }
@@ -91,7 +90,7 @@
     <div class="filter-row">
       <div class="filter-chips">
         <span class="fchip active">All</span>
-        <span class="fchip">ATS-friendly</span>
+        <span class="fchip">Professional</span>
         <span class="fchip">Modern</span>
         <span class="fchip">Executive</span>
         <span class="fchip">Creative</span>
@@ -106,20 +105,20 @@
 
 <script>
   const templates = [
-    {name:'Meridian', cat:'Modern', badge:'ats', accent:'#1F4D3D'},
+    {name:'Meridian', cat:'Modern', badge:'popular', accent:'#1F4D3D'},
     {name:'Ledger', cat:'Simple', badge:'popular', accent:'#B08D3E'},
     {name:'Bureau', cat:'Executive', badge:'exec', accent:'#1B1D1B'},
     {name:'Atelier', cat:'Creative', badge:'creative', accent:'#2F7A5C'},
-    {name:'Cordial', cat:'Modern', badge:'ats', accent:'#3E6B5C'},
+    {name:'Cordial', cat:'Modern', badge:'popular', accent:'#3E6B5C'},
     {name:'Foundry', cat:'Executive', badge:'exec', accent:'#4A4238'},
-    {name:'Halcyon', cat:'Simple', badge:'ats', accent:'#6B7A63'},
+    {name:'Halcyon', cat:'Simple', badge:'popular', accent:'#6B7A63'},
     {name:'Marquee', cat:'Creative', badge:'popular', accent:'#B5562B'},
-    {name:'Vantage', cat:'Modern', badge:'ats', accent:'#2F7A5C'},
+    {name:'Vantage', cat:'Modern', badge:'popular', accent:'#2F7A5C'},
     {name:'Print Row', cat:'Executive', badge:'exec', accent:'#3D3A2E'},
     {name:'Kiln', cat:'Creative', badge:'creative', accent:'#A8622E'},
-    {name:'Overleaf', cat:'Simple', badge:'ats', accent:'#4E6E5D'},
+    {name:'Overleaf', cat:'Simple', badge:'popular', accent:'#4E6E5D'},
   ];
-  const badgeMap = { ats:['ATS','badge-ats'], popular:['Popular','badge-popular'], exec:['Executive','badge-exec'], creative:['Creative','badge-creative'] };
+  const badgeMap = { popular:['Popular','badge-popular'], exec:['Executive','badge-exec'], creative:['Creative','badge-creative'] };
   const grid = document.getElementById('grid');
   grid.innerHTML = templates.map(t=>{
     const [label, cls] = badgeMap[t.badge];

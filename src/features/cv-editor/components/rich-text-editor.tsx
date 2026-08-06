@@ -20,8 +20,7 @@ const aiActions = [
   "Rewrite",
   "Make More Professional",
   "Make More Concise",
-  "Make ATS Friendly",
-  "Generate",
+  "Generate", 
 ];
 
 export function RichTextEditor({

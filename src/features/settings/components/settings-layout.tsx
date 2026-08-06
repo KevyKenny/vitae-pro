@@ -17,19 +17,21 @@ export function SettingsLayout({ children }: { children: React.ReactNode }) {
     (pathname === "/settings" ? "Overview" : "Settings");
 
   return (
-    <div className="mx-auto w-full max-w-[1100px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      <div className="mb-6 flex items-center justify-between gap-3 lg:hidden">
-        <div>
+    <div className="mx-auto w-full max-w-[1100px] px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+      <div className="mb-5 flex items-center justify-between gap-3 sm:mb-6 lg:hidden">
+        <div className="min-w-0">
           <p className="text-[0.72rem] font-bold tracking-[0.04em] text-ink-faint uppercase">
             Settings
           </p>
-          <p className="font-serif text-xl font-semibold text-ink">{current}</p>
+          <p className="truncate font-serif text-xl font-semibold text-ink">
+            {current}
+          </p>
         </div>
         <Button
           type="button"
           variant="outline"
           shape="soft"
-          className="rounded-[8px]"
+          className="shrink-0 rounded-[8px]"
           onClick={() => setOpen(true)}
         >
           <Menu className="size-4" />

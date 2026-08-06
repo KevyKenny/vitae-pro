@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 
-const NAV = [
+const SECTION_NAV = [
   { label: "Features", href: "#features" },
   { label: "Templates", href: "#templates" },
   { label: "AI Tools", href: "#ai-tools" },
@@ -17,6 +19,8 @@ const NAV = [
 ];
 
 export function LandingNavbar() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -26,6 +30,10 @@ export function LandingNavbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   return (
     <header
@@ -39,26 +47,31 @@ export function LandingNavbar() {
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:px-6 lg:px-8">
         <Logo href="/" />
 
-        <nav
-          className="mx-auto hidden items-center gap-1 md:flex"
-          aria-label="Primary"
-        >
-          {NAV.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="rounded-full px-3 py-2 text-sm font-medium text-ink-soft transition-colors hover:text-ink"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
+        {isHome ? (
+          <nav
+            className="mx-auto hidden items-center gap-1 md:flex"
+            aria-label="Primary"
+          >
+            {SECTION_NAV.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="rounded-full px-3 py-2 text-sm font-medium text-ink-soft transition-colors hover:text-ink"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        ) : (
+          <div className="mx-auto hidden md:block" aria-hidden />
+        )}
 
-        <div className="ml-auto flex items-center gap-2 md:ml-0">
-          <Button asChild variant="ghost" className="hidden sm:inline-flex">
+        <div className="ml-auto flex items-center gap-2">
+          <ThemeToggle />
+          <Button asChild variant="ghost" className="hidden md:inline-flex">
             <Link href="/auth/sign-in">Login</Link>
           </Button>
-          <Button asChild shape="soft" className="hidden sm:inline-flex">
+          <Button asChild shape="soft" className="hidden md:inline-flex">
             <Link href="/auth/sign-up">Create Free CV</Link>
           </Button>
           <Button
@@ -84,22 +97,24 @@ export function LandingNavbar() {
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden border-t border-line bg-paper/95 backdrop-blur-md md:hidden"
           >
-            <nav className="flex flex-col gap-1 px-4 py-4" aria-label="Mobile">
-              {NAV.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  className="rounded-[8px] px-3 py-3 text-sm font-semibold text-ink"
-                  onClick={() => setOpen(false)}
-                >
-                  {item.label}
-                </a>
-              ))}
-              <div className="mt-2 grid gap-2">
-                <Button asChild variant="outline" shape="soft">
+            <nav className="flex flex-col gap-1 px-4 py-4 safe-pb" aria-label="Mobile">
+              {isHome
+                ? SECTION_NAV.map((item) => (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      className="rounded-[8px] px-3 py-3.5 text-sm font-semibold text-ink transition-colors hover:bg-paper-dim"
+                      onClick={() => setOpen(false)}
+                    >
+                      {item.label}
+                    </a>
+                  ))
+                : null}
+              <div className={cn("grid gap-2", isHome && "mt-3")}>
+                <Button asChild variant="outline" shape="soft" className="h-11">
                   <Link href="/auth/sign-in">Login</Link>
                 </Button>
-                <Button asChild shape="soft">
+                <Button asChild shape="soft" className="h-11">
                   <Link href="/auth/sign-up">Create Free CV</Link>
                 </Button>
               </div>

@@ -33,9 +33,9 @@ export function TemplatePreview({ template }: { template: GalleryTemplate }) {
         <TemplateBadges badges={template.badges} />
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <Stat label="ATS score" value={`${template.atsScore}/100`} />
           <Stat label="Readability" value={`${template.readability}`} />
           <Stat label="Rating" value={`${template.rating.toFixed(1)} ★`} />
+          <Stat label="Reviews" value={template.reviews.toLocaleString("en-US")} />
         </div>
 
         <InfoBlock title="Best suited for" items={template.bestFor} />

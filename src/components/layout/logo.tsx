@@ -5,7 +5,6 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
   APP_NAME,
-  LOGO_HORIZONTAL,
   LOGO_MARK,
   LOGO_MARK_REVERSED,
 } from "@/lib/constants/navigation";
@@ -37,39 +36,25 @@ export function Logo({
       )}
       aria-label={APP_NAME}
     >
-      {compact || inverted ? (
-        <>
-          <Image
-            src={markSrc}
-            alt=""
-            width={26}
-            height={26}
-            className="size-[26px] rounded-[7px]"
-            unoptimized
-            priority
-          />
-          {!compact ? (
-            <span
-              className={cn(
-                "font-serif text-[1.12rem] font-semibold tracking-[-0.01em]",
-                inverted ? "text-paper" : "text-ink",
-              )}
-            >
-              {APP_NAME}
-            </span>
-          ) : null}
-        </>
-      ) : (
-        <Image
-          src={LOGO_HORIZONTAL}
-          alt={APP_NAME}
-          width={140}
-          height={36}
-          className="h-8 w-auto"
-          unoptimized
-          priority
-        />
-      )}
+      <Image
+        src={markSrc}
+        alt=""
+        width={26}
+        height={26}
+        className="size-[26px] rounded-[7px]"
+        unoptimized
+        priority
+      />
+      {!compact ? (
+        <span
+          className={cn(
+            "font-serif text-[1.12rem] font-semibold tracking-[-0.01em]",
+            inverted ? "text-paper" : "text-ink",
+          )}
+        >
+          {APP_NAME}
+        </span>
+      ) : null}
     </Link>
   );
 }

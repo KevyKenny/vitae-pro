@@ -36,7 +36,7 @@ export type IndustryId =
   | "design"
   | "engineering";
 
-export type CvStylePref = "ats" | "modern" | "creative" | "executive";
+export type CvStylePref = "classic" | "modern" | "creative" | "executive";
 
 export type AppearanceTheme = "light" | "dark" | "system";
 
@@ -70,7 +70,6 @@ export type AiPreferences = {
   highlightWeak: boolean;
   recommendKeywords: boolean;
   improveGrammar: boolean;
-  optimizeAts: boolean;
   generateAchievements: boolean;
   suggestSkills: boolean;
   careerFocus: CareerFocusId[];
@@ -82,7 +81,8 @@ export type CvPreferences = {
   defaultColorTheme: string;
   defaultLanguage: string;
   dateFormat: "mdy" | "dmy" | "ymd";
-  pageSize: "a4" | "letter";
+  /** Always A4 — PDF export is locked to this size. */
+  pageSize: "a4";
   cvStyle: CvStylePref;
 };
 

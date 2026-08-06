@@ -49,7 +49,7 @@ export default function CvsPage() {
           {mockCVs.map((cv) => (
             <li
               key={cv.id}
-              className="flex flex-col gap-3 py-3.5 sm:flex-row sm:items-center"
+              className="flex flex-col gap-3 py-3.5 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
@@ -61,7 +61,11 @@ export default function CvsPage() {
                   {cv.templateName} · Edited {formatRelativeTime(cv.updatedAt)}
                 </p>
               </div>
-              <Button asChild shape="soft" className="rounded-[8px]">
+              <Button
+                asChild
+                shape="soft"
+                className="w-full rounded-[8px] sm:w-auto"
+              >
                 <Link href={`/cvs/${cv.id}/edit`}>Continue</Link>
               </Button>
             </li>

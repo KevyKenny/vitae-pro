@@ -25,7 +25,6 @@ const icons: Record<string, LucideIcon> = {
   stat_templates: LayoutTemplate,
   stat_apps: Target,
   stat_resume: Percent,
-  stat_ats: Target,
   stat_profile: UserRound,
 };
 
@@ -44,7 +43,7 @@ function StatCard({ stat }: { stat: DashboardStat }) {
     <motion.article
       whileHover={{ y: -3 }}
       transition={{ duration: 0.15 }}
-      className="rounded-[14px] border border-line bg-surface p-5 shadow-s"
+      className="rounded-[14px] border border-line bg-surface p-4 shadow-s sm:p-5"
     >
       <div className="mb-3 flex items-start justify-between gap-3">
         <p className="text-[0.78rem] font-semibold text-ink-soft">{stat.label}</p>
@@ -106,7 +105,7 @@ export function DashboardStats({ stats }: { stats: DashboardStat[] }) {
       <div className="mb-4 flex items-end justify-between gap-3">
         <h2 className="font-serif text-xl font-semibold text-ink">Overview</h2>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {stats.map((stat) => (
           <StatCard key={stat.id} stat={stat} />
         ))}

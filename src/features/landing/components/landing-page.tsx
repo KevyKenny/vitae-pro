@@ -42,11 +42,6 @@ const CoverLetterSection = dynamic(
     ),
   { loading: () => <SectionFallback /> },
 );
-const AtsSection = dynamic(
-  () =>
-    import("@/features/landing/components/ats-section").then((m) => m.AtsSection),
-  { loading: () => <SectionFallback /> },
-);
 const TestimonialsSection = dynamic(
   () =>
     import("@/features/landing/components/testimonials-section").then(
@@ -92,7 +87,6 @@ export function LandingPage() {
         <EditorShowcaseSection />
         <TemplateShowcase />
         <CoverLetterSection />
-        <AtsSection />
         <TestimonialsSection />
         <PricingPreviewSection />
         <FaqSection />

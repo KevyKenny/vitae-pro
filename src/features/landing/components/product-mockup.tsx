@@ -81,7 +81,7 @@ export function ProductMockup({ className }: { className?: string }) {
           {/* Preview */}
           <aside className="hidden border-l border-line bg-paper-dim p-3 lg:block">
             <p className="mb-2 px-1 text-[0.65rem] font-bold tracking-[0.06em] text-ink-faint uppercase">
-              Live preview
+              Preview
             </p>
             <div className="rounded-[8px] border border-line bg-surface p-3 shadow-s">
               <p className="font-serif text-[0.85rem] font-semibold text-ink">
@@ -103,7 +103,7 @@ export function ProductMockup({ className }: { className?: string }) {
                 <div className="h-full w-[92%] rounded-full bg-emerald" />
               </div>
               <p className="mt-1 font-mono text-[0.58rem] text-emerald">
-                ATS 92
+                CV score 92
               </p>
             </div>
           </aside>

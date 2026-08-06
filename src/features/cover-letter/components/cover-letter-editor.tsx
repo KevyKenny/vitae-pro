@@ -2,7 +2,6 @@
 
 import { AIActionButton } from "@/features/cv-editor/components/ai-action-button";
 import { AIGenerationProgress } from "@/features/cover-letter/components/ai-generation-progress";
-import { CoverLetterScore } from "@/features/cover-letter/components/cover-letter-score";
 import { SuggestionCard } from "@/features/cover-letter/components/suggestion-card";
 import { useCoverLetter } from "@/features/cover-letter/context/cover-letter-context";
 import { Textarea } from "@/components/ui/textarea";
@@ -48,6 +47,7 @@ export function CoverLetterEditor() {
     applySuggestion,
     dismissSuggestion,
     setAiOpen,
+    setJobFormOpen,
   } = useCoverLetter();
 
   const fullText = [
@@ -68,23 +68,23 @@ export function CoverLetterEditor() {
     !document.body.skills;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-paper-dim/40">
-      <div className="mx-auto w-full max-w-3xl space-y-5 px-4 py-5 pb-28 md:px-8 md:py-7">
+    <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-y-auto bg-paper-dim/40">
+      <div className="mx-auto w-full max-w-3xl space-y-4 px-3 py-4 sm:space-y-5 sm:px-6 sm:py-6 md:px-8 md:py-7">
         <AIGenerationProgress
           active={generating}
           stepIndex={Math.max(0, generationStepIndex)}
         />
 
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h2 className="font-serif text-xl font-semibold text-ink">
+        <div className="flex flex-wrap items-end justify-between gap-2 sm:gap-3">
+          <div className="min-w-0">
+            <h2 className="font-serif text-lg font-semibold text-ink sm:text-xl">
               Letter workspace
             </h2>
             <p className="text-sm text-ink-soft">
               Edit each section. AI actions open contextual suggestions.
             </p>
           </div>
-          <p className="font-mono text-[0.72rem] text-ink-faint">
+          <p className="shrink-0 font-mono text-[0.72rem] text-ink-faint">
             {words} words · {chars} chars
           </p>
         </div>
@@ -93,21 +93,23 @@ export function CoverLetterEditor() {
           <EmptyState
             icon={Mail}
             title="No letter draft yet"
-            description="Fill in the job details on the left, then generate a personalized draft."
-            actionLabel="Focus job form"
-            onAction={() => toast.message("Add job details in the left panel")}
+            description="Add job details, then generate a personalized draft."
+            actionLabel="Add job details"
+            onAction={() => setJobFormOpen(true)}
             className="bg-surface"
           />
         ) : null}
 
-        <div className="space-y-3 rounded-[14px] border border-line-strong bg-surface p-4 shadow-s">
+        <div className="space-y-3 rounded-[14px] border border-line-strong bg-surface p-3 shadow-s sm:p-4">
           <p className="text-[0.72rem] font-bold tracking-[0.04em] text-ink-faint uppercase">
             Header
           </p>
-          <p className="font-serif text-lg font-semibold text-ink">
+          <p className="font-serif text-base font-semibold text-ink sm:text-lg">
             {document.body.headerName}
           </p>
-          <p className="text-sm text-ink-faint">{document.body.headerMeta}</p>
+          <p className="text-sm break-words text-ink-faint">
+            {document.body.headerMeta}
+          </p>
           <p className="text-sm text-ink-soft">{document.body.date}</p>
         </div>
 
@@ -117,7 +119,7 @@ export function CoverLetterEditor() {
             <div
               key={section.key}
               className={cn(
-                "rounded-[14px] border bg-surface p-4 shadow-s transition-colors",
+                "rounded-[14px] border bg-surface p-3 shadow-s transition-colors sm:p-4",
                 active ? "border-emerald" : "border-line-strong",
               )}
               onFocusCapture={() => setActiveSection(section.key)}
@@ -128,7 +130,7 @@ export function CoverLetterEditor() {
                 </p>
                 <button
                   type="button"
-                  className="text-[0.72rem] font-semibold text-emerald"
+                  className="min-h-9 rounded-[8px] px-2 text-[0.72rem] font-semibold text-emerald"
                   onClick={() => {
                     setActiveSection(section.key);
                     setAiOpen(true);
@@ -137,11 +139,15 @@ export function CoverLetterEditor() {
                   Open AI
                 </button>
               </div>
-              <div className="mb-2 flex flex-wrap gap-1">
+              <div
+                className="mb-2 flex max-w-full touch-pan-x gap-1 overflow-x-auto overscroll-x-contain pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                style={{ WebkitOverflowScrolling: "touch" }}
+              >
                 {AI_ACTIONS.map((action) => (
                   <AIActionButton
                     key={action}
                     label={action}
+                    className="shrink-0"
                     onClick={() => requestAi(action, section.key)}
                   />
                 ))}
@@ -150,14 +156,12 @@ export function CoverLetterEditor() {
                 value={document.body[section.key]}
                 onChange={(e) => updateBodySection(section.key, e.target.value)}
                 rows={section.rows}
-                className="bg-paper"
+                className="min-h-11 bg-paper text-[0.95rem]"
                 aria-label={section.label}
               />
             </div>
           );
         })}
-
-        <CoverLetterScore score={document.score} />
 
         {document.suggestions.length ? (
           <section className="space-y-3">

@@ -75,3 +75,14 @@ export {
   landingFaqs,
   landingTemplatePreview,
 } from "./landing";
+export {
+  privacySections,
+  privacyToc,
+  termsSections,
+  termsToc,
+  contactTopics,
+  contactFaqs,
+  estimateReadingMinutes,
+  PRIVACY_UPDATED,
+  TERMS_UPDATED,
+} from "./public-pages";

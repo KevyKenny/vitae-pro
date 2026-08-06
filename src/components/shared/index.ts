@@ -10,4 +10,5 @@ export {
 } from "./responsive-container";
 export { KeyboardShortcutsDialog } from "./keyboard-shortcuts-dialog";
 export { LivePreviewContainer } from "./live-preview-container";
+export { MobileBottomBar } from "./mobile-bottom-bar";
 export { PhasePlaceholder } from "./phase-placeholder";

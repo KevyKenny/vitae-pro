@@ -26,6 +26,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { clearMockSession } from "@/features/auth/lib/mock-auth";
@@ -39,33 +45,44 @@ export function TopBar({ className }: { className?: string }) {
   const unread = mockNotifications.filter((n) => !n.read);
   const notifications = mockNotifications;
   const [signOutOpen, setSignOutOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   function handleSignOut() {
     clearMockSession();
     router.push("/");
   }
 
+  function handleSearchSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (!q) return;
+    setSearchOpen(false);
+    router.push(`/cvs?q=${encodeURIComponent(q)}`);
+  }
+
   return (
     <header
       className={cn(
         "sticky top-0 z-40 border-b border-line bg-paper/90 backdrop-blur-md",
+        "safe-pt",
         className,
       )}
     >
-      <div className="flex h-16 items-center gap-3 px-4 sm:px-6 lg:px-8">
+      <div className="flex h-14 items-center gap-2 px-3 sm:h-16 sm:gap-3 sm:px-6 lg:px-8">
         <Button
           type="button"
           variant="outline"
           size="icon"
           shape="soft"
-          className="lg:hidden"
+          className="shrink-0 lg:hidden"
           onClick={() => setMobileOpen(true)}
           aria-label="Open navigation"
         >
           <Menu className="size-4" />
         </Button>
 
-        <div className="lg:hidden">
+        <div className="min-w-0 lg:hidden">
           <Logo />
         </div>
 
@@ -82,7 +99,7 @@ export function TopBar({ className }: { className?: string }) {
           />
         </div>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
           <Button
             type="button"
             variant="outline"
@@ -90,6 +107,7 @@ export function TopBar({ className }: { className?: string }) {
             shape="soft"
             className="md:hidden"
             aria-label="Search"
+            onClick={() => setSearchOpen(true)}
           >
             <Search className="size-4" />
           </Button>
@@ -156,33 +174,42 @@ export function TopBar({ className }: { className?: string }) {
 
           <ThemeToggle />
 
-          <Button asChild variant="outline" size="icon" shape="soft">
+          <Button
+            asChild
+            variant="outline"
+            size="icon"
+            shape="soft"
+            className="hidden sm:inline-flex"
+          >
             <Link href="/help" aria-label="Help">
               <HelpCircle className="size-4" />
             </Link>
           </Button>
 
-          <DropdownMenu>
+          {/* modal={false} avoids Radix locking body pointer-events during soft navigations */}
+          <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button
                 type="button"
                 variant="ghost"
+                size="icon"
                 shape="soft"
-                className="h-10 gap-2 px-1.5 sm:px-2"
+                className="rounded-full p-0"
                 aria-label="User menu"
               >
-                <Avatar className="size-8">
+                <Avatar className="size-9">
                   <AvatarFallback>
                     {mockCurrentUser.avatarInitials ??
                       getInitials(mockCurrentUser.name)}
                   </AvatarFallback>
                 </Avatar>
-                <span className="hidden max-w-[120px] truncate text-sm font-semibold text-ink sm:inline">
-                  {mockCurrentUser.name.split(" ")[0]}
-                </span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent
+              align="end"
+              className="w-56"
+              onCloseAutoFocus={(e) => e.preventDefault()}
+            >
               <DropdownMenuLabel>
                 <div className="flex flex-col gap-0.5">
                   <span>{mockCurrentUser.name}</span>
@@ -204,6 +231,12 @@ export function TopBar({ className }: { className?: string }) {
                   Settings
                 </Link>
               </DropdownMenuItem>
+              <DropdownMenuItem asChild className="sm:hidden">
+                <Link href="/help">
+                  <HelpCircle className="size-4" />
+                  Help
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setSignOutOpen(true)}>
                 <LogOut className="size-4" />
@@ -213,6 +246,34 @@ export function TopBar({ className }: { className?: string }) {
           </DropdownMenu>
         </div>
       </div>
+
+      <Sheet open={searchOpen} onOpenChange={setSearchOpen}>
+        <SheetContent side="top" className="gap-0 p-0 sm:max-w-none">
+          <SheetHeader className="border-b border-line px-4 py-4 text-left">
+            <SheetTitle className="font-serif text-lg">Search</SheetTitle>
+          </SheetHeader>
+          <form onSubmit={handleSearchSubmit} className="space-y-3 p-4">
+            <div className="relative">
+              <Search
+                className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-faint"
+                aria-hidden
+              />
+              <Input
+                autoFocus
+                type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search CVs, letters, templates…"
+                className="h-12 border-line bg-surface pl-10"
+                aria-label="Search"
+              />
+            </div>
+            <Button type="submit" shape="soft" className="w-full rounded-[8px]">
+              Search
+            </Button>
+          </form>
+        </SheetContent>
+      </Sheet>
 
       <ConfirmDialog
         open={signOutOpen}

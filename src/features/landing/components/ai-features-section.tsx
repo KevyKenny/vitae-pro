@@ -6,7 +6,6 @@ import {
   ListChecks,
   Mail,
   Sparkles,
-  Target,
   Wand2,
   type LucideIcon,
 } from "lucide-react";
@@ -15,7 +14,6 @@ import { landingAiFeatures } from "@/mocks/landing";
 const ICONS: Record<string, LucideIcon> = {
   summary: Sparkles,
   experience: Wand2,
-  ats: Target,
   letter: Mail,
   grammar: FileText,
   achievements: ListChecks,

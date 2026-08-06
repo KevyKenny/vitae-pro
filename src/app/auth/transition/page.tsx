@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, Sparkles } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 import { SuccessAnimation } from "@/features/auth/components";
-import { getMockSession } from "@/features/auth/lib/mock-auth";
+import { getMockSession, subscribeMockAuth } from "@/features/auth/lib/mock-auth";
 
 const stages = [
   "Verifying secure session…",
@@ -14,14 +14,10 @@ const stages = [
   "Loading your career coach…",
 ] as const;
 
-function subscribe() {
-  return () => {};
-}
-
 function useSessionSnapshot() {
   return useSyncExternalStore(
-    subscribe,
-    () => getMockSession(),
+    subscribeMockAuth,
+    getMockSession,
     () => null,
   );
 }

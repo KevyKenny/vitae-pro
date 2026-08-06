@@ -92,7 +92,7 @@ const GENERATED_BODY: CoverLetterBody = {
     "I bring Figma design systems, accessibility-first critique, and workshop facilitation — plus mentorship that lifts craft across growing design orgs.",
   closing:
     "I'd welcome a conversation about how my activation and systems work can help Northwind ship clearer first-run experiences this quarter.",
-  signature: "Warm regards,\nKennedy Sithole",
+  signature: "Yours Sincerely,\n\nKennedy Sithole",
 };
 
 export function CoverLetterProvider({

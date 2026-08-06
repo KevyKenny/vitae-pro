@@ -24,7 +24,7 @@ export function EditorShowcaseSection() {
           <ul className="mt-6 space-y-3 text-sm text-ink">
             {[
               "AI assistant on every section",
-              "Live preview that updates as you type",
+              "Preview that updates as you type",
               "Templates and suggestion cards in one flow",
             ].map((item) => (
               <li key={item} className="flex gap-2">

@@ -34,7 +34,7 @@ export function WelcomeHero() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className="relative overflow-hidden rounded-[22px] border border-line bg-surface p-6 shadow-s sm:p-8"
+      className="relative overflow-hidden rounded-[18px] border border-line bg-surface p-5 shadow-s sm:rounded-[22px] sm:p-6 lg:p-8"
     >
       <div
         className="pointer-events-none absolute inset-0 opacity-80"
@@ -53,27 +53,27 @@ export function WelcomeHero() {
             </Badge>
             <Badge variant="outline">{completion}% profile complete</Badge>
           </div>
-          <h1 className="font-serif text-3xl font-semibold tracking-[-0.02em] text-ink sm:text-4xl">
+          <h1 className="font-serif text-[1.75rem] font-semibold tracking-[-0.02em] text-ink sm:text-3xl lg:text-4xl">
             {greeting}, {firstName}
           </h1>
           <p className="mt-2 text-base text-ink-soft">
             Welcome back to VitatePro.
           </p>
           <p className="mt-1 max-w-xl text-sm text-ink-faint">{message}</p>
-          <div className="mt-6 flex flex-wrap gap-2.5">
-            <Button asChild shape="soft">
+          <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
+            <Button asChild shape="soft" className="w-full sm:w-auto">
               <Link href="/cvs/cv_1/edit">
                 <PencilLine className="size-4" />
                 Continue Editing
               </Link>
             </Button>
-            <Button asChild variant="outline" shape="soft">
+            <Button asChild variant="outline" shape="soft" className="w-full sm:w-auto">
               <Link href="/cvs/cv_1/edit">
                 <FilePlus2 className="size-4" />
                 Create New CV
               </Link>
             </Button>
-            <Button asChild variant="secondary" shape="soft">
+            <Button asChild variant="secondary" shape="soft" className="w-full sm:w-auto">
               <Link href="/cover-letter">
                 <Mail className="size-4" />
                 Generate Cover Letter

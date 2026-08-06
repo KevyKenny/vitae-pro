@@ -13,9 +13,9 @@ import type { CvPreferences, CvStylePref } from "@/features/settings/types";
 
 const CV_STYLES: { id: CvStylePref; label: string; description: string }[] = [
   {
-    id: "ats",
-    label: "ATS Optimized",
-    description: "Single-column, standard headings, maximum parse safety.",
+    id: "classic",
+    label: "Classic",
+    description: "Single-column layout with clear section headings.",
   },
   {
     id: "modern",
@@ -108,18 +108,10 @@ export function CvSettingsView() {
               { value: "ymd", label: "YYYY-MM-DD" },
             ]}
           />
-          <SelectSetting
-            id="pageSize"
-            label="Page size"
-            value={prefs.pageSize}
-            onChange={(v) =>
-              update({ pageSize: v as CvPreferences["pageSize"] })
-            }
-            options={[
-              { value: "a4", label: "A4" },
-              { value: "letter", label: "US Letter" },
-            ]}
-          />
+          <p className="text-[0.78rem] text-ink-soft">
+            PDF export uses <span className="font-semibold text-ink">A4</span>{" "}
+            page size.
+          </p>
         </div>
       </SectionCard>
 

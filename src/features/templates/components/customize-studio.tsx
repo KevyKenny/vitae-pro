@@ -14,7 +14,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
+import { MobileBottomBar } from "@/components/shared/mobile-bottom-bar";
 
 export function CustomizeStudio() {
   const {
@@ -26,8 +26,8 @@ export function CustomizeStudio() {
   } = useCustomize();
 
   return (
-    <div className="flex h-dvh flex-col bg-paper">
-      <header className="flex flex-wrap items-center gap-3 border-b border-line bg-surface/95 px-3 py-2.5 backdrop-blur md:px-5">
+    <div className="flex h-dvh flex-col bg-paper-dim">
+      <header className="flex items-center gap-2 border-b border-line bg-surface/95 px-3 py-2.5 backdrop-blur sm:gap-3 md:px-5">
         <Button asChild variant="ghost" size="icon-sm" shape="soft" aria-label="Back">
           <Link href="/templates">
             <ArrowLeft className="size-4" />
@@ -45,17 +45,17 @@ export function CustomizeStudio() {
           variant="outline"
           size="sm"
           shape="soft"
-          className="rounded-[8px]"
+          className="hidden rounded-[8px] sm:inline-flex"
           onClick={reset}
         >
           <RotateCcw className="size-3.5" />
-          <span className="hidden sm:inline">Reset</span>
+          Reset
         </Button>
         <Button
           type="button"
           size="sm"
           shape="soft"
-          className="rounded-[8px]"
+          className="hidden rounded-[8px] lg:inline-flex"
           onClick={saveCustom}
         >
           <Save className="size-3.5" />
@@ -66,7 +66,7 @@ export function CustomizeStudio() {
           size="sm"
           variant="secondary"
           shape="soft"
-          className="rounded-[8px]"
+          className="hidden rounded-[8px] sm:inline-flex"
         >
           <Link
             href="/cvs/cv_1/edit"
@@ -77,11 +77,11 @@ export function CustomizeStudio() {
         </Button>
       </header>
 
-      <div className="flex min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
         <div className="hidden w-[360px] shrink-0 overflow-y-auto border-r border-line bg-surface lg:block">
           <CustomizationPanel />
         </div>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 overflow-auto pb-mobile-bar lg:pb-0">
           <CVPreviewCustomizer />
         </div>
         <div className="hidden w-[280px] shrink-0 overflow-y-auto border-l border-line bg-surface p-4 xl:block">
@@ -89,7 +89,7 @@ export function CustomizeStudio() {
             Tips
           </p>
           <ul className="mt-3 space-y-2 text-sm text-ink-soft">
-            <li>· Keep ATS-critical headings if you switch layouts.</li>
+            <li>· Keep section headings clear if you switch layouts.</li>
             <li>· Emerald + gold palettes match VitatePro branding.</li>
             <li>· Export still happens from the CV Editor.</li>
           </ul>
@@ -100,7 +100,10 @@ export function CustomizeStudio() {
       </div>
 
       <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <SheetContent side="bottom" className="h-[75vh] overflow-y-auto p-0">
+        <SheetContent
+          side="bottom"
+          className="h-[min(75vh,640px)] overflow-y-auto p-0 safe-pb"
+        >
           <SheetHeader className="sr-only">
             <SheetTitle>Customization controls</SheetTitle>
           </SheetHeader>
@@ -108,11 +111,7 @@ export function CustomizeStudio() {
         </SheetContent>
       </Sheet>
 
-      <div
-        className={cn(
-          "fixed inset-x-0 bottom-0 z-30 flex gap-2 border-t border-line bg-surface/95 p-3 backdrop-blur lg:hidden",
-        )}
-      >
+      <MobileBottomBar>
         <Button
           type="button"
           variant="outline"
@@ -124,13 +123,24 @@ export function CustomizeStudio() {
         </Button>
         <Button
           type="button"
+          variant="outline"
+          shape="soft"
+          className="rounded-[8px] sm:hidden"
+          onClick={reset}
+          aria-label="Reset"
+        >
+          <RotateCcw className="size-4" />
+        </Button>
+        <Button
+          type="button"
           shape="soft"
           className="flex-1 rounded-[8px]"
           onClick={saveCustom}
         >
-          Save design
+          <Save className="size-4" />
+          Save
         </Button>
-      </div>
+      </MobileBottomBar>
     </div>
   );
 }

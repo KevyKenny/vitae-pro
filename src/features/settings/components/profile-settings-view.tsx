@@ -20,6 +20,7 @@ import {
 } from "@/features/settings/schemas";
 import { mockSettingsProfile } from "@/mocks/settings";
 import { mockCountries } from "@/mocks/onboarding";
+import { MobileBottomBar } from "@/components/shared/mobile-bottom-bar";
 import { Button } from "@/components/ui/button";
 
 export function ProfileSettingsView() {
@@ -54,10 +55,22 @@ export function ProfileSettingsView() {
     },
   });
 
-  const values = watch();
+  const firstName = watch("firstName");
+  const lastName = watch("lastName");
+  const title = watch("title");
+  const location = watch("location");
+  const careerLevel = watch("careerLevel");
+  const country = watch("country");
+  const industry = watch("industry");
+  const employmentStatus = watch("employmentStatus");
+
   const headerProfile = {
     ...mockSettingsProfile,
-    ...values,
+    firstName,
+    lastName,
+    title,
+    location,
+    careerLevel,
     profileCompletion: mockSettingsProfile.profileCompletion,
   };
 
@@ -68,7 +81,7 @@ export function ProfileSettingsView() {
   const markDirty = () => scheduleSave();
 
   return (
-    <div className="space-y-6 pb-16">
+    <div className="space-y-6 pb-mobile-bar lg:pb-0">
       <SettingsPageHeader
         title="Profile"
         description="Manage your professional identity so VitatePro can coach with context."
@@ -127,7 +140,7 @@ export function ProfileSettingsView() {
             <SelectSetting
               id="country"
               label="Country"
-              value={values.country}
+              value={country}
               onChange={(v) => {
                 setValue("country", v, { shouldValidate: true });
                 markDirty();
@@ -157,7 +170,7 @@ export function ProfileSettingsView() {
             <SelectSetting
               id="careerLevel"
               label="Career level"
-              value={values.careerLevel}
+              value={careerLevel}
               onChange={(v) => {
                 setValue("careerLevel", v as ProfileFormValues["careerLevel"], {
                   shouldValidate: true,
@@ -176,7 +189,7 @@ export function ProfileSettingsView() {
             <SelectSetting
               id="industry"
               label="Industry"
-              value={values.industry}
+              value={industry}
               onChange={(v) => {
                 setValue("industry", v as ProfileFormValues["industry"], {
                   shouldValidate: true,
@@ -205,7 +218,7 @@ export function ProfileSettingsView() {
             <SelectSetting
               id="employmentStatus"
               label="Employment status"
-              value={values.employmentStatus}
+              value={employmentStatus}
               onChange={(v) => {
                 setValue("employmentStatus", v, { shouldValidate: true });
                 markDirty();
@@ -228,11 +241,11 @@ export function ProfileSettingsView() {
           </div>
         </SectionCard>
 
-        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface/95 p-3 backdrop-blur lg:hidden">
+        <MobileBottomBar>
           <Button type="submit" shape="soft" className="w-full rounded-[8px]">
             Save profile
           </Button>
-        </div>
+        </MobileBottomBar>
       </form>
     </div>
   );

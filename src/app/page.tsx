@@ -1,25 +1,32 @@
-import type { Metadata } from "next";
+import {
+  DEFAULT_DESCRIPTION,
+  DEFAULT_KEYWORDS,
+  DEFAULT_TITLE,
+  createPageMetadata,
+  JsonLd,
+  landingJsonLd,
+} from "@/lib/seo";
 import { LandingPage } from "@/features/landing/components/landing-page";
-import { APP_NAME, APP_TAGLINE } from "@/lib/constants/navigation";
+import { landingFaqs } from "@/mocks/landing";
 
-export const metadata: Metadata = {
-  title: {
-    absolute: `${APP_NAME} - AI CV Builder & Cover Letter Generator`,
-  },
-  description:
-    "Create professional, ATS-friendly CVs and personalized cover letters with AI assistance. Build a CV that gets noticed.",
-  openGraph: {
-    title: `${APP_NAME} - AI CV Builder & Cover Letter Generator`,
-    description: APP_TAGLINE,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${APP_NAME} - AI CV Builder & Cover Letter Generator`,
-    description: APP_TAGLINE,
-  },
-};
+export const metadata = createPageMetadata({
+  title: DEFAULT_TITLE,
+  absoluteTitle: DEFAULT_TITLE,
+  description: DEFAULT_DESCRIPTION,
+  path: "/",
+  keywords: [
+    ...DEFAULT_KEYWORDS,
+    "online resume builder",
+    "job application tools",
+    "ATS friendly CV",
+  ],
+});
 
 export default function HomePage() {
-  return <LandingPage />;
+  return (
+    <>
+      <JsonLd data={landingJsonLd(landingFaqs)} />
+      <LandingPage />
+    </>
+  );
 }

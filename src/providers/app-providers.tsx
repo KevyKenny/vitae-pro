@@ -8,7 +8,12 @@ import { KeyboardShortcutsDialog } from "@/components/shared/keyboard-shortcuts-
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="light"
+      enableSystem
+      disableTransitionOnChange
+    >
       <TooltipProvider delayDuration={200}>
         <DemoModeGate>
           {children}

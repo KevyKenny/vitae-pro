@@ -5,6 +5,8 @@ import { Minus, Plus, Printer } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useCustomize } from "@/features/templates/context/customize-context";
+import { EducationPreview } from "@/features/cv-editor/components/education/education-preview";
+import { ExperiencePreview } from "@/features/cv-editor/components/experience/experience-preview";
 import { mockCvDocument } from "@/mocks/cv-editor";
 import { templateFonts } from "@/mocks/templates-gallery";
 import { cn } from "@/lib/utils";
@@ -32,7 +34,7 @@ export function CVPreviewCustomizer({ className }: { className?: string }) {
     <div className={cn("flex h-full flex-col bg-paper-dim", className)}>
       <div className="flex items-center justify-between border-b border-line bg-surface px-4 py-3">
         <div>
-          <h2 className="text-sm font-semibold text-ink">Live preview</h2>
+          <h2 className="text-sm font-semibold text-ink">Preview</h2>
           <p className="text-[0.72rem] text-ink-faint">
             {template.name} · {customization.pageSize.toUpperCase()} · Page 1 of 1
           </p>
@@ -72,7 +74,7 @@ export function CVPreviewCustomizer({ className }: { className?: string }) {
         </div>
       </div>
 
-      <div className="flex flex-1 justify-center overflow-auto p-6">
+      <div className="flex flex-1 justify-center overflow-auto p-3 sm:p-6">
         <motion.article
           key={`${customization.layout}-${customization.fontFamily}-${customization.primaryColor}`}
           initial={{ opacity: 0.7, y: 6 }}
@@ -85,9 +87,10 @@ export function CVPreviewCustomizer({ className }: { className?: string }) {
             template.editorStyle === "executive" && "border-l-4",
           )}
           style={{
-            width: customization.pageSize === "a4" ? 420 : 400,
+            width: "min(420px, calc(100vw - 2rem))",
             minHeight: 594,
             transform: `scale(${scale})`,
+            transformOrigin: "top center",
             padding: customization.margins * 0.55,
             background: customization.backgroundColor,
             color: customization.textColor,
@@ -163,22 +166,7 @@ export function CVPreviewCustomizer({ className }: { className?: string }) {
                         color={customization.primaryColor}
                         spacing={customization.sectionSpacing}
                       >
-                        {experience.map((exp) => (
-                          <div key={exp.id} className="mb-2">
-                            <p className="font-semibold">
-                              {exp.position} · {exp.company}
-                            </p>
-                            <p className="text-[0.85em] opacity-65">
-                              {exp.startDate}
-                              {exp.current ? " — Present" : ` — ${exp.endDate}`}
-                            </p>
-                            <ul className="mt-1">
-                              {exp.bullets.slice(0, 2).map((b) => (
-                                <li key={b}>— {b}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))}
+                        <ExperiencePreview experience={experience} />
                       </Section>
                     );
                   }
@@ -190,15 +178,7 @@ export function CVPreviewCustomizer({ className }: { className?: string }) {
                         color={customization.primaryColor}
                         spacing={customization.sectionSpacing}
                       >
-                        {education.map((edu) => (
-                          <p key={edu.id}>
-                            <span className="font-semibold">
-                              {edu.degree} · {edu.field}
-                            </span>
-                            <br />
-                            <span className="opacity-70">{edu.institution}</span>
-                          </p>
-                        ))}
+                        <EducationPreview education={education} compact />
                       </Section>
                     );
                   }

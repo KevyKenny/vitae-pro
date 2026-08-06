@@ -3,7 +3,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Minus, Plus, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useCoverLetter } from "@/features/cover-letter/context/cover-letter-context";
 import { letterTemplates } from "@/mocks/cover-letter-builder";
 import { cn } from "@/lib/utils";
@@ -18,18 +17,18 @@ export function CoverLetterPreview({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex h-full flex-col overflow-hidden border-l border-line bg-paper-dim",
+        "flex h-full min-h-0 min-w-0 flex-col overflow-hidden bg-paper-dim",
         className,
       )}
     >
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-surface px-4 py-3">
-        <div>
-          <h2 className="text-sm font-semibold text-ink">Live preview</h2>
-          <p className="text-[0.72rem] text-ink-faint">
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-line bg-surface px-3 py-2.5 sm:px-4 sm:py-3">
+        <div className="min-w-0">
+          <h2 className="text-sm font-semibold text-ink">Preview</h2>
+          <p className="truncate text-[0.72rem] text-ink-faint">
             {template?.name ?? "Template"} · A4 · Page 1 of 1
           </p>
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex shrink-0 items-center gap-1.5">
           <Button
             type="button"
             variant="outline"
@@ -58,7 +57,7 @@ export function CoverLetterPreview({ className }: { className?: string }) {
             variant="outline"
             size="sm"
             shape="soft"
-            className="rounded-[8px]"
+            className="hidden rounded-[8px] sm:inline-flex"
             onClick={() => setTemplatesOpen(true)}
           >
             Template
@@ -76,14 +75,18 @@ export function CoverLetterPreview({ className }: { className?: string }) {
         </div>
       </div>
 
-      <div className="flex gap-1.5 overflow-x-auto border-b border-line bg-surface px-3 py-2">
+      <div
+        className="flex shrink-0 touch-pan-x gap-1.5 overflow-x-auto overscroll-x-contain border-b border-line bg-surface px-3 py-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
         {letterTemplates.map((t) => (
           <button
             key={t.id}
             type="button"
             onClick={() => setTemplate(t.id)}
+            style={{ touchAction: "pan-x" }}
             className={cn(
-              "shrink-0 rounded-full border px-2.5 py-1 text-[0.72rem] font-semibold transition-colors",
+              "h-9 shrink-0 whitespace-nowrap rounded-full border px-3 text-[0.72rem] font-semibold transition-colors",
               document.templateId === t.id
                 ? "border-emerald bg-emerald text-paper"
                 : "border-line-strong text-ink-soft hover:border-emerald/40",
@@ -94,7 +97,7 @@ export function CoverLetterPreview({ className }: { className?: string }) {
         ))}
       </div>
 
-      <div className="flex flex-1 justify-center overflow-auto p-6">
+      <div className="flex min-h-0 flex-1 justify-center overflow-auto p-3 sm:p-5 md:p-6">
         <AnimatePresence mode="wait">
           <motion.article
             key={document.templateId}
@@ -109,17 +112,18 @@ export function CoverLetterPreview({ className }: { className?: string }) {
               document.templateId === "minimal" && "shadow-s",
             )}
             style={{
-              width: 420,
+              width: "min(420px, calc(100vw - 1.5rem))",
               minHeight: 594,
               transform: `scale(${scale})`,
+              transformOrigin: "top center",
               padding:
-                document.templateId === "minimal" ? "40px 36px" : "48px 42px",
+                document.templateId === "minimal" ? "36px 28px" : "40px 32px",
             }}
             aria-label="Cover letter A4 preview"
           >
             <header
               className={cn(
-                "mb-7",
+                "mb-6 sm:mb-7",
                 document.templateId === "modern" &&
                   "border-b border-line pb-4",
               )}
@@ -134,14 +138,9 @@ export function CoverLetterPreview({ className }: { className?: string }) {
               >
                 {document.body.headerName}
               </p>
-              <p className="mt-1 text-[0.72rem] leading-relaxed text-ink-faint">
+              <p className="mt-1 text-[0.72rem] leading-relaxed break-words text-ink-faint">
                 {document.body.headerMeta}
               </p>
-              {template?.atsFriendly ? (
-                <Badge variant="outline" className="mt-2">
-                  ATS friendly
-                </Badge>
-              ) : null}
             </header>
             <p className="mb-5 text-[0.78rem] text-ink-soft">
               {document.body.date}

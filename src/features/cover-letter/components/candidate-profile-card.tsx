@@ -8,6 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCoverLetter } from "@/features/cover-letter/context/cover-letter-context";
 import { mockCvDocument } from "@/mocks/cv-editor";
+import {
+  experienceOrganization,
+  experiencePrimaryTitle,
+} from "@/features/cv-editor/components/experience/experience-helpers";
 import { useState } from "react";
 
 export function CandidateProfileCard() {
@@ -110,8 +114,15 @@ export function CandidateProfileCard() {
                   className="mt-0.5"
                 />
                 <label htmlFor={exp.id} className="cursor-pointer text-sm">
-                  <span className="font-semibold text-ink">{exp.position}</span>
-                  <span className="text-ink-soft"> · {exp.company}</span>
+                  <span className="font-semibold text-ink">
+                    {experiencePrimaryTitle(exp)}
+                  </span>
+                  {experienceOrganization(exp) ? (
+                    <span className="text-ink-soft">
+                      {" "}
+                      · {experienceOrganization(exp)}
+                    </span>
+                  ) : null}
                 </label>
               </li>
             );

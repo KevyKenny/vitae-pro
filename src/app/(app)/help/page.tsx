@@ -31,7 +31,7 @@ const GUIDES = [
   },
   {
     title: "Browse templates",
-    description: "Compare ATS scores and customize colors live.",
+    description: "Customize colors live.",
     href: "/templates",
     icon: LayoutTemplate,
   },

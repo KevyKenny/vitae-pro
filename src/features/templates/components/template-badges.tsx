@@ -8,7 +8,6 @@ const LABEL: Record<TemplateBadge, string> = {
   free: "Free",
   premium: "Premium",
   recommended: "Recommended",
-  "ats-optimized": "ATS Optimized",
   "recruiter-favorite": "Recruiter Favorite",
   popular: "Popular",
 };

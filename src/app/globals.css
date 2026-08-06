@@ -190,6 +190,13 @@
 
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  html,
+  body {
+    overflow-x: clip;
+    max-width: 100%;
   }
 
   body {
@@ -240,6 +247,34 @@
   }
   .shadow-l {
     box-shadow: var(--shadow-l);
+  }
+
+  /* Safe-area helpers for notched devices + fixed chrome */
+  .safe-pb {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  .safe-pt {
+    padding-top: max(0px, env(safe-area-inset-top, 0px));
+  }
+
+  /* Clears fixed mobile bottom action bars (~56–64px + safe area) */
+  .pb-mobile-bar {
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Touch-friendly horizontal chip/filter scroller */
+  .h-scroll-touch {
+    @apply flex gap-2 overflow-x-auto overscroll-x-contain scrollbar-none;
+    -webkit-overflow-scrolling: touch;
   }
 }
 

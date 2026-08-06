@@ -14,7 +14,6 @@ export function CustomizationPanel({ className }: { className?: string }) {
     applyPalette,
     setFont,
     setLayout,
-    setPageSize,
     toggleSection,
     moveSection,
   } = useCustomize();
@@ -66,13 +65,11 @@ export function CustomizationPanel({ className }: { className?: string }) {
             layout={customization.layout}
             sectionSpacing={customization.sectionSpacing}
             margins={customization.margins}
-            pageSize={customization.pageSize}
             onLayoutChange={setLayout}
             onSectionSpacingChange={(sectionSpacing) =>
               update({ sectionSpacing })
             }
             onMarginsChange={(margins) => update({ margins })}
-            onPageSizeChange={setPageSize}
           />
         </TabsContent>
         <TabsContent value="sections" className="px-1 pb-8">

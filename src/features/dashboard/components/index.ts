@@ -1,10 +1,5 @@
 export { WelcomeHero } from "./welcome-hero";
-export { DashboardStats } from "./dashboard-stats";
 export { QuickActions } from "./quick-actions";
-export { RecentCvs } from "./recent-cvs";
-export { AiInsights } from "./ai-insights";
-export { ResumeHealth } from "./resume-health";
-export { ResumeScoreWidget } from "./resume-score-widget";
 export { RecentActivity } from "./recent-activity";
 export { TipsCarousel } from "./tips-carousel";
 export { DashboardView } from "./dashboard-view";

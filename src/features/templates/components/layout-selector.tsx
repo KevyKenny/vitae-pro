@@ -2,10 +2,10 @@
 
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
-import type { LayoutMode, PageSize } from "@/features/templates/types";
+import type { LayoutMode } from "@/features/templates/types";
 
 const LAYOUTS: { id: LayoutMode; label: string; hint: string }[] = [
-  { id: "single", label: "Single column", hint: "ATS-safe classic" },
+  { id: "single", label: "Single column", hint: "Classic single column" },
   { id: "two-column", label: "Two column", hint: "Skills + body" },
   { id: "sidebar", label: "Sidebar layout", hint: "Accent rail" },
 ];
@@ -14,20 +14,16 @@ export function LayoutSelector({
   layout,
   sectionSpacing,
   margins,
-  pageSize,
   onLayoutChange,
   onSectionSpacingChange,
   onMarginsChange,
-  onPageSizeChange,
 }: {
   layout: LayoutMode;
   sectionSpacing: number;
   margins: number;
-  pageSize: PageSize;
   onLayoutChange: (l: LayoutMode) => void;
   onSectionSpacingChange: (n: number) => void;
   onMarginsChange: (n: number) => void;
-  onPageSizeChange: (s: PageSize) => void;
 }) {
   return (
     <div className="space-y-4">
@@ -79,29 +75,10 @@ export function LayoutSelector({
         />
       </div>
 
-      <div>
-        <p className="mb-2 text-[0.7rem] font-semibold text-ink-faint uppercase">
-          Page size
-        </p>
-        <div className="flex gap-2">
-          {(["a4", "letter"] as const).map((s) => (
-            <button
-              key={s}
-              type="button"
-              aria-pressed={pageSize === s}
-              onClick={() => onPageSizeChange(s)}
-              className={cn(
-                "flex-1 rounded-[8px] border py-2 text-sm font-semibold uppercase",
-                pageSize === s
-                  ? "border-emerald bg-emerald text-paper"
-                  : "border-line-strong text-ink-soft",
-              )}
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-      </div>
+      <p className="text-[0.78rem] text-ink-soft">
+        PDF export uses <span className="font-semibold text-ink">A4</span> page
+        size.
+      </p>
     </div>
   );
 }

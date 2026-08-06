@@ -45,7 +45,6 @@ export function AiSettingsView() {
     !prefs.highlightWeak &&
     !prefs.recommendKeywords &&
     !prefs.improveGrammar &&
-    !prefs.optimizeAts &&
     !prefs.generateAchievements &&
     !prefs.suggestSkills;
 
@@ -71,7 +70,6 @@ export function AiSettingsView() {
               highlightWeak: true,
               recommendKeywords: true,
               improveGrammar: true,
-              optimizeAts: true,
               suggestSkills: true,
               assistanceLevel: "balanced",
             })
@@ -139,13 +137,6 @@ export function AiSettingsView() {
             description="Light copy edits for clarity and tense."
             checked={prefs.improveGrammar}
             onCheckedChange={(v) => update({ improveGrammar: v })}
-          />
-          <ToggleSetting
-            id="optimizeAts"
-            title="Optimize ATS score"
-            description="Prefer scannable headings and keyword coverage."
-            checked={prefs.optimizeAts}
-            onCheckedChange={(v) => update({ optimizeAts: v })}
           />
           <ToggleSetting
             id="generateAchievements"

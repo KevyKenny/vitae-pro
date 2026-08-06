@@ -55,7 +55,7 @@ export function SkillSelector() {
       <EmptyState
         icon={Gauge}
         title="No skills added"
-        description="Organize skills by category and strength for ATS clarity."
+        description="Organize skills by category and strength."
         actionLabel="Add a skill"
         onAction={() => setDraft("Product Design")}
         className="border-0 bg-transparent py-8"

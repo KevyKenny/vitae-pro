@@ -34,7 +34,7 @@ export function TemplateComparison({
               Compare templates
             </h2>
             <p className="text-sm text-ink-soft">
-              Up to 3 designs · design, ATS, readability
+              Up to 3 designs · layout, readability, rating
             </p>
           </div>
           <Button type="button" variant="ghost" size="sm" shape="soft" onClick={onClear}>
@@ -61,8 +61,8 @@ export function TemplateComparison({
               <p className="font-semibold text-ink">{t.name}</p>
               <p className="text-[0.72rem] capitalize text-ink-faint">{t.style}</p>
               <div className="mt-2 flex flex-wrap gap-1.5">
-                <Badge variant="default">ATS {t.atsScore}</Badge>
-                <Badge variant="outline">Read {t.readability}</Badge>
+                <Badge variant="default">Readability {t.readability}</Badge>
+                <Badge variant="outline">Rating {t.rating.toFixed(1)} ★</Badge>
               </div>
               <p className="mt-2 text-[0.74rem] text-ink-soft">
                 Best for: {t.bestFor.slice(0, 2).join(", ")}

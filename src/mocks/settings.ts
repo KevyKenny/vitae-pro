@@ -39,7 +39,6 @@ export const mockSettingsAiPreferences: AiPreferences = {
   highlightWeak: true,
   recommendKeywords: true,
   improveGrammar: true,
-  optimizeAts: true,
   generateAchievements: false,
   suggestSkills: true,
   careerFocus: ["improve-cv", "hired-faster"],
@@ -128,7 +127,6 @@ export const subscriptionPlans: SubscriptionPlan[] = [
     features: [
       "2 CVs",
       "20 AI suggestions / month",
-      "ATS-friendly templates",
       "Basic export",
     ],
   },

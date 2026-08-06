@@ -1,214 +1,143 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import { useState } from "react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { Briefcase, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { EmptyState } from "@/components/shared/empty-state";
-import { AIActionButton } from "@/features/cv-editor/components/ai-action-button";
 import { EditorSectionCard } from "@/features/cv-editor/components/editor-section-card";
+import { ExperienceCard } from "@/features/cv-editor/components/experience/experience-card";
+import { ExperienceTypeSelector } from "@/features/cv-editor/components/experience/experience-type-selector";
+import { createExperienceEntry } from "@/features/cv-editor/components/experience/experience-helpers";
 import { useEditor } from "@/features/cv-editor/context/editor-context";
-import type { ExperienceEntry } from "@/features/cv-editor/types";
-import { Briefcase } from "lucide-react";
-
-export function ExperienceCard({
-  entry,
-  index,
-  onChange,
-  onRemove,
-}: {
-  entry: ExperienceEntry;
-  index: number;
-  onChange: (entry: ExperienceEntry) => void;
-  onRemove: () => void;
-}) {
-  const { requestAi } = useEditor();
-
-  function updateBullet(i: number, value: string) {
-    const bullets = [...entry.bullets];
-    bullets[i] = value;
-    onChange({ ...entry, bullets });
-  }
-
-  return (
-    <div className="rounded-[12px] border border-line bg-paper-dim/40 p-4">
-      <div className="mb-3 flex items-start justify-between gap-2">
-        <p className="text-sm font-semibold text-ink">
-          Role {index + 1}
-        </p>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          shape="soft"
-          aria-label="Remove experience"
-          onClick={onRemove}
-        >
-          <Trash2 className="size-4" />
-        </Button>
-      </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="space-y-1.5">
-          <Label className="text-[0.76rem] uppercase text-ink-soft">Company</Label>
-          <Input
-            value={entry.company}
-            onChange={(e) => onChange({ ...entry, company: e.target.value })}
-            className="bg-surface"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label className="text-[0.76rem] uppercase text-ink-soft">Position</Label>
-          <Input
-            value={entry.position}
-            onChange={(e) => onChange({ ...entry, position: e.target.value })}
-            className="bg-surface"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label className="text-[0.76rem] uppercase text-ink-soft">Start</Label>
-          <Input
-            value={entry.startDate}
-            onChange={(e) => onChange({ ...entry, startDate: e.target.value })}
-            className="bg-surface"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label className="text-[0.76rem] uppercase text-ink-soft">End</Label>
-          <Input
-            value={entry.current ? "Present" : entry.endDate}
-            disabled={entry.current}
-            onChange={(e) => onChange({ ...entry, endDate: e.target.value })}
-            className="bg-surface"
-          />
-        </div>
-        <div className="space-y-1.5 sm:col-span-2">
-          <Label className="text-[0.76rem] uppercase text-ink-soft">Location</Label>
-          <Input
-            value={entry.location}
-            onChange={(e) => onChange({ ...entry, location: e.target.value })}
-            className="bg-surface"
-          />
-        </div>
-      </div>
-      <div className="mt-4 space-y-2">
-        <div className="flex items-center justify-between">
-          <Label className="text-[0.76rem] uppercase text-ink-soft">
-            Achievements
-          </Label>
-          <div className="flex flex-wrap gap-1">
-            <AIActionButton label="Improve Bullet" onClick={() => requestAi("bullet_rewrite")} />
-            <AIActionButton
-              label="Generate Metrics"
-              onClick={() => toast.message("Generate metrics (mock)")}
-            />
-            <AIActionButton label="Rewrite" onClick={() => requestAi("bullet_rewrite")} />
-          </div>
-        </div>
-        {entry.bullets.map((bullet, i) => (
-          <div key={i} className="flex gap-2">
-            <span className="mt-3 text-ink-faint">—</span>
-            <Textarea
-              rows={2}
-              value={bullet}
-              onChange={(e) => updateBullet(i, e.target.value)}
-              className="bg-surface"
-            />
-          </div>
-        ))}
-        <Button
-          type="button"
-          variant="link"
-          className="h-auto px-0"
-          onClick={() =>
-            onChange({ ...entry, bullets: [...entry.bullets, ""] })
-          }
-        >
-          <Plus className="size-3.5" /> Add achievement
-        </Button>
-      </div>
-    </div>
-  );
-}
+import type {
+  ExperienceEntry,
+  ExperienceTypeId,
+} from "@/features/cv-editor/types";
 
 export function ExperienceSection() {
   const { document, updateDocument } = useEditor();
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [newEntryId, setNewEntryId] = useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   function setExperience(experience: ExperienceEntry[]) {
     updateDocument((prev) => ({ ...prev, experience }));
   }
 
-  if (document.experience.length === 0) {
-    return (
-      <EditorSectionCard sectionId="sec_experience" title="Work Experience">
-        <EmptyState
-          icon={Briefcase}
-          title="No experience added"
-          description="Add roles and AI will help turn responsibilities into measurable achievements."
-          actionLabel="Add experience"
-          onAction={() =>
-            setExperience([
-              {
-                id: `exp_${Date.now()}`,
-                company: "",
-                position: "",
-                startDate: "",
-                endDate: "",
-                current: false,
-                location: "",
-                bullets: [""],
-              },
-            ])
-          }
-          className="border-0 bg-transparent py-8"
-        />
-      </EditorSectionCard>
-    );
+  function addOfType(type: ExperienceTypeId) {
+    const entry = createExperienceEntry(type);
+    setExperience([...document.experience, entry]);
+    setNewEntryId(entry.id);
+    setPickerOpen(false);
+  }
+
+  function onDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = document.experience.findIndex((e) => e.id === active.id);
+    const newIndex = document.experience.findIndex((e) => e.id === over.id);
+    if (oldIndex < 0 || newIndex < 0) return;
+    setExperience(arrayMove(document.experience, oldIndex, newIndex));
   }
 
   return (
     <EditorSectionCard sectionId="sec_experience" title="Work Experience">
-      <div className="space-y-4">
-        {document.experience.map((entry, index) => (
-          <ExperienceCard
-            key={entry.id}
-            entry={entry}
-            index={index}
-            onChange={(next) => {
-              const experience = [...document.experience];
-              experience[index] = next;
-              setExperience(experience);
-            }}
-            onRemove={() =>
-              setExperience(document.experience.filter((e) => e.id !== entry.id))
-            }
-          />
-        ))}
-        <Button
-          type="button"
-          variant="outline"
-          shape="soft"
-          className="w-full rounded-[8px] border-dashed"
-          onClick={() =>
-            setExperience([
-              ...document.experience,
-              {
-                id: `exp_${Date.now()}`,
-                company: "",
-                position: "",
-                startDate: "",
-                endDate: "",
-                current: false,
-                location: "",
-                bullets: [""],
-              },
-            ])
-          }
-        >
-          <Plus className="size-4" /> Add experience
-        </Button>
-      </div>
+      {document.experience.length === 0 ? (
+        <EmptyState
+          icon={Briefcase}
+          title="No experience added"
+          description="Add full-time roles, industrial attachments, internships, freelance work, volunteer experience, and more."
+          actionLabel="Add experience"
+          onAction={() => setPickerOpen(true)}
+          className="border-0 bg-transparent py-8"
+        />
+      ) : (
+        <div className="space-y-3">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={onDragEnd}
+          >
+            <SortableContext
+              items={document.experience.map((e) => e.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {document.experience.map((entry) => (
+                <ExperienceCard
+                  key={entry.id}
+                  entry={entry}
+                  defaultExpanded={entry.id === newEntryId}
+                  onChange={(next) => {
+                    setExperience(
+                      document.experience.map((e) =>
+                        e.id === entry.id ? next : e,
+                      ),
+                    );
+                  }}
+                  onRemove={() =>
+                    setExperience(
+                      document.experience.filter((e) => e.id !== entry.id),
+                    )
+                  }
+                  onDuplicate={() => {
+                    const copy = structuredClone(entry) as ExperienceEntry;
+                    copy.id = `exp_${Date.now()}`;
+                    setExperience([...document.experience, copy]);
+                    setNewEntryId(copy.id);
+                  }}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
+          <Button
+            type="button"
+            variant="outline"
+            shape="soft"
+            className="w-full rounded-[8px] border-dashed"
+            onClick={() => setPickerOpen(true)}
+          >
+            <Plus className="size-4" /> Add experience
+          </Button>
+        </div>
+      )}
+
+      <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="sr-only">
+              Select experience type
+            </DialogTitle>
+          </DialogHeader>
+          <ExperienceTypeSelector onSelect={addOfType} />
+        </DialogContent>
+      </Dialog>
     </EditorSectionCard>
   );
 }

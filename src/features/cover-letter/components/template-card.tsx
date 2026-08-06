@@ -46,11 +46,7 @@ export function TemplateCard({
       <div className="space-y-2 p-3.5">
         <div className="flex items-center justify-between gap-2">
           <h3 className="font-semibold text-ink">{template.name}</h3>
-          {template.atsFriendly ? (
-            <Badge variant="default">ATS</Badge>
-          ) : (
-            <Badge variant="gold">Creative</Badge>
-          )}
+          <Badge variant="gold">Creative</Badge>
         </div>
         <p className="text-[0.78rem] leading-snug text-ink-soft">
           {template.description}

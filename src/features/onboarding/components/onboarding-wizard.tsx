@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "@/components/layout/logo";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,6 +39,7 @@ import {
   getOnboardingDraft,
   mockCompleteOnboarding,
   saveOnboardingDraft,
+  subscribeMockAuth,
 } from "@/features/auth/lib/mock-auth";
 import type {
   AiPreferencesValues,
@@ -66,7 +68,6 @@ const defaultAi: AiPreferencesValues = {
   improveGrammar: true,
   suggestAchievements: true,
   generateSummaries: true,
-  optimizeAts: true,
   rewriteProfessionally: false,
   improveReadability: true,
   createCoverLetters: true,
@@ -93,15 +94,11 @@ const defaultDraft: DraftState = {
   ...defaultAi,
 };
 
-function subscribe() {
-  return () => {};
-}
-
 export function OnboardingWizard() {
   const router = useRouter();
   const storedDraft = useSyncExternalStore(
-    subscribe,
-    () => getOnboardingDraft(),
+    subscribeMockAuth,
+    getOnboardingDraft,
     () => null,
   );
   const [saving, setSaving] = useState(false);
@@ -231,16 +228,19 @@ export function OnboardingWizard() {
     <div className="mx-auto flex min-h-dvh w-full max-w-3xl flex-col px-5 py-8 sm:px-8">
       <div className="mb-8 flex items-center justify-between gap-4">
         <Logo href="/" />
-        {step < STEPS.length - 1 ? (
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={handleSaveForLater}
-            disabled={saving}
-          >
-            {saving ? "Saving…" : "Save & continue later"}
-          </Button>
-        ) : null}
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          {step < STEPS.length - 1 ? (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={handleSaveForLater}
+              disabled={saving}
+            >
+              {saving ? "Saving…" : "Save & continue later"}
+            </Button>
+          ) : null}
+        </div>
       </div>
 
       {step < STEPS.length - 1 ? (
@@ -290,7 +290,7 @@ export function OnboardingWizard() {
                   Tell us about yourself
                 </h1>
                 <p className="mt-2 text-ink-soft">
-                  This helps VitatePro tailor language, examples, and ATS tips.
+                  This helps VitatePro tailor language and examples for your role.
                 </p>
                 <div className="mt-8 grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">

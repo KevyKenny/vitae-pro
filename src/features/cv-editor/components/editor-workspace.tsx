@@ -15,70 +15,65 @@ import {
 } from "@/features/cv-editor/components/sections/misc-sections";
 import { AISuggestionCard } from "@/features/cv-editor/components/ai-suggestion-card";
 import { useEditor } from "@/features/cv-editor/context/editor-context";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 
+function ActiveSectionView({ sectionId }: { sectionId: string }) {
+  const { document } = useEditor();
+  const section = document.sections.find((s) => s.id === sectionId);
+
+  if (!section) return null;
+
+  switch (section.type) {
+    case "personal":
+      return <PersonalInfoSection />;
+    case "summary":
+      return <SummarySection />;
+    case "experience":
+      return <ExperienceSection />;
+    case "education":
+      return <EducationSection />;
+    case "skills":
+      return <SkillsSection />;
+    case "projects":
+      return <ProjectsSection />;
+    case "certifications":
+      return <CertificationsSection />;
+    case "languages":
+      return <LanguagesSection />;
+    case "achievements":
+      return <AchievementsSection />;
+    case "references":
+      return <ReferencesSection />;
+    case "custom":
+      return <CustomSection sectionId={section.id} label={section.label} />;
+    default:
+      return null;
+  }
+}
+
+/** Left input pane — shows the active section only (matches desktop mock). */
 export function EditorWorkspace() {
-  const { document, addCustomSection, aiSuggestion, aiOpen } = useEditor();
+  const { document, activeSectionId, aiSuggestion, aiOpen } = useEditor();
+  const activeId =
+    document.sections.find((s) => s.id === activeSectionId)?.id ??
+    document.sections[0]?.id;
 
   return (
     <div
       id="editor-scroll"
-      className="min-h-0 flex-1 overflow-y-auto border-r border-line bg-paper"
+      className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface"
     >
-      <div className="mx-auto max-w-[760px] space-y-4 px-4 py-7 pb-28 sm:px-8">
-        {aiSuggestion && !aiOpen ? (
-          <div className="lg:hidden">
-            <AISuggestionCard />
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <div className="mx-auto flex h-full w-full max-w-none flex-col">
+          {aiSuggestion && !aiOpen ? (
+            <div className="px-4 pt-4 lg:hidden sm:px-6">
+              <AISuggestionCard />
+            </div>
+          ) : null}
+
+          <div className="min-h-0 flex-1">
+            {activeId ? <ActiveSectionView sectionId={activeId} /> : null}
           </div>
-        ) : null}
-
-        {document.sections
-          .filter((s) => s.visible || s.type === "custom")
-          .map((section) => {
-            switch (section.type) {
-              case "personal":
-                return <PersonalInfoSection key={section.id} />;
-              case "summary":
-                return <SummarySection key={section.id} />;
-              case "experience":
-                return <ExperienceSection key={section.id} />;
-              case "education":
-                return <EducationSection key={section.id} />;
-              case "skills":
-                return <SkillsSection key={section.id} />;
-              case "projects":
-                return <ProjectsSection key={section.id} />;
-              case "certifications":
-                return <CertificationsSection key={section.id} />;
-              case "languages":
-                return <LanguagesSection key={section.id} />;
-              case "achievements":
-                return <AchievementsSection key={section.id} />;
-              case "references":
-                return <ReferencesSection key={section.id} />;
-              case "custom":
-                return (
-                  <CustomSection
-                    key={section.id}
-                    sectionId={section.id}
-                    label={section.label}
-                  />
-                );
-              default:
-                return null;
-            }
-          })}
-
-        <Button
-          type="button"
-          variant="outline"
-          shape="soft"
-          className="w-full rounded-[14px] border-dashed py-6 text-ink-faint hover:text-emerald"
-          onClick={addCustomSection}
-        >
-          <Plus className="size-4" /> Add section
-        </Button>
+        </div>
       </div>
     </div>
   );

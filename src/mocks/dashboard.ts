@@ -61,16 +61,6 @@ export const mockDashboardStats: DashboardStat[] = [
     tone: "emerald",
   },
   {
-    id: "stat_ats",
-    label: "ATS Score",
-    value: 92,
-    suffix: "/100",
-    trend: "Passes 9 of 10",
-    trendDirection: "up",
-    progress: 92,
-    tone: "gold",
-  },
-  {
     id: "stat_profile",
     label: "Profile Completion",
     value: 78,
@@ -114,14 +104,6 @@ export const mockQuickActions: QuickAction[] = [
     cta: "Browse",
     icon: "templates",
   },
-  {
-    id: "qa_ai",
-    title: "AI Career Assistant",
-    description: "Ask for rewrites, bullet strength, and keyword gaps.",
-    href: "/ai-assistant",
-    cta: "Open assistant",
-    icon: "ai",
-  },
 ];
 
 export const mockResumeHealth: ResumeHealthItem[] = [
@@ -154,13 +136,6 @@ export const mockResumeHealth: ResumeHealthItem[] = [
     status: "strong",
   },
   {
-    id: "rh_ats",
-    label: "ATS Optimization",
-    score: 92,
-    recommendation: "Use standard section titles for scanning systems.",
-    status: "strong",
-  },
-  {
     id: "rh_grammar",
     label: "Grammar",
     score: 90,
@@ -187,7 +162,7 @@ export const mockScoreBreakdown: ScoreBreakdown[] = [
   { id: "sb_format", label: "Formatting", score: 94 },
   { id: "sb_content", label: "Content", score: 86 },
   { id: "sb_grammar", label: "Grammar", score: 90 },
-  { id: "sb_ats", label: "ATS", score: 92 },
+  { id: "sb_clarity", label: "Clarity", score: 92 },
   { id: "sb_skills", label: "Skills", score: 88 },
   { id: "sb_experience", label: "Experience", score: 76 },
   { id: "sb_education", label: "Education", score: 94 },

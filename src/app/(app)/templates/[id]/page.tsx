@@ -28,7 +28,7 @@ export default async function TemplateDetailPage({ params }: PageProps) {
     <PageContainer>
       <AppHeader
         title={template.name}
-        description="Preview details, ATS fit, and customization options."
+        description="Preview details and customization options."
         showNewCv={false}
         actions={
           <Button asChild variant="ghost" shape="soft">

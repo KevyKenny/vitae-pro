@@ -15,18 +15,57 @@ export type MockOnboardingDraft = {
   updatedAt: string;
 };
 
+type CacheEntry<T> = { raw: string | null; value: T | null };
+
+const listeners = new Set<() => void>();
+let sessionCache: CacheEntry<MockAuthSession> | null = null;
+let onboardingCache: CacheEntry<MockOnboardingDraft> | null = null;
+
 function delay(ms = 900) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function readJson<T>(key: string): T | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : null;
-  } catch {
-    return null;
+function notify() {
+  listeners.forEach((listener) => listener());
+}
+
+/** Subscribe to auth/onboarding localStorage changes (for useSyncExternalStore). */
+export function subscribeMockAuth(onStoreChange: () => void) {
+  listeners.add(onStoreChange);
+  const onStorage = () => {
+    sessionCache = null;
+    onboardingCache = null;
+    onStoreChange();
+  };
+  if (typeof window !== "undefined") {
+    window.addEventListener("storage", onStorage);
   }
+  return () => {
+    listeners.delete(onStoreChange);
+    if (typeof window !== "undefined") {
+      window.removeEventListener("storage", onStorage);
+    }
+  };
+}
+
+function readCached<T>(
+  key: string,
+  cache: CacheEntry<T> | null,
+  setCache: (entry: CacheEntry<T>) => void,
+): T | null {
+  if (typeof window === "undefined") return null;
+  const raw = window.localStorage.getItem(key);
+  if (cache && cache.raw === raw) return cache.value;
+  let value: T | null = null;
+  if (raw) {
+    try {
+      value = JSON.parse(raw) as T;
+    } catch {
+      value = null;
+    }
+  }
+  setCache({ raw, value });
+  return value;
 }
 
 function writeJson(key: string, value: unknown) {
@@ -35,12 +74,16 @@ function writeJson(key: string, value: unknown) {
 }
 
 export function getMockSession(): MockAuthSession | null {
-  return readJson<MockAuthSession>(AUTH_KEY);
+  return readCached(AUTH_KEY, sessionCache, (entry) => {
+    sessionCache = entry;
+  });
 }
 
 export function clearMockSession() {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(AUTH_KEY);
+  sessionCache = { raw: null, value: null };
+  notify();
 }
 
 export async function mockSignIn(input: {
@@ -66,6 +109,8 @@ export async function mockSignIn(input: {
     needsOnboarding: input.needsOnboarding ?? true,
   };
   writeJson(AUTH_KEY, session);
+  sessionCache = { raw: JSON.stringify(session), value: session };
+  notify();
   return session;
 }
 
@@ -83,6 +128,8 @@ export async function mockSignUp(input: {
     needsOnboarding: true,
   };
   writeJson(AUTH_KEY, session);
+  sessionCache = { raw: JSON.stringify(session), value: session };
+  notify();
   return session;
 }
 
@@ -101,6 +148,8 @@ export async function mockSocialAuth(
     needsOnboarding: true,
   };
   writeJson(AUTH_KEY, session);
+  sessionCache = { raw: JSON.stringify(session), value: session };
+  notify();
   return session;
 }
 
@@ -116,23 +165,32 @@ export async function mockResendVerification(): Promise<{ ok: true }> {
 }
 
 export function getOnboardingDraft(): MockOnboardingDraft | null {
-  return readJson<MockOnboardingDraft>(ONBOARDING_KEY);
+  return readCached(ONBOARDING_KEY, onboardingCache, (entry) => {
+    onboardingCache = entry;
+  });
 }
 
 export function saveOnboardingDraft(draft: MockOnboardingDraft) {
   writeJson(ONBOARDING_KEY, draft);
+  onboardingCache = { raw: JSON.stringify(draft), value: draft };
+  notify();
 }
 
 export function clearOnboardingDraft() {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(ONBOARDING_KEY);
+  onboardingCache = { raw: null, value: null };
+  notify();
 }
 
 export async function mockCompleteOnboarding(): Promise<void> {
   await delay(700);
   const session = getMockSession();
   if (session) {
-    writeJson(AUTH_KEY, { ...session, needsOnboarding: false });
+    const next = { ...session, needsOnboarding: false };
+    writeJson(AUTH_KEY, next);
+    sessionCache = { raw: JSON.stringify(next), value: next };
+    notify();
   }
   clearOnboardingDraft();
 }

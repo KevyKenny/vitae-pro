@@ -8,27 +8,27 @@ const COLUMNS = [
   {
     title: "Product",
     links: [
-      { label: "Features", href: "#features" },
+      { label: "Features", href: "/#features" },
       { label: "Templates", href: "/templates" },
       { label: "Cover letters", href: "/cover-letter" },
-      { label: "AI tools", href: "#ai-tools" },
+      { label: "AI tools", href: "/#ai-tools" },
     ],
   },
   {
     title: "Resources",
     links: [
       { label: "Help", href: "/help" },
-      { label: "Pricing", href: "#pricing" },
-      { label: "FAQ", href: "#faq" },
+      { label: "Pricing", href: "/#pricing" },
+      { label: "FAQ", href: "/#faq" },
       { label: "Sign in", href: "/auth/sign-in" },
     ],
   },
   {
     title: "Company",
     links: [
-      { label: "Privacy", href: "#" },
-      { label: "Terms", href: "#" },
-      { label: "Contact", href: "#" },
+      { label: "Privacy", href: "/privacy" },
+      { label: "Terms", href: "/terms" },
+      { label: "Contact", href: "/contact" },
     ],
   },
 ];

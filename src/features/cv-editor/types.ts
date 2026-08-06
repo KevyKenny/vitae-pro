@@ -32,27 +32,223 @@ export type PersonalInfo = {
   socialLinks: string[];
 };
 
-export type ExperienceEntry = {
+export type EducationQualificationType =
+  | "o-level"
+  | "a-level"
+  | "certificate"
+  | "diploma"
+  | "hnd"
+  | "bachelors"
+  | "honours"
+  | "masters"
+  | "doctorate"
+  | "professional"
+  | "short-course"
+  | "apprenticeship"
+  | "vocational"
+  | "other";
+
+export type ExamBoardId = "zimsec" | "cambridge" | "other";
+
+export type SubjectGrade = {
   id: string;
-  company: string;
-  position: string;
-  startDate: string;
-  endDate: string;
-  current: boolean;
-  location: string;
-  bullets: string[];
+  name: string;
+  grade: string;
 };
 
-export type EducationEntry = {
+type EducationBase = {
   id: string;
+};
+
+export type ExamSubjectsEducation = EducationBase & {
+  qualificationType: "o-level" | "a-level";
+  examinationBoard: ExamBoardId;
+  examinationBoardOther: string;
+  schoolName: string;
+  yearCompleted: string;
+  candidateNumber: string;
+  subjects: SubjectGrade[];
+};
+
+export type TertiaryEducation = EducationBase & {
+  qualificationType:
+    | "diploma"
+    | "hnd"
+    | "bachelors"
+    | "honours"
+    | "masters"
+    | "doctorate"
+    | "other";
   institution: string;
-  degree: string;
+  qualification: string;
   field: string;
   startDate: string;
   endDate: string;
+  grade: string;
   achievements: string;
   description: string;
 };
+
+export type CertificateEducation = EducationBase & {
+  qualificationType: "certificate";
+  certificateName: string;
+  institution: string;
+  year: string;
+  credentialNumber: string;
+  description: string;
+};
+
+export type ProfessionalEducation = EducationBase & {
+  qualificationType: "professional";
+  certificationName: string;
+  issuingOrganization: string;
+  issueDate: string;
+  expiryDate: string;
+  credentialId: string;
+  verificationUrl: string;
+};
+
+export type VocationalEducation = EducationBase & {
+  qualificationType: "vocational" | "short-course" | "apprenticeship";
+  trainingProvider: string;
+  programmeName: string;
+  duration: string;
+  completionDate: string;
+  skillsAcquired: string;
+};
+
+export type EducationEntry =
+  | ExamSubjectsEducation
+  | TertiaryEducation
+  | CertificateEducation
+  | ProfessionalEducation
+  | VocationalEducation;
+
+export type ExperienceTypeId =
+  | "full-time"
+  | "part-time"
+  | "contract"
+  | "internship"
+  | "industrial-attachment"
+  | "graduate-trainee"
+  | "apprenticeship"
+  | "freelance"
+  | "volunteer"
+  | "consulting"
+  | "self-employed"
+  | "temporary"
+  | "other";
+
+export type ExperienceDateMode = "range" | "duration";
+
+export type SupervisorReference = {
+  name: string;
+  position: string;
+  email: string;
+  phone: string;
+};
+
+type ExperienceBase = {
+  id: string;
+};
+
+export type EmploymentExperience = ExperienceBase & {
+  experienceType:
+    | "full-time"
+    | "part-time"
+    | "contract"
+    | "temporary"
+    | "consulting"
+    | "self-employed"
+    | "apprenticeship"
+    | "other";
+  company: string;
+  position: string;
+  location: string;
+  startMonth: string;
+  startYear: string;
+  endMonth: string;
+  endYear: string;
+  current: boolean;
+  responsibilities: string[];
+  skillsGained: string[];
+  achievements: string[];
+};
+
+export type AttachmentExperience = ExperienceBase & {
+  experienceType: "industrial-attachment" | "internship";
+  company: string;
+  department: string;
+  role: string;
+  location: string;
+  dateMode: ExperienceDateMode;
+  startMonth: string;
+  startYear: string;
+  endMonth: string;
+  endYear: string;
+  duration: string;
+  current: boolean;
+  responsibilities: string[];
+  skillsGained: string[];
+  achievements: string[];
+  supervisor: SupervisorReference;
+  includeSupervisorOnExport: boolean;
+};
+
+export type GraduateTraineeExperience = ExperienceBase & {
+  experienceType: "graduate-trainee";
+  programmeName: string;
+  department: string;
+  company: string;
+  rotationDetails: string;
+  location: string;
+  startMonth: string;
+  startYear: string;
+  endMonth: string;
+  endYear: string;
+  current: boolean;
+  responsibilities: string[];
+  skillsGained: string[];
+  achievements: string[];
+};
+
+export type VolunteerExperience = ExperienceBase & {
+  experienceType: "volunteer";
+  organization: string;
+  role: string;
+  cause: string;
+  impact: string;
+  location: string;
+  startMonth: string;
+  startYear: string;
+  endMonth: string;
+  endYear: string;
+  current: boolean;
+  responsibilities: string[];
+  achievements: string[];
+};
+
+export type FreelanceExperience = ExperienceBase & {
+  experienceType: "freelance";
+  clientName: string;
+  projectName: string;
+  technologies: string[];
+  duration: string;
+  dateMode: ExperienceDateMode;
+  startMonth: string;
+  startYear: string;
+  endMonth: string;
+  endYear: string;
+  achievements: string[];
+  portfolioLink: string;
+};
+
+export type ExperienceEntry =
+  | EmploymentExperience
+  | AttachmentExperience
+  | GraduateTraineeExperience
+  | VolunteerExperience
+  | FreelanceExperience;
 
 export type SkillCategory =
   | "technical"
@@ -152,6 +348,5 @@ export type CvVersion = {
 export type EditorTemplate = {
   id: EditorTemplateId;
   name: string;
-  atsCompatible: boolean;
   description: string;
 };

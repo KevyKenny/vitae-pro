@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/** Format a relative timestamp for UI meta lines. */
+/** Format a relative timestamp for UI meta lines (locale-stable for SSR). */
 export function formatRelativeTime(date: Date | string): string {
   const target = typeof date === "string" ? new Date(date) : date;
   const diffMs = Date.now() - target.getTime();
@@ -18,7 +18,8 @@ export function formatRelativeTime(date: Date | string): string {
   const days = Math.floor(hours / 24);
   if (days === 1) return "Yesterday";
   if (days < 7) return `${days} days ago`;
-  return target.toLocaleDateString(undefined, {
+  // Fixed locale avoids Node vs browser `toLocaleDateString()` mismatches.
+  return target.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",

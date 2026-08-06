@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
 import { AppProviders } from "@/providers/app-providers";
-import { APP_NAME, APP_TAGLINE } from "@/lib/constants/navigation";
+import {
+  DEFAULT_DESCRIPTION,
+  DEFAULT_KEYWORDS,
+  DEFAULT_TITLE,
+  SITE_NAME,
+  SITE_URL,
+} from "@/lib/seo/config";
 import "./globals.css";
 
 const inter = Inter({
@@ -25,36 +31,46 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://vitatepro.app",
-  ),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: `${APP_NAME} — AI CV & Cover Letter Builder`,
-    template: `%s — ${APP_NAME}`,
+    default: DEFAULT_TITLE,
+    template: `%s — ${SITE_NAME}`,
   },
-  description: APP_TAGLINE,
-  applicationName: APP_NAME,
-  keywords: [
-    "CV builder",
-    "resume",
-    "cover letter",
-    "ATS",
-    "AI career assistant",
-    "VitatePro",
-  ],
-  authors: [{ name: APP_NAME }],
-  creator: APP_NAME,
+  description: DEFAULT_DESCRIPTION,
+  applicationName: SITE_NAME,
+  keywords: [...DEFAULT_KEYWORDS],
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  category: "career",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: APP_NAME,
-    title: `${APP_NAME} — AI CV & Cover Letter Builder`,
-    description: APP_TAGLINE,
+    siteName: SITE_NAME,
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    url: SITE_URL,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${APP_NAME} — AI CV & Cover Letter Builder`,
-    description: APP_TAGLINE,
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
   icons: {
     icon: [{ url: "/logo/vitaepro-favicon.svg", type: "image/svg+xml" }],
@@ -71,9 +87,12 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${fraunces.variable} ${ibmPlexMono.variable} h-full`}
+      className={`${inter.variable} ${fraunces.variable} ${ibmPlexMono.variable} h-full scroll-smooth`}
     >
-      <body className="min-h-full font-sans antialiased">
+      <body
+        className="min-h-full font-sans antialiased"
+        suppressHydrationWarning
+      >
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

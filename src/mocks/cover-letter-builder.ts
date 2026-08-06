@@ -14,31 +14,26 @@ export const letterTemplates: LetterTemplate[] = [
     id: "professional",
     name: "Professional",
     description: "Classic serif header with balanced whitespace for senior roles.",
-    atsFriendly: true,
   },
   {
     id: "modern",
     name: "Modern",
     description: "Clean Inter body and emerald accent rules for product roles.",
-    atsFriendly: true,
   },
   {
     id: "executive",
     name: "Executive",
     description: "Bold hierarchy suited to leadership and director applications.",
-    atsFriendly: true,
   },
   {
     id: "minimal",
     name: "Minimal",
-    description: "Single-column ATS-safe layout with crisp density.",
-    atsFriendly: true,
+    description: "Single-column layout with crisp density.",
   },
   {
     id: "creative",
     name: "Creative",
     description: "Editorial accents for design and brand storytelling.",
-    atsFriendly: false,
   },
 ];
 
@@ -274,7 +269,7 @@ export const mockCoverLetterDocument: CoverLetterDocument = {
       "I bring Figma design systems, accessibility-first critique, and workshop facilitation — plus mentorship that lifts craft across growing design orgs.",
     closing:
       "I'd welcome a conversation about how my activation and systems work can help Northwind ship clearer first-run experiences this quarter.",
-    signature: "Warm regards,\nKennedy Sithole",
+    signature: "Yours Sincerely,\n\nKennedy Sithole",
   },
   score: {
     total: 92,
@@ -288,7 +283,7 @@ export const mockCoverLetterDocument: CoverLetterDocument = {
     recommendations: [
       "Keep the hiring manager name — it lifts personalization.",
       "One more keyword from the posting (mentorship) is already covered.",
-      "Consider swapping 'Warm regards' for 'Sincerely' if tone shifts to Professional.",
+      "Review the experience paragraph for one more metric.",
     ],
   },
   suggestions: baseSuggestions,
@@ -367,7 +362,7 @@ export const emptyCoverLetterDocument = (): CoverLetterDocument => ({
     experience: "",
     skills: "",
     closing: "",
-    signature: `Warm regards,\n${mockCoverLetterDocument.candidate.name}`,
+    signature: `Yours Sincerely,\n\n${mockCoverLetterDocument.candidate.name}`,
   },
   score: {
     total: 0,

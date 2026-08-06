@@ -24,19 +24,16 @@ export type Industry =
   | "engineering"
   | "design";
 
-export type AtsLevel = "friendly" | "highly-optimized";
-
 export type TemplateBadge =
   | "free"
   | "premium"
   | "recommended"
-  | "ats-optimized"
   | "recruiter-favorite"
   | "popular";
 
 export type LayoutMode = "single" | "two-column" | "sidebar";
 
-export type PageSize = "a4" | "letter";
+export type PageSize = "a4";
 
 export type FontFamilyId =
   | "inter"
@@ -77,8 +74,6 @@ export type GalleryTemplate = {
   style: TemplateStyle;
   careerLevels: CareerLevel[];
   industries: Industry[];
-  atsLevel: AtsLevel;
-  atsScore: number;
   rating: number;
   reviews: number;
   popularity: number;

@@ -14,9 +14,9 @@ export function SaveIndicator({
 }) {
   const map = {
     saved: {
-      label: "Saved",
+      label: "All changes saved",
       icon: Check,
-      className: "text-emerald",
+      className: "text-ink-faint",
       dot: "bg-emerald-bright",
     },
     saving: {
@@ -42,12 +42,19 @@ export function SaveIndicator({
   const Icon = map.icon;
 
   return (
-    <div className={cn("flex items-center gap-2 text-[0.74rem]", map.className)}>
+    <div
+      className={cn(
+        "hidden items-center gap-2 text-[0.74rem] sm:flex",
+        map.className,
+      )}
+    >
       <span className={cn("size-1.5 rounded-full", map.dot)} aria-hidden />
-      <Icon
-        className={cn("size-3.5", status === "saving" && "animate-spin")}
-        aria-hidden
-      />
+      {status === "saving" || status === "failed" ? (
+        <Icon
+          className={cn("size-3.5", status === "saving" && "animate-spin")}
+          aria-hidden
+        />
+      ) : null}
       <span>{map.label}</span>
       {status === "failed" && onRetry ? (
         <Button type="button" variant="link" className="h-auto p-0 text-xs" onClick={onRetry}>

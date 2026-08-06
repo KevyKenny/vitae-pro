@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
+import { FileText, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,12 +8,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { useCoverLetter } from "@/features/cover-letter/context/cover-letter-context";
 import { JobAnalysisCard } from "@/features/cover-letter/components/job-analysis-card";
 import { CandidateProfileCard } from "@/features/cover-letter/components/candidate-profile-card";
-import { ToneSelector } from "@/features/cover-letter/components/tone-selector";
-import { LengthSelector } from "@/features/cover-letter/components/length-selector";
 import { EmptyState } from "@/components/shared/empty-state";
-import { FileText } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export function JobInformationForm() {
+export function JobInformationForm({
+  embedded = false,
+}: {
+  /** When true (mobile sheet), drop outer chrome so the Sheet owns the chrome. */
+  embedded?: boolean;
+}) {
   const {
     document,
     updateJob,
@@ -21,35 +24,43 @@ export function JobInformationForm() {
     analyzeJobDescription,
     generateLetter,
     generating,
-    setTone,
-    setLength,
+    setJobFormOpen,
   } = useCoverLetter();
   const { job } = document;
   const descLen = job.jobDescription.length;
 
   return (
-    <aside className="flex h-full flex-col overflow-y-auto border-r border-line bg-paper px-5 py-6 md:px-7">
-      <div className="mb-6">
-        <h1 className="font-serif text-[1.35rem] font-semibold tracking-tight text-ink">
-          Cover Letter
-        </h1>
-        <p className="mt-1 text-sm text-ink-soft">
-          Tell VitatePro about the role — we&apos;ll draft a letter matched to it.
-        </p>
-      </div>
+    <aside
+      className={cn(
+        "flex h-full min-w-0 flex-col overflow-y-auto bg-paper",
+        embedded ? "border-0 px-4 py-4" : "border-r border-line px-4 py-5 sm:px-5 md:px-7 md:py-6",
+      )}
+    >
+      {!embedded ? (
+        <div className="mb-5 sm:mb-6">
+          <h1 className="font-serif text-[1.25rem] font-semibold tracking-tight text-ink sm:text-[1.35rem]">
+            Cover Letter
+          </h1>
+          <p className="mt-1 text-sm text-ink-soft">
+            Tell VitatePro about the role — we&apos;ll draft a letter matched to
+            it.
+          </p>
+        </div>
+      ) : null}
 
-      <div className="space-y-7 pb-24 md:pb-10">
+      <div className="space-y-6 pb-8 sm:space-y-7 sm:pb-10">
         <section className="space-y-3">
           <p className="text-[0.72rem] font-bold tracking-[0.04em] text-ink-faint uppercase">
             Company information
           </p>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Field label="Company name" id="company">
               <Input
                 id="company"
                 value={job.companyName}
                 onChange={(e) => updateJob({ companyName: e.target.value })}
                 placeholder="Northwind"
+                className="h-11"
               />
             </Field>
             <Field label="Job title" id="title">
@@ -58,6 +69,7 @@ export function JobInformationForm() {
                 value={job.jobTitle}
                 onChange={(e) => updateJob({ jobTitle: e.target.value })}
                 placeholder="Senior Product Designer"
+                className="h-11"
               />
             </Field>
             <Field label="Hiring manager" id="hm">
@@ -66,6 +78,7 @@ export function JobInformationForm() {
                 value={job.hiringManager}
                 onChange={(e) => updateJob({ hiringManager: e.target.value })}
                 placeholder="Jordan Ruiz"
+                className="h-11"
               />
             </Field>
             <Field label="Company website" id="web">
@@ -74,6 +87,7 @@ export function JobInformationForm() {
                 value={job.companyWebsite}
                 onChange={(e) => updateJob({ companyWebsite: e.target.value })}
                 placeholder="northwind.design"
+                className="h-11"
               />
             </Field>
             <Field label="Company location" id="loc" className="sm:col-span-2">
@@ -82,6 +96,7 @@ export function JobInformationForm() {
                 value={job.companyLocation}
                 onChange={(e) => updateJob({ companyLocation: e.target.value })}
                 placeholder="Remote · San Francisco"
+                className="h-11"
               />
             </Field>
           </div>
@@ -99,21 +114,21 @@ export function JobInformationForm() {
               icon={FileText}
               title="No job description"
               description="Paste the posting so AI can extract skills, keywords, and expectations."
-              className="py-10"
+              className="py-8 sm:py-10"
             />
           ) : null}
           <Textarea
             value={job.jobDescription}
             onChange={(e) => updateJob({ jobDescription: e.target.value })}
             placeholder="Paste the job description here..."
-            rows={7}
-            className="min-h-36 bg-surface"
+            rows={6}
+            className="min-h-32 bg-surface text-[0.95rem] sm:min-h-36"
           />
           <Button
             type="button"
             variant="outline"
             shape="soft"
-            className="w-full rounded-[8px]"
+            className="h-11 w-full rounded-[8px]"
             disabled={analyzing || !job.jobDescription.trim()}
             onClick={analyzeJobDescription}
           >
@@ -130,26 +145,15 @@ export function JobInformationForm() {
           <CandidateProfileCard />
         </section>
 
-        <section className="space-y-3">
-          <p className="text-[0.72rem] font-bold tracking-[0.04em] text-ink-faint uppercase">
-            Tone
-          </p>
-          <ToneSelector value={document.tone} onChange={setTone} />
-        </section>
-
-        <section className="space-y-3">
-          <p className="text-[0.72rem] font-bold tracking-[0.04em] text-ink-faint uppercase">
-            Length
-          </p>
-          <LengthSelector value={document.length} onChange={setLength} />
-        </section>
-
         <Button
           type="button"
           shape="soft"
-          className="w-full rounded-full"
+          className="h-12 w-full rounded-[10px]"
           disabled={generating}
-          onClick={generateLetter}
+          onClick={() => {
+            generateLetter();
+            if (embedded) setJobFormOpen(false);
+          }}
         >
           <Sparkles className="size-4" />
           {generating ? "Generating…" : "Generate with AI"}
@@ -171,10 +175,8 @@ function Field({
   className?: string;
 }) {
   return (
-    <div className={className}>
-      <Label htmlFor={id} className="mb-1.5">
-        {label}
-      </Label>
+    <div className={cn("min-w-0 space-y-1.5", className)}>
+      <Label htmlFor={id}>{label}</Label>
       {children}
     </div>
   );

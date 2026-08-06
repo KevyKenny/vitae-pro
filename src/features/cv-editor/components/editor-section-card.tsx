@@ -18,6 +18,8 @@ type EditorSectionCardProps = {
   className?: string;
   collapsed?: boolean;
   onToggleCollapse?: () => void;
+  /** Flush into parent panel card (no nested border/shadow). */
+  flush?: boolean;
 };
 
 export function EditorSectionCard({
@@ -27,6 +29,7 @@ export function EditorSectionCard({
   className,
   collapsed,
   onToggleCollapse,
+  flush = true,
 }: EditorSectionCardProps) {
   const {
     activeSectionId,
@@ -44,10 +47,14 @@ export function EditorSectionCard({
       data-section-id={sectionId}
       onFocusCapture={() => setActiveSectionId(sectionId)}
       className={cn(
-        "overflow-hidden rounded-[14px] border border-line bg-surface transition-[box-shadow,border-color] duration-150",
-        "hover:shadow-s",
-        focused &&
-          "border-emerald-bright shadow-[0_0_0_3px_var(--emerald-wash)]",
+        "overflow-hidden transition-[box-shadow,border-color] duration-150",
+        flush
+          ? "rounded-none border-0 bg-transparent shadow-none"
+          : cn(
+              "rounded-[14px] border border-line bg-surface hover:shadow-s",
+              focused &&
+                "border-emerald-bright shadow-[0_0_0_3px_var(--emerald-wash)]",
+            ),
         !meta?.visible && "opacity-60",
         className,
       )}
@@ -56,7 +63,27 @@ export function EditorSectionCard({
         <h3 className="flex-1 font-sans text-[0.92rem] font-semibold text-ink">
           {title}
         </h3>
-        <span className="text-[0.7rem] text-ink-faint">{meta?.completion ?? 0}%</span>
+        <div className="mr-1 hidden items-center gap-2 sm:flex">
+          <div
+            className="h-1.5 w-24 overflow-hidden rounded-full bg-paper-dim"
+            role="progressbar"
+            aria-valuenow={meta?.completion ?? 0}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`${title} completion`}
+          >
+            <div
+              className="h-full rounded-full bg-emerald transition-[width]"
+              style={{ width: `${meta?.completion ?? 0}%` }}
+            />
+          </div>
+          <span className="text-[0.72rem] font-medium text-ink-faint tabular-nums">
+            {meta?.completion ?? 0}% complete
+          </span>
+        </div>
+        <span className="text-[0.7rem] text-ink-faint sm:hidden">
+          {meta?.completion ?? 0}%
+        </span>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -110,7 +137,11 @@ export function EditorSectionCard({
           </Button>
         ) : null}
       </div>
-      {!collapsed ? <div className="p-[18px]">{children}</div> : null}
+      {!collapsed ? (
+        <div className={cn("p-[18px]", flush && "px-5 py-5 sm:px-7 sm:py-6")}>
+          {children}
+        </div>
+      ) : null}
     </section>
   );
 }

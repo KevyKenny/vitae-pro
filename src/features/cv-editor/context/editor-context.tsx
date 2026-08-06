@@ -24,6 +24,7 @@ import type {
   EditorTemplateId,
   SaveStatus,
 } from "@/features/cv-editor/types";
+import { withUpdatedFirstBullet } from "@/features/cv-editor/components/experience/experience-helpers";
 
 type EditorContextValue = {
   document: CvDocument;
@@ -199,15 +200,17 @@ export function EditorProvider({
         }
         if (
           aiSuggestion.sectionType === "experience" &&
-          aiSuggestion.targetPath === "experience.0.bullets.0"
+          (aiSuggestion.targetPath === "experience.0.bullets.0" ||
+            aiSuggestion.targetPath === "experience.0.responsibilities.0")
         ) {
           updateDocument((prev) => {
             const experience = [...prev.experience];
             const first = experience[0];
             if (!first) return prev;
-            const bullets = [...first.bullets];
-            bullets[0] = aiSuggestion.suggestion;
-            experience[0] = { ...first, bullets };
+            experience[0] = withUpdatedFirstBullet(
+              first,
+              aiSuggestion.suggestion,
+            );
             return { ...prev, experience };
           });
         }
@@ -227,7 +230,7 @@ export function EditorProvider({
           if (!aiSuggestion) return;
           setAiSuggestion({
             ...aiSuggestion,
-            suggestion: `${aiSuggestion.suggestion.replace(/\.$/, "")} — refined for ATS clarity.`,
+            suggestion: `${aiSuggestion.suggestion.replace(/\.$/, "")} — refined.`,
             confidence: Math.min(0.98, aiSuggestion.confidence + 0.02),
           });
         }, 800);

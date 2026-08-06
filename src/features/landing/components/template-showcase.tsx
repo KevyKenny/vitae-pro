@@ -15,7 +15,8 @@ export function TemplateShowcase() {
               Templates that look hired, not handmade overnight
             </h2>
             <p className="mt-3 max-w-xl text-ink-soft">
-              Modern, Executive, Minimal, Creative — each scored for ATS fit.
+              Modern, Executive, Minimal, Creative — designed to present your
+              experience with clarity.
             </p>
           </div>
           <Button asChild variant="outline" shape="soft">
@@ -52,7 +53,7 @@ export function TemplateShowcase() {
               <div className="flex items-center justify-between px-4 py-3">
                 <p className="font-semibold text-ink">{t.name}</p>
                 <span className="text-[0.68rem] font-bold tracking-wide text-emerald uppercase">
-                  ATS
+                  Professional
                 </span>
               </div>
             </motion.article>

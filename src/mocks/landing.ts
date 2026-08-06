@@ -22,7 +22,7 @@ export const landingSteps = [
     id: "3",
     title: "Choose your professional design",
     description:
-      "Switch templates while your content stays intact — ATS-safe by default.",
+      "Switch templates while your content stays intact and clearly presented.",
   },
   {
     id: "4",
@@ -46,10 +46,10 @@ export const landingAiFeatures = [
     example: "Improved day-7 activation by 18% through onboarding redesign.",
   },
   {
-    id: "ats",
-    title: "ATS Optimization",
-    description: "Keep headings, keywords, and structure parseable.",
-    example: "ATS score 62 → 92 with keyword and structure passes.",
+    id: "clarity",
+    title: "Clarity Coaching",
+    description: "Refine headings, keywords, and structure for a focused story.",
+    example: "Turn a dense draft into clear, role-relevant highlights.",
   },
   {
     id: "letter",
@@ -85,7 +85,7 @@ export const landingTestimonials = [
     name: "Jonas Meyer",
     role: "Software Engineer",
     quote:
-      "The ATS pass alone caught gaps I never noticed. I started getting callbacks the same week.",
+      "The feedback caught gaps I never noticed. I started getting callbacks the same week.",
     initials: "JM",
   },
   {
@@ -111,7 +111,7 @@ export const landingFaqs = [
     id: "free",
     question: "Is VitatePro free?",
     answer:
-      "Yes — start on Free with ATS-friendly templates and AI suggestions. Upgrade when you need unlimited generations and premium layouts.",
+      "Yes — start on Free with AI suggestions. Upgrade when you need unlimited generations and premium layouts.",
   },
   {
     id: "write",
@@ -120,10 +120,10 @@ export const landingFaqs = [
       "AI drafts and improves sections from your experience. You stay in control — accept, edit, or reject every suggestion.",
   },
   {
-    id: "ats",
-    question: "Are templates ATS friendly?",
+    id: "professional-templates",
+    question: "Do the templates look professional?",
     answer:
-      "Most layouts are built for parseable headings and clean single-column flows. Each template shows an ATS badge in the gallery.",
+      "Yes — each layout uses polished typography, balanced spacing, and clear sections to help your experience stand out.",
   },
   {
     id: "customize",

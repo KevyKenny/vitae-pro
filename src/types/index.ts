@@ -44,7 +44,6 @@ export type CV = {
   templateId: string;
   templateName: string;
   score: number;
-  atsScore: number;
   completion: number;
   updatedAt: string;
   status: "draft" | "complete" | "archived";

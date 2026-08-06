@@ -28,7 +28,6 @@ const DEFAULT_FILTERS: TemplateFiltersState = {
   style: "all",
   careerLevel: "all",
   industry: "all",
-  ats: "any",
 };
 
 export function TemplateGallery() {
@@ -54,7 +53,6 @@ export function TemplateGallery() {
         !t.industries.includes(filters.industry)
       )
         return false;
-      if (filters.ats !== "any" && t.atsLevel !== filters.ats) return false;
       if (!q) return true;
       return (
         t.name.toLowerCase().includes(q) ||
@@ -78,7 +76,7 @@ export function TemplateGallery() {
     <PageContainer>
       <AppHeader
         title="Templates"
-        description="Professionally designed CV layouts optimized for recruiters and ATS systems."
+        description="Professionally designed CV layouts that make a strong impression on recruiters."
         showNewCv={false}
         actions={
           <Button asChild variant="outline" shape="soft">
@@ -100,8 +98,8 @@ export function TemplateGallery() {
               Choose a CV design that represents your career.
             </h2>
             <p className="mt-3 max-w-xl text-[0.95rem] text-ink-soft">
-              Professionally designed templates optimized for recruiters and ATS
-              systems — preview, compare, and customize in minutes.
+              Professionally designed templates for recruiters — preview, compare,
+              and customize in minutes.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               <Button asChild shape="soft">

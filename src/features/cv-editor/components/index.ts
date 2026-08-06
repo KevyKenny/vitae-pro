@@ -1,6 +1,6 @@
 export { CVEditorLayout } from "./cv-editor-layout";
 export { EditorToolbar } from "./editor-toolbar";
-export { SectionNavigator } from "./section-navigator";
+export { SectionNavigator, MobileSectionBar } from "./section-navigator";
 export { EditorWorkspace } from "./editor-workspace";
 export { CVPreview } from "./cv-preview";
 export { TemplateSelector } from "./template-selector";

@@ -24,7 +24,10 @@ export function MobileSidebar() {
 
   return (
     <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-      <SheetContent side="left" className="w-[280px] gap-0 p-0">
+      <SheetContent
+        side="left"
+        className="w-[min(100%,300px)] gap-0 p-0 safe-pt safe-pb"
+      >
         <SheetHeader className="border-b border-line px-4 py-5 text-left">
           <SheetTitle className="sr-only">Navigation</SheetTitle>
           <Logo onNavigate={() => setMobileOpen(false)} />

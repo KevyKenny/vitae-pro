@@ -18,7 +18,6 @@ import type {
   GallerySectionId,
   GalleryTemplate,
   LayoutMode,
-  PageSize,
   TemplateCustomization,
 } from "@/features/templates/types";
 
@@ -33,7 +32,6 @@ type CustomizeContextValue = {
   applyPalette: (palette: ColorPalette) => void;
   setFont: (id: FontFamilyId) => void;
   setLayout: (layout: LayoutMode) => void;
-  setPageSize: (size: PageSize) => void;
   toggleSection: (id: GallerySectionId) => void;
   moveSection: (id: GallerySectionId, direction: "up" | "down") => void;
   reset: () => void;
@@ -79,7 +77,6 @@ export function CustomizeProvider({
         }),
       setFont: (fontFamily) => update({ fontFamily }),
       setLayout: (layout) => update({ layout }),
-      setPageSize: (pageSize) => update({ pageSize }),
       toggleSection: (id) =>
         setCustomization((prev) => ({
           ...prev,

@@ -10,7 +10,6 @@ import { ProductMockup } from "@/features/landing/components/product-mockup";
 const TRUST = [
   "No credit card required",
   "Create your first CV in minutes",
-  "ATS-friendly templates",
   "AI-powered improvements",
 ];
 
@@ -44,15 +43,15 @@ export function HeroSection() {
           <p className="font-serif text-3xl font-semibold tracking-[-0.02em] text-emerald sm:text-4xl">
             {APP_NAME}
           </p>
-          <h1 className="mt-4 font-serif text-[2.35rem] leading-[1.08] font-semibold tracking-[-0.025em] text-ink sm:text-5xl md:text-[3.25rem]">
+          <h1 className="mt-4 font-serif text-[2rem] leading-[1.1] font-semibold tracking-[-0.025em] text-ink sm:text-5xl md:text-[3.25rem]">
             Build a CV that gets noticed.
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-base text-ink-soft sm:text-lg">
-            Create professional, ATS-friendly CVs and personalized cover letters
-            with AI assistance.
+            Create professional CVs and personalized cover letters with AI
+            assistance.
           </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button asChild size="lg" shape="soft" className="min-w-[180px]">
+          <div className="mt-8 flex w-full max-w-sm flex-col items-stretch gap-3 self-center sm:max-w-none sm:flex-row sm:items-center sm:justify-center">
+            <Button asChild size="lg" shape="soft" className="w-full sm:w-auto sm:min-w-[180px]">
               <Link href="/auth/sign-up">Create My CV</Link>
             </Button>
             <Button
@@ -60,7 +59,7 @@ export function HeroSection() {
               size="lg"
               variant="outline"
               shape="soft"
-              className="min-w-[180px]"
+              className="w-full sm:w-auto sm:min-w-[180px]"
             >
               <Link href="/templates">View Templates</Link>
             </Button>

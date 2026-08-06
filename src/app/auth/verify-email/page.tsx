@@ -13,18 +13,15 @@ import {
 import {
   getMockSession,
   mockResendVerification,
+  subscribeMockAuth,
 } from "@/features/auth/lib/mock-auth";
-
-function subscribe() {
-  return () => {};
-}
 
 export default function VerifyEmailPage() {
   const [loading, setLoading] = useState(false);
   const [resent, setResent] = useState(false);
   const session = useSyncExternalStore(
-    subscribe,
-    () => getMockSession(),
+    subscribeMockAuth,
+    getMockSession,
     () => null,
   );
   const email = session?.email ?? "your email";

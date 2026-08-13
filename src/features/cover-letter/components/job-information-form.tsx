@@ -1,14 +1,24 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { FileText, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useCoverLetter } from "@/features/cover-letter/context/cover-letter-context";
 import { JobAnalysisCard } from "@/features/cover-letter/components/job-analysis-card";
+import { CvTailorCard } from "@/features/cover-letter/components/cv-tailor-card";
 import { CandidateProfileCard } from "@/features/cover-letter/components/candidate-profile-card";
 import { EmptyState } from "@/components/shared/empty-state";
+import { listUserCvs, type CvListItem } from "@/lib/cvs";
 import { cn } from "@/lib/utils";
 
 export function JobInformationForm({
@@ -20,14 +30,33 @@ export function JobInformationForm({
   const {
     document,
     updateJob,
+    setCvId,
     analyzing,
     analyzeJobDescription,
     generateLetter,
     generating,
+    tailorCv,
+    cvTailoring,
+    cvTailorResult,
     setJobFormOpen,
   } = useCoverLetter();
   const { job } = document;
   const descLen = job.jobDescription.length;
+  const [cvs, setCvs] = useState<CvListItem[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void listUserCvs()
+      .then((items) => {
+        if (!cancelled) setCvs(items);
+      })
+      .catch(() => {
+        if (!cancelled) setCvs([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <aside
@@ -136,12 +165,50 @@ export function JobInformationForm({
             Analyze Job Description
           </Button>
           <JobAnalysisCard analysis={document.analysis} loading={analyzing} />
+          {document.cvId ? (
+            <>
+              <Button
+                type="button"
+                variant="outline"
+                shape="soft"
+                className="h-11 w-full rounded-[8px]"
+                disabled={
+                  cvTailoring || !job.jobDescription.trim() || !document.cvId
+                }
+                onClick={tailorCv}
+              >
+                <Sparkles className="size-4" />
+                Tailor linked CV to job
+              </Button>
+              <CvTailorCard result={cvTailorResult} loading={cvTailoring} />
+            </>
+          ) : null}
         </section>
 
         <section className="space-y-3">
           <p className="text-[0.72rem] font-bold tracking-[0.04em] text-ink-faint uppercase">
             Candidate information
           </p>
+          <Field label="Associated CV" id="associated-cv">
+            <Select
+              value={document.cvId ?? "none"}
+              onValueChange={(value) =>
+                setCvId(value === "none" ? null : value)
+              }
+            >
+              <SelectTrigger id="associated-cv" className="h-11 rounded-[8px]">
+                <SelectValue placeholder="No CV attached" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">No CV attached</SelectItem>
+                {cvs.map((cv) => (
+                  <SelectItem key={cv.id} value={cv.id}>
+                    {cv.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
           <CandidateProfileCard />
         </section>
 

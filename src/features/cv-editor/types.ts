@@ -20,16 +20,53 @@ export type EditorTemplateId =
   | "minimal"
   | "creative";
 
+export type PersonalOptionalFieldKey =
+  | "driversLicense"
+  | "website"
+  | "linkedin"
+  | "dateOfBirth"
+  | "placeOfBirth"
+  | "gender"
+  | "nationality"
+  | "civilStatus";
+
+export type PersonalCustomField = {
+  id: string;
+  label: string;
+  value: string;
+};
+
+export type PersonalFieldVisibility = Partial<
+  Record<PersonalOptionalFieldKey, boolean>
+>;
+
 export type PersonalInfo = {
   photoUrl?: string;
+  givenName: string;
+  familyName: string;
+  /** Synced from given/family names for preview, export, and legacy consumers. */
   fullName: string;
   title: string;
+  useAsHeadline: boolean;
   email: string;
   phone: string;
+  address: string;
+  postCode: string;
+  city: string;
+  /** Synced from address parts for preview and legacy consumers. */
   location: string;
+  driversLicense: string;
   linkedin: string;
   portfolio: string;
+  /** Preserved in storage; not shown in the redesigned Personal Details form. */
   socialLinks: string[];
+  dateOfBirth: string;
+  placeOfBirth: string;
+  gender: string;
+  nationality: string;
+  civilStatus: string;
+  customFields: PersonalCustomField[];
+  fieldVisibility: PersonalFieldVisibility;
 };
 
 export type EducationQualificationType =
@@ -80,8 +117,15 @@ export type TertiaryEducation = EducationBase & {
     | "doctorate"
     | "other";
   institution: string;
+  city: string;
   qualification: string;
   field: string;
+  startMonth: string;
+  startYear: string;
+  endMonth: string;
+  endYear: string;
+  current: boolean;
+  /** Synced ISO date for persistence and legacy consumers. */
   startDate: string;
   endDate: string;
   grade: string;
@@ -261,7 +305,7 @@ export type SkillEntry = {
   id: string;
   name: string;
   category: SkillCategory;
-  level: number;
+  level: number | null;
 };
 
 export type ProjectEntry = {
@@ -306,6 +350,7 @@ export type CvSectionMeta = {
   label: string;
   visible: boolean;
   completion: number;
+  content?: string;
 };
 
 export type CvDocument = {

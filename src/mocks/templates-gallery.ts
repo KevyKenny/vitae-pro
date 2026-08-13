@@ -440,9 +440,12 @@ export function getGalleryTemplateById(id: string): GalleryTemplate | undefined 
 }
 
 export function createDefaultCustomization(
-  templateId: string,
+  templateOrId: string | GalleryTemplate,
 ): TemplateCustomization {
-  const template = getGalleryTemplateById(templateId) ?? galleryTemplates[0];
+  const template =
+    typeof templateOrId === "string"
+      ? getGalleryTemplateById(templateOrId) ?? galleryTemplates[0]
+      : templateOrId;
   const palette =
     colorPalettes.find((p) => p.primary === template.accent) ?? colorPalettes[0];
 

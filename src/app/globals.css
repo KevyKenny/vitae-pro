@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../styles/document.css";
 @import "tw-animate-css";
 
 /* ─────────────────────────────────────────────────────────────
@@ -276,6 +277,27 @@
     @apply flex gap-2 overflow-x-auto overscroll-x-contain scrollbar-none;
     -webkit-overflow-scrolling: touch;
   }
+}
+
+/* CV editor Quill (react-quill-new) */
+.cv-quill .ql-toolbar {
+  border: none;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-dim);
+  border-radius: 8px 8px 0 0;
+}
+.cv-quill .ql-container {
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  min-height: 7.5rem;
+}
+.cv-quill .ql-editor {
+  min-height: 7.5rem;
+}
+.cv-quill .ql-editor.ql-blank::before {
+  color: var(--ink-faint);
+  font-style: normal;
 }
 
 @media (prefers-reduced-motion: reduce) {

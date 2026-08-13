@@ -1,12 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  ChevronDown,
-  Copy,
-  GripVertical,
-  Trash2,
-} from "lucide-react";
+import { Check, ChevronDown, GripVertical, Trash2 } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
@@ -18,7 +13,6 @@ import {
   VolunteerForm,
 } from "@/features/cv-editor/components/experience/experience-forms";
 import {
-  EXPERIENCE_TYPE_OPTIONS,
   experienceCardSummary,
   validateExperienceEntry,
 } from "@/features/cv-editor/components/experience/experience-helpers";
@@ -29,13 +23,12 @@ export function ExperienceCard({
   entry,
   onChange,
   onRemove,
-  onDuplicate,
   defaultExpanded = false,
 }: {
   entry: ExperienceEntry;
   onChange: (next: ExperienceEntry) => void;
   onRemove: () => void;
-  onDuplicate: () => void;
+  onDuplicate?: () => void;
   defaultExpanded?: boolean;
 }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
@@ -45,9 +38,6 @@ export function ExperienceCard({
     () => (showErrors || expanded ? validateExperienceEntry(entry) : {}),
     [entry, expanded, showErrors],
   );
-  const Icon =
-    EXPERIENCE_TYPE_OPTIONS.find((o) => o.id === entry.experienceType)?.icon ??
-    EXPERIENCE_TYPE_OPTIONS[0].icon;
 
   const {
     attributes,
@@ -97,10 +87,10 @@ export function ExperienceCard({
         transition,
         opacity: isDragging ? 0.72 : 1,
       }}
-      className="rounded-[14px] border border-line bg-paper-dim/40 shadow-s"
+      className="rounded-lg border border-line bg-surface shadow-s"
       aria-labelledby={`exp-title-${entry.id}`}
     >
-      <div className="flex items-start gap-2 p-3 sm:p-4">
+      <div className="flex items-start gap-2 border-b border-line px-3 py-3 sm:px-4">
         <Button
           type="button"
           variant="ghost"
@@ -116,87 +106,77 @@ export function ExperienceCard({
 
         <button
           type="button"
-          className="min-w-0 flex-1 rounded-[10px] text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald/40"
+          className="min-w-0 flex-1 rounded-md text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald/40"
           aria-expanded={expanded}
           aria-controls={`exp-panel-${entry.id}`}
           onClick={() => {
-            setExpanded((v) => !v);
+            setExpanded((value) => !value);
             setShowErrors(true);
           }}
         >
-          <div className="flex items-start gap-3">
-            <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-emerald-wash text-emerald">
-              <Icon className="size-4" aria-hidden />
+          <span
+            id={`exp-title-${entry.id}`}
+            className="block text-[0.92rem] font-semibold text-ink"
+          >
+            {summary.title}
+          </span>
+          <span className="mt-0.5 block text-sm text-ink-soft">
+            {summary.subtitle}
+          </span>
+          {summary.meta ? (
+            <span className="mt-1 block text-[0.78rem] text-ink-faint">
+              {summary.meta}
             </span>
-            <span className="min-w-0">
-              <span className="mb-1 inline-block rounded-full bg-surface px-2 py-0.5 text-[0.68rem] font-semibold text-ink-soft">
-                {summary.badge}
-              </span>
-              <span
-                id={`exp-title-${entry.id}`}
-                className="block font-semibold text-ink"
-              >
-                {summary.title}
-              </span>
-              <span className="mt-0.5 block text-sm text-ink-soft">
-                {summary.subtitle}
-              </span>
-              <span className="mt-1 block text-[0.78rem] text-ink-faint">
-                {summary.meta}
-              </span>
-            </span>
-          </div>
+          ) : null}
         </button>
 
-        <div className="flex shrink-0 items-center gap-0.5">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            shape="soft"
-            aria-label="Duplicate experience"
-            onClick={onDuplicate}
-          >
-            <Copy className="size-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            shape="soft"
-            aria-label="Delete experience"
-            onClick={onRemove}
-          >
-            <Trash2 className="size-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            shape="soft"
-            aria-label={expanded ? "Collapse" : "Expand"}
-            aria-expanded={expanded}
-            onClick={() => {
-              setExpanded((v) => !v);
-              setShowErrors(true);
-            }}
-          >
-            <ChevronDown
-              className={cn(
-                "size-4 transition-transform",
-                expanded && "rotate-180",
-              )}
-            />
-          </Button>
-        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          shape="soft"
+          aria-label={
+            expanded ? "Collapse experience entry" : "Expand experience entry"
+          }
+          aria-expanded={expanded}
+          onClick={() => {
+            setExpanded((value) => !value);
+            setShowErrors(true);
+          }}
+        >
+          <ChevronDown
+            className={cn(
+              "size-4 transition-transform",
+              expanded && "rotate-180",
+            )}
+          />
+        </Button>
       </div>
 
       {expanded ? (
-        <div
-          id={`exp-panel-${entry.id}`}
-          className="border-t border-line px-3 pt-3 pb-4 sm:px-4"
-        >
+        <div id={`exp-panel-${entry.id}`} className="px-3 py-4 sm:px-4">
           {renderForm()}
+          <div className="mt-4 flex items-center justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              shape="soft"
+              aria-label="Delete experience entry"
+              onClick={onRemove}
+              className="rounded-md"
+            >
+              <Trash2 className="size-4" />
+            </Button>
+            <Button
+              type="button"
+              className="rounded-md bg-[#7c3aed] px-4 text-white hover:bg-[#6d28d9]"
+              onClick={() => setExpanded(false)}
+            >
+              <Check className="size-4" />
+              Done
+            </Button>
+          </div>
         </div>
       ) : null}
     </article>

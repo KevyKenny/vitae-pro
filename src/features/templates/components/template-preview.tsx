@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Bookmark, Share2 } from "lucide-react";
 import { toast } from "sonner";
@@ -8,9 +10,79 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TemplateBadges } from "@/features/templates/components/template-badges";
 import { MiniPreview } from "@/features/templates/components/template-card";
+import { useUser } from "@/features/auth/hooks/use-auth";
 import type { GalleryTemplate } from "@/features/templates/types";
+import { listUserCvs } from "@/lib/cvs";
+import {
+  applyGalleryTemplateToCv,
+  saveTemplateCustomization,
+  templateErrorMessage,
+} from "@/lib/templates";
+import { createDefaultCustomization } from "@/mocks/templates-gallery";
 
 export function TemplatePreview({ template }: { template: GalleryTemplate }) {
+  const router = useRouter();
+  const { user, loading: authLoading } = useUser();
+  const [applying, setApplying] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const handleUseTemplate = async () => {
+    if (authLoading) return;
+
+    if (!user) {
+      router.push(`/auth/sign-in?next=/templates/${template.id}`);
+      return;
+    }
+
+    setApplying(true);
+    try {
+      const cvs = await listUserCvs();
+      const target = cvs.find((cv) => cv.isDefault) ?? cvs[0];
+
+      if (!target) {
+        router.push(`/cvs?template=${template.id}`);
+        return;
+      }
+
+      await applyGalleryTemplateToCv(target.id, template.id);
+      toast.success("Template applied", {
+        description: `Updated "${target.title}".`,
+        action: {
+          label: "Open editor",
+          onClick: () => router.push(`/cvs/${target.id}/edit`),
+        },
+      });
+      router.push(`/cvs/${target.id}/edit`);
+    } catch (error) {
+      toast.error(templateErrorMessage(error));
+    } finally {
+      setApplying(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (authLoading) return;
+
+    if (!user) {
+      router.push(`/auth/sign-in?next=/templates/${template.id}`);
+      return;
+    }
+
+    setSaving(true);
+    try {
+      await saveTemplateCustomization({
+        templateSlug: template.id,
+        name: template.name,
+        customization: createDefaultCustomization(template),
+      });
+      toast.success("Template saved to My Templates");
+    } catch (error) {
+      toast.error(templateErrorMessage(error));
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
       <motion.div
@@ -55,8 +127,13 @@ export function TemplatePreview({ template }: { template: GalleryTemplate }) {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <Button asChild shape="soft">
-            <Link href={`/customize?template=${template.id}`}>Use Template</Link>
+          <Button
+            type="button"
+            shape="soft"
+            disabled={applying || authLoading}
+            onClick={() => void handleUseTemplate()}
+          >
+            {applying ? "Applying…" : "Use Template"}
           </Button>
           <Button asChild variant="outline" shape="soft">
             <Link href={`/customize?template=${template.id}`}>Customize</Link>
@@ -65,10 +142,11 @@ export function TemplatePreview({ template }: { template: GalleryTemplate }) {
             type="button"
             variant="outline"
             shape="soft"
-            onClick={() => toast.success("Template saved to My Templates")}
+            disabled={saving || authLoading}
+            onClick={() => void handleSave()}
           >
             <Bookmark className="size-4" />
-            Save
+            {saving ? "Saving…" : "Save"}
           </Button>
           <Button
             type="button"

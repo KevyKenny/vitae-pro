@@ -8,15 +8,62 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  MONTH_OPTIONS,
-  YEAR_OPTIONS,
-} from "@/features/cv-editor/components/experience/experience-helpers";
+import { MONTH_OPTIONS, YEAR_OPTIONS } from "@/lib/cvs/date-options";
 import { cn } from "@/lib/utils";
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
   return <p className="text-[0.72rem] text-destructive">{message}</p>;
+}
+
+export function SingleMonthYearFields({
+  month,
+  year,
+  onChange,
+  label = "Date",
+}: {
+  month: string;
+  year: string;
+  onChange: (patch: { month?: string; year?: string }) => void;
+  label?: string;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <Label className="text-[0.76rem] uppercase text-ink-soft">{label}</Label>
+      <div className="grid grid-cols-2 gap-2">
+        <Select
+          value={month || undefined}
+          onValueChange={(value) => onChange({ month: value })}
+        >
+          <SelectTrigger className="bg-surface" aria-label="Month">
+            <SelectValue placeholder="Month" />
+          </SelectTrigger>
+          <SelectContent>
+            {MONTH_OPTIONS.map((m) => (
+              <SelectItem key={m.id} value={m.id}>
+                {m.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
+          value={year || undefined}
+          onValueChange={(value) => onChange({ year: value })}
+        >
+          <SelectTrigger className="bg-surface" aria-label="Year">
+            <SelectValue placeholder="Year" />
+          </SelectTrigger>
+          <SelectContent>
+            {YEAR_OPTIONS.map((y) => (
+              <SelectItem key={y} value={y}>
+                {y}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
 }
 
 export function MonthYearFields({

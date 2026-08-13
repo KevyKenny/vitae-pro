@@ -3,7 +3,12 @@ import type {
   EducationQualificationType,
   ExamBoardId,
   SubjectGrade,
+  TertiaryEducation,
 } from "@/features/cv-editor/types";
+import {
+  normalizeTertiaryEntry,
+  syncTertiaryDates,
+} from "@/lib/cvs/education-dates";
 
 export const QUALIFICATION_OPTIONS: {
   id: EducationQualificationType;
@@ -137,7 +142,7 @@ export function examBoardShort(
 
 export function createSubject(partial?: Partial<SubjectGrade>): SubjectGrade {
   return {
-    id: `subj_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+    id: crypto.randomUUID(),
     name: "",
     grade: "",
     ...partial,
@@ -146,7 +151,7 @@ export function createSubject(partial?: Partial<SubjectGrade>): SubjectGrade {
 
 export function createEducationEntry(
   type: EducationQualificationType,
-  id = `edu_${Date.now()}`,
+  id = crypto.randomUUID(),
 ): EducationEntry {
   switch (type) {
     case "o-level":
@@ -195,19 +200,32 @@ export function createEducationEntry(
         skillsAcquired: "",
       };
     default:
-      return {
+      return normalizeTertiaryEntry({
         id,
         qualificationType: type,
         institution: "",
+        city: "",
         qualification: "",
         field: "",
+        startMonth: "",
+        startYear: "",
+        endMonth: "",
+        endYear: "",
+        current: false,
         startDate: "",
         endDate: "",
         grade: "",
         achievements: "",
         description: "",
-      };
+      });
   }
+}
+
+export function patchTertiaryEntry(
+  entry: TertiaryEducation,
+  patch: Partial<TertiaryEducation>,
+): TertiaryEducation {
+  return normalizeTertiaryEntry({ ...entry, ...patch });
 }
 
 export function educationCardSummary(entry: EducationEntry): {
@@ -254,17 +272,33 @@ export function educationCardSummary(entry: EducationEntry): {
           .filter(Boolean)
           .join(" · "),
       };
-    default:
+    default: {
+      const synced = syncTertiaryDates(entry);
+      const title =
+        synced.qualification.trim() ||
+        qualificationLabel(entry.qualificationType);
       return {
-        title: qualificationLabel(entry.qualificationType),
-        subtitle:
-          [entry.qualification, entry.field].filter(Boolean).join(" · ") ||
-          "Untitled qualification",
-        meta: [entry.institution, entry.endDate || entry.startDate]
+        title,
+        subtitle: synced.institution || "Untitled institution",
+        meta: [synced.city, formatTertiaryDateMeta(synced)]
           .filter(Boolean)
           .join(" · "),
       };
+    }
   }
+}
+
+function formatTertiaryDateMeta(entry: TertiaryEducation): string {
+  const start = [entry.startMonth, entry.startYear].filter(Boolean).length
+    ? [entry.startMonth, entry.startYear].filter(Boolean).join("/")
+    : entry.startDate;
+  const end = entry.current
+    ? "Present"
+    : [entry.endMonth, entry.endYear].filter(Boolean).length
+      ? [entry.endMonth, entry.endYear].filter(Boolean).join("/")
+      : entry.endDate;
+  if (start && end) return `${start} – ${end}`;
+  return start || end || "";
 }
 
 export type EducationFieldErrors = Record<string, string>;
@@ -330,18 +364,23 @@ export function validateEducationEntry(
         errors.trainingProvider = "Training provider is required";
       }
       break;
-    default:
-      if (!entry.institution.trim()) errors.institution = "Institution is required";
+    default: {
       if (!entry.qualification.trim()) {
-        errors.qualification = "Qualification is required";
+        errors.qualification = "Education is required";
       }
-      if (entry.startDate && !yearOk(entry.startDate)) {
-        errors.startDate = "Enter a valid year";
+      if (!entry.institution.trim()) {
+        errors.institution = "Institution is required";
       }
-      if (entry.endDate && !yearOk(entry.endDate)) {
-        errors.endDate = "Enter a valid year";
+      const monthYearOk = (month: string, year: string) =>
+        !year.trim() || /^(19|20)\d{2}$/.test(year.trim());
+      if (!monthYearOk(entry.startMonth, entry.startYear)) {
+        errors.startYear = "Enter a valid start year";
+      }
+      if (!entry.current && !monthYearOk(entry.endMonth, entry.endYear)) {
+        errors.endYear = "Enter a valid end year";
       }
       break;
+    }
   }
 
   return errors;

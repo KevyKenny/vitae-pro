@@ -1,17 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { SETTINGS_NAV } from "@/features/settings/components/settings-sidebar";
-import { mockSettingsProfile, mockBillingState, subscriptionPlans } from "@/mocks/settings";
+import { mockBillingState, subscriptionPlans } from "@/mocks/settings";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SectionCard } from "@/components/shared/section-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { UserRound } from "lucide-react";
+import { useProfile } from "@/features/auth/hooks/use-auth";
 
 export function SettingsOverview() {
-  const profile = mockSettingsProfile;
-  const plan = subscriptionPlans.find((p) => p.id === mockBillingState.currentPlanId);
+  const router = useRouter();
+  const { profile, completion, loading } = useProfile();
+  const plan = subscriptionPlans.find(
+    (p) => p.id === mockBillingState.currentPlanId,
+  );
+  const firstName = profile?.first_name ?? "";
+  const lastName = profile?.last_name ?? "";
+  const title = profile?.professional_title ?? "Add your professional title";
 
   return (
     <div className="space-y-6">
@@ -20,8 +28,8 @@ export function SettingsOverview() {
           Account settings
         </h1>
         <p className="mt-1.5 text-sm text-ink-soft">
-          Personalize how VitatePro coaches your career — profile, AI, CV defaults,
-          and billing in one place.
+          Personalize how VitatePro coaches your career — profile, AI, CV
+          defaults, and billing in one place.
         </p>
       </div>
 
@@ -29,13 +37,13 @@ export function SettingsOverview() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="font-serif text-xl font-semibold text-ink">
-              {profile.firstName} {profile.lastName}
+              {loading
+                ? "Loading…"
+                : `${firstName} ${lastName}`.trim() || "Your profile"}
             </p>
-            <p className="text-sm text-ink-soft">{profile.title}</p>
+            <p className="text-sm text-ink-soft">{title}</p>
             <div className="mt-2 flex flex-wrap gap-2">
-              <Badge variant="default">
-                Profile {profile.profileCompletion}%
-              </Badge>
+              <Badge variant="default">Profile {completion}%</Badge>
               <Badge variant="gold">{plan?.name ?? "Free"} plan</Badge>
             </div>
           </div>
@@ -43,15 +51,15 @@ export function SettingsOverview() {
             <Link href="/settings/profile">Complete profile</Link>
           </Button>
         </div>
-        {profile.profileCompletion < 100 ? (
+        {completion < 100 ? (
           <div className="mt-4">
             <EmptyState
               icon={UserRound}
               title="Incomplete profile"
-              description="Add photo, links, and career goals so AI can personalize suggestions."
+              description="Add links and career details so AI can personalize suggestions. Photo storage comes in a later phase."
               actionLabel="Edit profile"
               onAction={() => {
-                window.location.href = "/settings/profile";
+                router.push("/settings/profile");
               }}
               className="py-10"
             />

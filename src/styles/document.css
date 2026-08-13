@@ -1,0 +1,241 @@
+/* VitatePro document export / print styles — shared by preview, print, and PDF */
+
+.doc-root {
+  --doc-ink: #1b1d1b;
+  --doc-ink-soft: #55584f;
+  --doc-ink-faint: #8b8d82;
+  --doc-accent: #1f4d3d;
+  --doc-bg: #ffffff;
+  --doc-line: #e4e0d3;
+  --doc-font: Inter, system-ui, sans-serif;
+  --doc-font-heading: Fraunces, Georgia, serif;
+  --doc-base-size: 11px;
+  --doc-line-height: 1.45;
+  --doc-pad-x: 32px;
+  --doc-pad-y: 36px;
+
+  color: var(--doc-ink);
+  background: var(--doc-bg);
+  font-family: var(--doc-font);
+  font-size: var(--doc-base-size);
+  line-height: var(--doc-line-height);
+}
+
+.doc-page {
+  width: 210mm;
+  min-height: 297mm;
+  box-sizing: border-box;
+  padding: var(--doc-pad-y) var(--doc-pad-x);
+  background: var(--doc-bg);
+  position: relative;
+  overflow: hidden;
+}
+
+.doc-page--letter {
+  width: 8.5in;
+  min-height: 11in;
+}
+
+.doc-template-creative {
+  border-top: 4px solid #b08d3e;
+}
+
+.doc-template-executive {
+  border-left: 4px solid var(--doc-accent);
+}
+
+.doc-name {
+  font-family: var(--doc-font-heading);
+  font-size: 1.35em;
+  font-weight: 600;
+  margin: 0;
+}
+
+.doc-title {
+  font-size: 0.85em;
+  color: var(--doc-ink-soft);
+  margin: 0.15em 0 0;
+}
+
+.doc-contact {
+  font-size: 0.75em;
+  color: var(--doc-ink-faint);
+  margin: 0.35em 0 0;
+}
+
+.doc-contact a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.doc-contact a:hover {
+  text-decoration: underline;
+}
+
+.doc-section {
+  margin-top: 0.85em;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.doc-section-title {
+  font-size: 0.72em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--doc-accent);
+  border-bottom: 1px solid var(--doc-line);
+  padding-bottom: 0.2em;
+  margin: 0 0 0.35em;
+}
+
+.doc-body {
+  font-size: 0.88em;
+  line-height: 1.5;
+}
+
+.doc-entry {
+  margin-top: 0.45em;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.doc-entry-title {
+  font-size: 0.82em;
+  font-weight: 600;
+  margin: 0;
+}
+
+.doc-entry-meta {
+  font-size: 0.72em;
+  color: var(--doc-ink-faint);
+  margin: 0.1em 0 0;
+}
+
+.doc-subject-table {
+  border-collapse: collapse;
+}
+
+.doc-subject-table th,
+.doc-subject-table td {
+  font-size: 0.78em;
+  color: var(--doc-ink-soft);
+  vertical-align: top;
+}
+
+.doc-subject-table th {
+  color: var(--doc-ink-faint);
+  font-weight: 600;
+}
+
+.doc-bullets {
+  margin: 0.25em 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doc-bullets li {
+  font-size: 0.78em;
+  color: var(--doc-ink-soft);
+  margin-top: 0.15em;
+  padding-left: 0.5em;
+}
+
+.doc-bullets li::before {
+  content: "— ";
+  color: var(--doc-ink-faint);
+}
+
+.doc-cl-header {
+  margin-bottom: 1.25em;
+}
+
+.doc-cl-header--modern {
+  border-bottom: 1px solid var(--doc-line);
+  padding-bottom: 0.75em;
+}
+
+.doc-cl-name {
+  font-family: var(--doc-font-heading);
+  font-weight: 600;
+  margin: 0;
+}
+
+.doc-cl-meta {
+  font-size: 0.75em;
+  color: var(--doc-ink-faint);
+  margin: 0.25em 0 0;
+  line-height: 1.4;
+}
+
+.doc-cl-date {
+  font-size: 0.78em;
+  color: var(--doc-ink-soft);
+  margin-bottom: 1em;
+}
+
+.doc-cl-body p {
+  margin: 0 0 0.65em;
+  font-size: 0.88em;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+.doc-layout-sidebar {
+  display: flex;
+  gap: 1rem;
+}
+
+.doc-sidebar {
+  width: 28%;
+  flex-shrink: 0;
+  padding: 0.75rem;
+  border-radius: 6px;
+  background: var(--doc-accent);
+  color: #faf8f3;
+  font-size: 0.85em;
+}
+
+.doc-main {
+  flex: 1;
+  min-width: 0;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  @page letter {
+    size: letter;
+    margin: 0;
+  }
+
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .doc-page {
+    box-shadow: none !important;
+    margin: 0 !important;
+    page-break-after: always;
+  }
+
+  .doc-page:last-child {
+    page-break-after: auto;
+  }
+
+  .doc-section,
+  .doc-entry {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { EditorToolbar } from "@/features/cv-editor/components/editor-toolbar";
+import { GuidedCvPanel } from "@/features/cv-creation/components/guided-cv-panel";
 import {
   MobileSectionBar,
   SectionNavigator,
@@ -9,11 +11,14 @@ import {
 import { EditorWorkspace } from "@/features/cv-editor/components/editor-workspace";
 import { CVPreview } from "@/features/cv-editor/components/cv-preview";
 import { AIInsightPanel } from "@/features/cv-editor/components/ai-insight-panel";
+import { CvAnalysisPanel } from "@/features/analysis/components/cv-analysis-panel";
 import { VersionHistory } from "@/features/cv-editor/components/version-history";
 import { useEditor } from "@/features/cv-editor/context/editor-context";
+import type { AnalysisRecommendation } from "@/lib/analysis/types";
+import type { CvSectionType } from "@/features/cv-editor/types";
 import { MobileBottomBar } from "@/components/shared/mobile-bottom-bar";
 import { Button } from "@/components/ui/button";
-import { Eye, PencilLine, Sparkles } from "lucide-react";
+import { Eye, PencilLine, Sparkles, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type MobilePane = "edit" | "preview";
@@ -23,8 +28,49 @@ type MobilePane = "edit" | "preview";
  * 50/50 input + Preview on lg+, Edit|Preview panes on smaller screens.
  */
 export function CVEditorLayout() {
-  const { setAiOpen, previewOpen, setPreviewOpen } = useEditor();
+  const {
+    cvId,
+    setAiOpen,
+    analysisOpen,
+    setAnalysisOpen,
+    requestAi,
+    setActiveSectionId,
+    document,
+    previewOpen,
+    setPreviewOpen,
+  } = useEditor();
+  const searchParams = useSearchParams();
   const [mobilePane, setMobilePane] = useState<MobilePane>("edit");
+
+  useEffect(() => {
+    if (searchParams.get("analyze") === "1") {
+      setAnalysisOpen(true);
+    }
+  }, [searchParams, setAnalysisOpen]);
+
+  function handleAnalysisImprove(rec: AnalysisRecommendation) {
+    setAnalysisOpen(false);
+    const section = rec.sectionType ?? "summary";
+    const sectionMeta = document.sections.find((s) => s.type === section);
+    if (sectionMeta) setActiveSectionId(sectionMeta.id);
+
+    if (rec.aiAction === "summary" || section === "summary") {
+      void requestAi({ feature: "summary", action: rec.action || "Improve" });
+    } else if (rec.aiAction === "experience" || section === "experience") {
+      void requestAi({ feature: "experience", action: rec.action || "Improve" });
+    } else if (rec.aiAction === "skills" || section === "skills") {
+      void requestAi({ feature: "skills", action: "Recommend" });
+    } else if (rec.aiAction === "ats") {
+      void requestAi({ feature: "summary", action: "Make ATS-friendly" });
+    } else {
+      setAiOpen(true);
+    }
+  }
+
+  function navigateToSection(sectionType: CvSectionType) {
+    const section = document.sections.find((s) => s.type === sectionType);
+    if (section) setActiveSectionId(section.id);
+  }
 
   useEffect(() => {
     if (previewOpen) setMobilePane("preview");
@@ -38,6 +84,7 @@ export function CVEditorLayout() {
   return (
     <div className="flex h-dvh min-w-0 flex-col bg-paper-dim">
       <EditorToolbar />
+      <GuidedCvPanel />
       {mobilePane === "edit" ? <MobileSectionBar /> : null}
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
@@ -74,6 +121,13 @@ export function CVEditorLayout() {
       </div>
 
       <AIInsightPanel />
+      <CvAnalysisPanel
+        open={analysisOpen}
+        onOpenChange={setAnalysisOpen}
+        cvId={cvId}
+        onImprove={handleAnalysisImprove}
+        onNavigateSection={navigateToSection}
+      />
       <VersionHistory />
 
       <MobileBottomBar>

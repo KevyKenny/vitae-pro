@@ -86,7 +86,7 @@ function RailItem({
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: section.id });
   const Icon = sectionIcons[section.type];
-  const railLabel = railLabels[section.type] ?? section.label;
+  const displayLabel = section.label?.trim() || railLabels[section.type] || "Section";
 
   return (
     <div
@@ -123,12 +123,12 @@ function RailItem({
             ) : null}
             <Icon className="size-4 shrink-0" aria-hidden />
             <span className="w-full px-0.5 text-[0.7rem] leading-snug font-semibold tracking-tight whitespace-normal">
-              {railLabel}
+              {displayLabel}
             </span>
           </button>
         </TooltipTrigger>
         <TooltipContent side="right" className="text-xs">
-          {section.label}
+          {displayLabel}
           {!section.visible ? " (hidden)" : ""}
           {" · drag to reorder"}
         </TooltipContent>
@@ -300,7 +300,7 @@ export function MobileSectionBar({ className }: { className?: string }) {
             {document.sections.map((section) => {
               const Icon = sectionIcons[section.type];
               const active = section.id === activeSectionId;
-              const label = railLabels[section.type] ?? section.label;
+              const label = section.label?.trim() || railLabels[section.type] || "Section";
               return (
                 <button
                   key={section.id}

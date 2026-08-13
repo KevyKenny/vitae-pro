@@ -15,18 +15,48 @@ export function AchievementEditor({
   onChange,
   label = "Achievements",
   experienceType,
+  experienceId,
+  field = "responsibilities",
+  jobTitle,
+  company,
   showAi = true,
 }: {
   items: string[];
   onChange: (next: string[]) => void;
   label?: string;
   experienceType: ExperienceTypeId;
+  experienceId?: string;
+  field?: "responsibilities" | "achievements";
+  jobTitle?: string;
+  company?: string;
   showAi?: boolean;
 }) {
-  const { requestAi } = useEditor();
+  const { requestAi, aiLoading } = useEditor();
 
   function tip() {
     toast.message(aiTipForExperienceType(experienceType));
+  }
+
+  function firstActiveIndex() {
+    const idx = items.findIndex((item) => item.trim());
+    return idx >= 0 ? idx : 0;
+  }
+
+  function runAi(action: string, mode?: "single" | "bullets") {
+    tip();
+    const bulletIndex = firstActiveIndex();
+    void requestAi({
+      feature: "experience",
+      action,
+      mode,
+      experienceId,
+      bulletIndex,
+      field,
+      text: items[bulletIndex] ?? "",
+      jobTitle,
+      company,
+      description: items.filter((item) => item.trim()).join("\n"),
+    });
   }
 
   return (
@@ -36,32 +66,24 @@ export function AchievementEditor({
         {showAi ? (
           <div className="flex flex-wrap gap-1">
             <AIActionButton
-              label="Improve"
-              onClick={() => {
-                tip();
-                requestAi("bullet_rewrite");
-              }}
+              label={aiLoading ? "Generating…" : "Improve"}
+              onClick={() => runAi("Improve")}
+              disabled={aiLoading}
             />
             <AIActionButton
               label="Rewrite"
-              onClick={() => {
-                tip();
-                requestAi("bullet_rewrite");
-              }}
+              onClick={() => runAi("Rewrite")}
+              disabled={aiLoading}
             />
             <AIActionButton
               label="Add measurable achievements"
-              onClick={() => {
-                tip();
-                toast.message("Generate metrics (mock)");
-              }}
+              onClick={() => runAi("Generate bullets", "bullets")}
+              disabled={aiLoading}
             />
             <AIActionButton
               label="Professional wording"
-              onClick={() => {
-                tip();
-                requestAi("bullet_rewrite");
-              }}
+              onClick={() => runAi("Professional wording")}
+              disabled={aiLoading}
             />
           </div>
         ) : null}

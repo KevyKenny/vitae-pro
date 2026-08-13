@@ -17,11 +17,13 @@ import { toast } from "sonner";
 
 export function SavedCoverLetterCard({
   letter,
+  disabled,
   onDuplicate,
   onDelete,
   onRename,
 }: {
   letter: SavedCoverLetterSummary;
+  disabled?: boolean;
   onDuplicate: () => void;
   onDelete: () => void;
   onRename: () => void;
@@ -38,6 +40,13 @@ export function SavedCoverLetterCard({
           <p className="mt-0.5 text-sm text-ink-soft">
             {letter.company} · {letter.role}
           </p>
+          {letter.cvTitle || letter.templateName ? (
+            <p className="mt-1 text-[0.72rem] text-ink-faint">
+              {letter.cvTitle ? `CV: ${letter.cvTitle}` : null}
+              {letter.cvTitle && letter.templateName ? " · " : null}
+              {letter.templateName ?? null}
+            </p>
+          ) : null}
         </div>
         <ApplicationStatusBadge status={letter.applicationStatus} />
       </div>
@@ -46,7 +55,13 @@ export function SavedCoverLetterCard({
         {formatRelativeTime(letter.updatedAt)}
       </p>
       <div className="mt-4 flex items-center gap-2">
-        <Button asChild size="sm" shape="soft" className="rounded-[8px]">
+        <Button
+          asChild
+          size="sm"
+          shape="soft"
+          className="rounded-[8px]"
+          disabled={disabled}
+        >
           <Link href={`/cover-letter/${letter.id}`}>Open</Link>
         </Button>
         <Button

@@ -17,7 +17,6 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { GraduationCap, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -29,7 +28,10 @@ import { EditorSectionCard } from "@/features/cv-editor/components/editor-sectio
 import { EducationCard } from "@/features/cv-editor/components/education/education-card";
 import { EducationTypeSelector } from "@/features/cv-editor/components/education/education-type-selector";
 import { createEducationEntry } from "@/features/cv-editor/components/education/education-helpers";
+import { SectionSaveBar } from "@/features/cv-editor/components/section-save-bar";
 import { useEditor } from "@/features/cv-editor/context/editor-context";
+import { useSectionId } from "@/features/cv-editor/hooks/use-section-id";
+import { useSectionSave } from "@/features/cv-editor/hooks/use-section-save";
 import type {
   EducationEntry,
   EducationQualificationType,
@@ -37,6 +39,8 @@ import type {
 
 export function EducationSection() {
   const { document, updateDocument } = useEditor();
+  const sectionId = useSectionId("education");
+  const { dirty, status, onSave } = useSectionSave("education");
   const [pickerOpen, setPickerOpen] = useState(false);
   const [newEntryId, setNewEntryId] = useState<string | null>(null);
 
@@ -47,13 +51,18 @@ export function EducationSection() {
     }),
   );
 
-  function setEducation(education: EducationEntry[]) {
-    updateDocument((prev) => ({ ...prev, education }));
+  function patchEducation(
+    updater: (education: EducationEntry[]) => EducationEntry[],
+  ) {
+    updateDocument(
+      (prev) => ({ ...prev, education: updater(prev.education) }),
+      { sectionKey: "education" },
+    );
   }
 
   function addOfType(type: EducationQualificationType) {
     const entry = createEducationEntry(type);
-    setEducation([...document.education, entry]);
+    patchEducation((education) => [...education, entry]);
     setNewEntryId(entry.id);
     setPickerOpen(false);
   }
@@ -61,14 +70,16 @@ export function EducationSection() {
   function onDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
-    const oldIndex = document.education.findIndex((e) => e.id === active.id);
-    const newIndex = document.education.findIndex((e) => e.id === over.id);
-    if (oldIndex < 0 || newIndex < 0) return;
-    setEducation(arrayMove(document.education, oldIndex, newIndex));
+    patchEducation((education) => {
+      const oldIndex = education.findIndex((e) => e.id === active.id);
+      const newIndex = education.findIndex((e) => e.id === over.id);
+      if (oldIndex < 0 || newIndex < 0) return education;
+      return arrayMove(education, oldIndex, newIndex);
+    });
   }
 
   return (
-    <EditorSectionCard sectionId="sec_education" title="Education">
+    <EditorSectionCard sectionId={sectionId} title="Education">
       {document.education.length === 0 ? (
         <EmptyState
           icon={GraduationCap}
@@ -95,44 +106,36 @@ export function EducationSection() {
                   entry={entry}
                   defaultExpanded={entry.id === newEntryId}
                   onChange={(next) => {
-                    setEducation(
-                      document.education.map((e) =>
-                        e.id === entry.id ? next : e,
-                      ),
+                    patchEducation((education) =>
+                      education.map((e) => (e.id === entry.id ? next : e)),
                     );
                   }}
                   onRemove={() =>
-                    setEducation(
-                      document.education.filter((e) => e.id !== entry.id),
+                    patchEducation((education) =>
+                      education.filter((e) => e.id !== entry.id),
                     )
                   }
-                  onDuplicate={() => {
-                    const copy = structuredClone(entry) as EducationEntry;
-                    copy.id = `edu_${Date.now()}`;
-                    if ("subjects" in copy) {
-                      copy.subjects = copy.subjects.map((s) => ({
-                        ...s,
-                        id: `subj_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-                      }));
-                    }
-                    setEducation([...document.education, copy]);
-                    setNewEntryId(copy.id);
-                  }}
                 />
               ))}
             </SortableContext>
           </DndContext>
-          <Button
+          <button
             type="button"
-            variant="outline"
-            shape="soft"
-            className="w-full rounded-[8px] border-dashed"
+            className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface px-3 py-1.5 text-[0.82rem] font-medium text-ink-soft transition-colors hover:border-line-strong hover:text-ink"
             onClick={() => setPickerOpen(true)}
           >
-            <Plus className="size-4" /> Add education
-          </Button>
+            <Plus className="size-3.5" aria-hidden />
+            Add education
+          </button>
         </div>
       )}
+
+      <SectionSaveBar
+        dirty={dirty}
+        status={status}
+        onSave={onSave}
+        label="Save Education"
+      />
 
       <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
         <DialogContent className="max-w-xl">

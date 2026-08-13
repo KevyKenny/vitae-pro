@@ -10,17 +10,17 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 import { getInitials } from "@/lib/utils";
-import { mockCurrentUser } from "@/mocks";
 
 export function MobileSidebar() {
   const { mobileOpen, setMobileOpen } = useSidebar();
-  const planLabel =
-    mockCurrentUser.plan === "free"
-      ? "Free plan"
-      : mockCurrentUser.plan === "pro"
-        ? "Pro plan"
-        : "Team plan";
+  const { user, profile } = useAuth();
+  const name =
+    [profile?.first_name, profile?.last_name].filter(Boolean).join(" ").trim() ||
+    user?.email ||
+    "Account";
+  const planLabel = "Free plan";
 
   return (
     <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -37,14 +37,11 @@ export function MobileSidebar() {
           <div className="flex-1" />
           <div className="mt-2 flex items-center gap-2.5 border-t border-line px-3 pt-3">
             <Avatar>
-              <AvatarFallback>
-                {mockCurrentUser.avatarInitials ??
-                  getInitials(mockCurrentUser.name)}
-              </AvatarFallback>
+              <AvatarFallback>{getInitials(name)}</AvatarFallback>
             </Avatar>
             <div className="min-w-0">
               <p className="truncate text-[0.85rem] font-semibold text-ink">
-                {mockCurrentUser.name}
+                {name}
               </p>
               <p className="text-[0.72rem] text-ink-faint">{planLabel}</p>
             </div>

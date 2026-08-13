@@ -2,11 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { CvDocumentView } from "@/components/document";
 import { TemplateSelector } from "@/features/cv-editor/components/template-selector";
-import { EducationPreview } from "@/features/cv-editor/components/education/education-preview";
-import { ExperiencePreview } from "@/features/cv-editor/components/experience/experience-preview";
 import { useEditor } from "@/features/cv-editor/context/editor-context";
-import type { CvDocument } from "@/features/cv-editor/types";
 import { cn } from "@/lib/utils";
 
 /** Preview is always A4 (210 × 297 mm → aspect ≈ 1 : 1.414). */
@@ -102,7 +100,7 @@ export function CVPreview({ className }: { className?: string }) {
             fontSize,
           }}
         >
-          <CvPageBody document={document} />
+          <CvDocumentView document={document} mode="preview" shell={false} />
         </div>
 
         <div
@@ -150,7 +148,7 @@ export function CVPreview({ className }: { className?: string }) {
                       fontSize,
                     }}
                   >
-                    <CvPageBody document={document} />
+                    <CvDocumentView document={document} mode="preview" shell={false} />
                   </div>
                 </div>
               ))}
@@ -159,92 +157,5 @@ export function CVPreview({ className }: { className?: string }) {
         </div>
       </div>
     </div>
-  );
-}
-
-function CvPageBody({ document }: { document: CvDocument }) {
-  const { personal, summary, experience, education, skills, projects } =
-    document;
-  const visible = new Set(
-    document.sections.filter((s) => s.visible).map((s) => s.type),
-  );
-
-  return (
-    <>
-      {visible.has("personal") ? (
-        <>
-          <h1 className="font-serif text-[1.15em] font-semibold text-ink">
-            {personal.fullName}
-          </h1>
-          <p className="text-[0.72em] text-ink-soft">{personal.title}</p>
-          <p className="mt-1 text-[0.62em] text-ink-faint">
-            {[personal.email, personal.phone, personal.location]
-              .filter(Boolean)
-              .join(" · ")}
-          </p>
-          <p className="text-[0.62em] text-ink-faint">
-            {[personal.linkedin, personal.portfolio].filter(Boolean).join(" · ")}
-          </p>
-        </>
-      ) : null}
-
-      {visible.has("summary") && summary ? (
-        <>
-          <p className="mt-3 border-b border-line pb-1 text-[0.58em] font-bold tracking-[0.08em] text-emerald uppercase">
-            Summary
-          </p>
-          <p className="mt-1.5 text-[0.68em] leading-relaxed text-ink">
-            {summary}
-          </p>
-        </>
-      ) : null}
-
-      {visible.has("experience") ? (
-        <>
-          <p className="mt-3 border-b border-line pb-1 text-[0.58em] font-bold tracking-[0.08em] text-emerald uppercase">
-            Experience
-          </p>
-          <div className="text-[1em]">
-            <ExperiencePreview experience={experience} />
-          </div>
-        </>
-      ) : null}
-
-      {visible.has("education") ? (
-        <>
-          <p className="mt-3 border-b border-line pb-1 text-[0.58em] font-bold tracking-[0.08em] text-emerald uppercase">
-            Education
-          </p>
-          <div className="text-[1em]">
-            <EducationPreview education={education} />
-          </div>
-        </>
-      ) : null}
-
-      {visible.has("skills") ? (
-        <>
-          <p className="mt-3 border-b border-line pb-1 text-[0.58em] font-bold tracking-[0.08em] text-emerald uppercase">
-            Skills
-          </p>
-          <p className="mt-1.5 text-[0.65em] text-ink-soft">
-            {skills.map((s) => s.name).join(" · ")}
-          </p>
-        </>
-      ) : null}
-
-      {visible.has("projects") && projects.length > 0 ? (
-        <>
-          <p className="mt-3 border-b border-line pb-1 text-[0.58em] font-bold tracking-[0.08em] text-emerald uppercase">
-            Projects
-          </p>
-          {projects.map((p) => (
-            <div key={p.id} className="mt-1.5">
-              <p className="text-[0.68em] font-semibold text-ink">{p.name}</p>
-              <p className="text-[0.65em] text-ink-soft">{p.description}</p>
-            </div>
-          ))}
-        </>
-      ) : null}
-    </>
   );
 }

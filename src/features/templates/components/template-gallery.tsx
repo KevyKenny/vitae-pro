@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { LayoutTemplate } from "lucide-react";
@@ -8,6 +8,7 @@ import { AppHeader } from "@/components/layout/app-header";
 import { PageContainer } from "@/components/layout/page-container";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
+import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
 import { SearchBar } from "@/features/templates/components/search-bar";
 import {
   TemplateFilter,
@@ -17,11 +18,16 @@ import { TemplateCard } from "@/features/templates/components/template-card";
 import { TemplateComparison } from "@/features/templates/components/template-comparison";
 import { SavedTemplateCard } from "@/features/templates/components/saved-template-card";
 import { MiniPreview } from "@/features/templates/components/template-card";
+import { galleryTemplates } from "@/mocks/templates-gallery";
+import type {
+  GalleryTemplate,
+  SavedTemplateEntry,
+} from "@/features/templates/types";
 import {
-  galleryTemplates,
-  savedTemplates as initialSaved,
-} from "@/mocks/templates-gallery";
-import type { SavedTemplateEntry } from "@/features/templates/types";
+  listActiveTemplates,
+  listUserCustomizations,
+  templateErrorMessage,
+} from "@/lib/templates";
 import { toast } from "sonner";
 
 const DEFAULT_FILTERS: TemplateFiltersState = {
@@ -34,14 +40,46 @@ export function TemplateGallery() {
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<TemplateFiltersState>(DEFAULT_FILTERS);
   const [compareIds, setCompareIds] = useState<string[]>([]);
-  const [saved, setSaved] = useState<SavedTemplateEntry[]>(initialSaved);
+  const [templates, setTemplates] = useState<GalleryTemplate[]>([]);
+  const [saved, setSaved] = useState<SavedTemplateEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const [active, customizations] = await Promise.all([
+          listActiveTemplates(),
+          listUserCustomizations(),
+        ]);
+        if (cancelled) return;
+
+        // Fallback: empty DB seed keeps the gallery usable with mock layouts.
+        setTemplates(active.length > 0 ? active : galleryTemplates);
+        setSaved(customizations);
+      } catch (error) {
+        if (cancelled) return;
+        toast.error(templateErrorMessage(error));
+        setTemplates(galleryTemplates);
+        setSaved([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const featured =
-    galleryTemplates.find((t) => t.isFeatured) ?? galleryTemplates[0];
+    templates.find((t) => t.isFeatured) ?? templates[0] ?? galleryTemplates[0];
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return galleryTemplates.filter((t) => {
+    return templates.filter((t) => {
       if (filters.style !== "all" && t.style !== filters.style) return false;
       if (
         filters.careerLevel !== "all" &&
@@ -62,15 +100,23 @@ export function TemplateGallery() {
         t.description.toLowerCase().includes(q)
       );
     });
-  }, [query, filters]);
+  }, [query, filters, templates]);
 
-  const compareTemplates = galleryTemplates.filter((t) =>
+  const compareTemplates = templates.filter((t) =>
     compareIds.includes(t.id),
   );
 
   const recent = saved.filter((s) => s.kind === "recent");
   const savedOnly = saved.filter((s) => s.kind === "saved");
   const custom = saved.filter((s) => s.kind === "custom");
+
+  if (loading) {
+    return (
+      <PageContainer>
+        <LoadingSkeleton variant="page" />
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer>

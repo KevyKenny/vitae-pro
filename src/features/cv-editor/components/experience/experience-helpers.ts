@@ -3,6 +3,7 @@ import type {
   ExperienceTypeId,
   SupervisorReference,
 } from "@/features/cv-editor/types";
+import { MONTH_OPTIONS, YEAR_OPTIONS } from "@/lib/cvs/date-options";
 import {
   Briefcase,
   Building2,
@@ -17,6 +18,8 @@ import {
   Wrench,
   type LucideIcon,
 } from "lucide-react";
+
+export { MONTH_OPTIONS, YEAR_OPTIONS };
 
 export const EXPERIENCE_TYPE_OPTIONS: {
   id: ExperienceTypeId;
@@ -104,26 +107,12 @@ export const EXPERIENCE_TYPE_OPTIONS: {
   },
 ];
 
-export const MONTH_OPTIONS = [
-  { id: "01", label: "January" },
-  { id: "02", label: "February" },
-  { id: "03", label: "March" },
-  { id: "04", label: "April" },
-  { id: "05", label: "May" },
-  { id: "06", label: "June" },
-  { id: "07", label: "July" },
-  { id: "08", label: "August" },
-  { id: "09", label: "September" },
-  { id: "10", label: "October" },
-  { id: "11", label: "November" },
-  { id: "12", label: "December" },
-] as const;
-
 export const DURATION_OPTIONS = [
   "3 Months",
   "6 Months",
   "8 Months",
   "10 Months",
+  "12 Months",
   "1 Year",
 ] as const;
 
@@ -191,17 +180,56 @@ export function withUpdatedFirstBullet(
   entry: ExperienceEntry,
   text: string,
 ): ExperienceEntry {
-  if ("responsibilities" in entry) {
+  return withUpdatedExperienceField(entry, "responsibilities", 0, text);
+}
+
+export function withUpdatedExperienceField(
+  entry: ExperienceEntry,
+  field: "responsibilities" | "achievements",
+  index: number,
+  text: string,
+): ExperienceEntry {
+  if (field === "responsibilities" && "responsibilities" in entry) {
     const responsibilities = [...entry.responsibilities];
-    if (responsibilities.length === 0) responsibilities.push(text);
-    else responsibilities[0] = text;
+    while (responsibilities.length <= index) responsibilities.push("");
+    responsibilities[index] = text;
     return { ...entry, responsibilities };
   }
-  if (entry.experienceType === "freelance") {
+  if (field === "achievements" && "achievements" in entry) {
     const achievements = [...entry.achievements];
-    if (achievements.length === 0) achievements.push(text);
-    else achievements[0] = text;
+    while (achievements.length <= index) achievements.push("");
+    achievements[index] = text;
     return { ...entry, achievements };
+  }
+  return entry;
+}
+
+export function appendExperienceBullets(
+  entry: ExperienceEntry,
+  bullets: string[],
+): ExperienceEntry {
+  if ("responsibilities" in entry) {
+    const existing = entry.responsibilities.filter((b) => b.trim());
+    return {
+      ...entry,
+      responsibilities: [...existing, ...bullets.filter((b) => b.trim())],
+    };
+  }
+  return entry;
+}
+
+/** Replace the responsibility list with AI-generated bullets (description rewrite). */
+export function replaceExperienceBullets(
+  entry: ExperienceEntry,
+  bullets: string[],
+  field: "responsibilities" | "achievements" = "responsibilities",
+): ExperienceEntry {
+  const next = bullets.map((b) => b.trim()).filter(Boolean);
+  if (field === "achievements" && "achievements" in entry) {
+    return { ...entry, achievements: next };
+  }
+  if ("responsibilities" in entry) {
+    return { ...entry, responsibilities: next };
   }
   return entry;
 }
@@ -245,16 +273,9 @@ export function aiTipForExperienceType(type: ExperienceTypeId): string {
   }
 }
 
-function yearOptions(): string[] {
-  const now = new Date().getFullYear();
-  return Array.from({ length: 40 }, (_, i) => String(now - i));
-}
-
-export const YEAR_OPTIONS = yearOptions();
-
 export function createExperienceEntry(
   type: ExperienceTypeId,
-  id = `exp_${Date.now()}`,
+  id = crypto.randomUUID(),
 ): ExperienceEntry {
   const sharedDates = {
     startMonth: "",
@@ -387,7 +408,7 @@ export function experienceCardSummary(entry: ExperienceEntry): {
     default:
       return {
         title: entry.position || badge,
-        subtitle: entry.company || "Company not set",
+        subtitle: [entry.company, entry.location].filter(Boolean).join(" · "),
         meta: formatDateRange(entry) || "Dates not set",
         badge,
       };

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -13,27 +13,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   AuthCard,
-  AuthDivider,
   AuthTabs,
   PasswordInput,
-  SocialLoginRow,
 } from "@/features/auth/components";
-import { mockSignIn, mockSocialAuth } from "@/features/auth/lib/mock-auth";
 import {
   signInSchema,
   type SignInValues,
 } from "@/features/auth/schemas/auth";
+import { authErrorMessage } from "@/lib/auth/errors";
+import { createClient } from "@/lib/supabase/client";
 
-export default function SignInPage() {
+function SignInForm() {
   const router = useRouter();
-  const [loadingProvider, setLoadingProvider] = useState<
-    "google" | "github" | null
-  >(null);
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect");
 
   const form = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-      email: "kennedy.sithole@example.com",
+      email: "",
       password: "",
       rememberMe: true,
     },
@@ -52,31 +50,23 @@ export default function SignInPage() {
 
   async function onSubmit(values: SignInValues) {
     try {
-      await mockSignIn({
-        email: values.email,
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithPassword({
+        email: values.email.trim(),
         password: values.password,
-        name: "Kennedy Sithole",
-        needsOnboarding: true,
       });
-      router.push("/auth/transition");
-    } catch {
-      toast.error("Unable to sign in. Check your details and try again.");
+      if (error) throw error;
+
+      if (redirectTo && redirectTo.startsWith("/")) {
+        router.push(redirectTo);
+      } else {
+        router.push("/auth/transition");
+      }
+      router.refresh();
+    } catch (error) {
+      toast.error(authErrorMessage(error));
     }
   }
-
-  async function handleSocial(provider: "google" | "github") {
-    try {
-      setLoadingProvider(provider);
-      await mockSocialAuth(provider);
-      router.push("/auth/transition");
-    } catch {
-      toast.error("Social sign-in failed. Please try again.");
-    } finally {
-      setLoadingProvider(null);
-    }
-  }
-
-  const busy = isSubmitting || Boolean(loadingProvider);
 
   return (
     <AuthCard
@@ -101,15 +91,12 @@ export default function SignInPage() {
       }
     >
       <AuthTabs />
-      <SocialLoginRow
-        onGoogle={() => handleSocial("google")}
-        onGithub={() => handleSocial("github")}
-        loadingProvider={loadingProvider}
-        disabled={busy}
-      />
-      <AuthDivider />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-[18px]" noValidate>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mt-6 space-y-[18px]"
+        noValidate
+      >
         <div className="space-y-2">
           <Label htmlFor="email">Email address</Label>
           <Input
@@ -118,7 +105,7 @@ export default function SignInPage() {
             autoComplete="email"
             placeholder="you@example.com"
             aria-invalid={Boolean(errors.email)}
-            disabled={busy}
+            disabled={isSubmitting}
             {...register("email")}
           />
           {errors.email ? (
@@ -143,7 +130,7 @@ export default function SignInPage() {
             autoComplete="current-password"
             placeholder="Enter your password"
             aria-invalid={Boolean(errors.password)}
-            disabled={busy}
+            disabled={isSubmitting}
             {...register("password")}
           />
           {errors.password ? (
@@ -160,7 +147,7 @@ export default function SignInPage() {
             onCheckedChange={(checked) =>
               setValue("rememberMe", checked === true)
             }
-            disabled={busy}
+            disabled={isSubmitting}
           />
           <Label htmlFor="remember" className="font-medium text-ink-soft">
             Remember me
@@ -170,7 +157,7 @@ export default function SignInPage() {
         <Button
           type="submit"
           shape="soft"
-          disabled={busy}
+          disabled={isSubmitting}
           className="mt-1.5 h-11 w-full rounded-[8px] text-[0.94rem]"
         >
           {isSubmitting ? (
@@ -184,5 +171,21 @@ export default function SignInPage() {
         </Button>
       </form>
     </AuthCard>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense
+      fallback={
+        <AuthCard title="Welcome back" subtitle="Loading…">
+          <div className="flex justify-center py-10">
+            <Loader2 className="size-6 animate-spin text-emerald" />
+          </div>
+        </AuthCard>
+      }
+    >
+      <SignInForm />
+    </Suspense>
   );
 }

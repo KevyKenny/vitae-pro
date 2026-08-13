@@ -14,11 +14,12 @@ import {
   IllustrationContainer,
   SuccessAnimation,
 } from "@/features/auth/components";
-import { mockForgotPassword } from "@/features/auth/lib/mock-auth";
 import {
   forgotPasswordSchema,
   type ForgotPasswordValues,
 } from "@/features/auth/schemas/auth";
+import { authErrorMessage } from "@/lib/auth/errors";
+import { createClient } from "@/lib/supabase/client";
 
 export default function ForgotPasswordPage() {
   const [sentTo, setSentTo] = useState<string | null>(null);
@@ -37,10 +38,17 @@ export default function ForgotPasswordPage() {
 
   async function onSubmit(values: ForgotPasswordValues) {
     try {
-      await mockForgotPassword(values.email);
-      setSentTo(values.email);
-    } catch {
-      toast.error("Could not send reset link. Please try again.");
+      const supabase = createClient();
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        values.email.trim(),
+        {
+          redirectTo: `${window.location.origin}/auth/callback?type=recovery&next=/auth/reset-password`,
+        },
+      );
+      if (error) throw error;
+      setSentTo(values.email.trim());
+    } catch (error) {
+      toast.error(authErrorMessage(error, "Could not send reset link."));
     }
   }
 
@@ -48,9 +56,14 @@ export default function ForgotPasswordPage() {
     return (
       <AuthCard
         title="Check your inbox"
-        subtitle={`We sent a reset link to ${sentTo}. It expires in 30 minutes.`}
+        subtitle={`We sent a reset link to ${sentTo}. It expires in about an hour.`}
         footer={
-          <Button asChild variant="outline" shape="soft" className="w-full rounded-[8px]">
+          <Button
+            asChild
+            variant="outline"
+            shape="soft"
+            className="w-full rounded-[8px]"
+          >
             <Link href="/auth/sign-in">
               <ArrowLeft className="size-4" />
               Back to sign in
@@ -80,36 +93,33 @@ export default function ForgotPasswordPage() {
 
   return (
     <AuthCard
-      title="Forgot password?"
-      subtitle="Enter your email and we’ll send a secure reset link."
+      title="Reset your password"
+      subtitle="Enter your email and we'll send a secure link to choose a new password."
       footer={
-        <p className="text-center text-[0.8rem] text-ink-faint">
-          <Link
-            href="/auth/sign-in"
-            className="inline-flex items-center gap-1.5 font-semibold text-emerald hover:underline"
-          >
-            <ArrowLeft className="size-3.5" />
+        <Button asChild variant="ghost" className="w-full">
+          <Link href="/auth/sign-in">
+            <ArrowLeft className="size-4" />
             Back to sign in
           </Link>
-        </p>
+        </Button>
       }
     >
-      <div className="mb-8 flex justify-center">
-        <IllustrationContainer tone="gold" className="max-h-40 max-w-40">
-          <Mail className="size-12 text-gold" aria-hidden />
+      <div className="mb-6 flex justify-center">
+        <IllustrationContainer tone="emerald" className="max-h-40 max-w-40">
+          <Mail className="size-14 text-emerald" aria-hidden />
         </IllustrationContainer>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-[18px]" noValidate>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <div className="space-y-2">
-          <Label htmlFor="reset-email">Email address</Label>
+          <Label htmlFor="email">Email address</Label>
           <Input
-            id="reset-email"
+            id="email"
             type="email"
             autoComplete="email"
             placeholder="you@example.com"
-            disabled={isSubmitting}
             aria-invalid={Boolean(errors.email)}
+            disabled={isSubmitting}
             {...register("email")}
           />
           {errors.email ? (
@@ -127,7 +137,7 @@ export default function ForgotPasswordPage() {
           {isSubmitting ? (
             <>
               <Loader2 className="size-4 animate-spin" />
-              Sending link…
+              Sending…
             </>
           ) : (
             "Send reset link"

@@ -129,6 +129,7 @@ export type CoverLetterDocument = {
   body: CoverLetterBody;
   score: CoverLetterScore;
   suggestions: CoverLetterSuggestion[];
+  cvId?: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -138,6 +139,8 @@ export type SavedCoverLetterSummary = {
   title: string;
   company: string;
   role: string;
+  cvTitle?: string | null;
+  templateName?: string;
   createdAt: string;
   updatedAt: string;
   applicationStatus: ApplicationStatus;

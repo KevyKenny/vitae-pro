@@ -1,23 +1,70 @@
 "use client";
 
-import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { FilePlus2, Mail } from "lucide-react";
+import { toast } from "sonner";
 import { AppHeader } from "@/components/layout/app-header";
 import { PageContainer } from "@/components/layout/page-container";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
 import { SavedCoverLetterCard } from "@/features/cover-letter/components/saved-cover-letter-card";
-import { mockSavedCoverLetters } from "@/mocks/cover-letter-builder";
+import { useCreateCoverLetter } from "@/features/cover-letter/hooks/use-create-cover-letter";
 import type { SavedCoverLetterSummary } from "@/features/cover-letter/types";
-import { toast } from "sonner";
+import {
+  coverLetterErrorMessage,
+  deleteCoverLetter,
+  duplicateCoverLetter,
+  listUserCoverLetters,
+  renameCoverLetter,
+  type CoverLetterListItem,
+} from "@/lib/cover-letters";
+
+function mapListItemToSummary(
+  item: CoverLetterListItem,
+): SavedCoverLetterSummary {
+  return {
+    id: item.id,
+    title: item.title,
+    company: item.company,
+    role: item.role,
+    cvTitle: item.cvTitle,
+    templateName: item.templateName,
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt,
+    applicationStatus: item.applicationStatus,
+  };
+}
 
 export function CoverLettersListView() {
-  const [letters, setLetters] = useState<SavedCoverLetterSummary[]>(
-    mockSavedCoverLetters,
+  const router = useRouter();
+  const { creating, createAndOpen } = useCreateCoverLetter();
+  const [letters, setLetters] = useState<SavedCoverLetterSummary[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<SavedCoverLetterSummary | null>(
+    null,
   );
+  const [busyId, setBusyId] = useState<string | null>(null);
 
-  const empty = letters.length === 0;
+  const refresh = useCallback(async () => {
+    try {
+      const items = await listUserCoverLetters();
+      setLetters(items.map(mapListItemToSummary));
+    } catch (error) {
+      toast.error(
+        coverLetterErrorMessage(error, "Could not load your cover letters."),
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
   const sorted = useMemo(
     () =>
       [...letters].sort(
@@ -27,7 +74,72 @@ export function CoverLettersListView() {
     [letters],
   );
 
-  if (empty) {
+  async function handleDuplicate(letter: SavedCoverLetterSummary) {
+    setBusyId(letter.id);
+    try {
+      const { id } = await duplicateCoverLetter(letter.id);
+      toast.success("Cover letter duplicated");
+      router.push(`/cover-letter/${id}`);
+    } catch (error) {
+      toast.error(
+        coverLetterErrorMessage(error, "Could not duplicate cover letter."),
+      );
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    const letter = deleteTarget;
+    setDeleteTarget(null);
+    setBusyId(letter.id);
+    try {
+      await deleteCoverLetter(letter.id);
+      toast.success("Cover letter deleted");
+      await refresh();
+    } catch (error) {
+      toast.error(
+        coverLetterErrorMessage(error, "Could not delete cover letter."),
+      );
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  function handleRename(letter: SavedCoverLetterSummary) {
+    const next = window.prompt("Rename cover letter", letter.title);
+    if (!next?.trim()) return;
+    setBusyId(letter.id);
+    void renameCoverLetter(letter.id, next.trim())
+      .then(async () => {
+        toast.success("Renamed");
+        await refresh();
+      })
+      .catch((error) => {
+        toast.error(
+          coverLetterErrorMessage(error, "Could not rename cover letter."),
+        );
+      })
+      .finally(() => {
+        setBusyId(null);
+      });
+  }
+
+  if (loading) {
+    return (
+      <PageContainer>
+        <AppHeader
+          title="Cover Letters"
+          description="Personalized letters for each application."
+          showNewCv={false}
+        />
+        <LoadingSkeleton variant="cards" />
+      </PageContainer>
+    );
+  }
+
+  if (letters.length === 0) {
     return (
       <PageContainer>
         <AppHeader
@@ -40,9 +152,7 @@ export function CoverLettersListView() {
           title="No cover letters"
           description="Create a tailored letter from your CV and a job posting."
           actionLabel="Create cover letter"
-          onAction={() => {
-            window.location.href = "/cover-letter";
-          }}
+          onAction={() => void createAndOpen()}
         />
       </PageContainer>
     );
@@ -55,63 +165,47 @@ export function CoverLettersListView() {
         description="Manage drafts and track application status."
         showNewCv={false}
         actions={
-          <Button asChild variant="outline" shape="soft">
-            <Link href="/cover-letter">
-              <FilePlus2 className="size-4" />
-              New letter
-            </Link>
+          <Button
+            type="button"
+            variant="outline"
+            shape="soft"
+            disabled={creating}
+            onClick={() => void createAndOpen()}
+          >
+            <FilePlus2 className="size-4" />
+            {creating ? "Creating…" : "New letter"}
           </Button>
         }
       />
 
-      {sorted.length === 0 ? (
-        <EmptyState
-          icon={Mail}
-          title="No saved applications"
-          description="Your application tracker will appear here."
-          actionLabel="Start writing"
-          onAction={() => {
-            window.location.href = "/cover-letter";
-          }}
-        />
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {sorted.map((letter) => (
-            <SavedCoverLetterCard
-              key={letter.id}
-              letter={letter}
-              onDuplicate={() => {
-                setLetters((prev) => [
-                  {
-                    ...letter,
-                    id: `cl_${Date.now()}`,
-                    title: `${letter.title} (copy)`,
-                    applicationStatus: "draft",
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                  },
-                  ...prev,
-                ]);
-                toast.success("Duplicated");
-              }}
-              onDelete={() => {
-                setLetters((prev) => prev.filter((l) => l.id !== letter.id));
-                toast.success("Deleted");
-              }}
-              onRename={() => {
-                const next = window.prompt("Rename cover letter", letter.title);
-                if (!next?.trim()) return;
-                setLetters((prev) =>
-                  prev.map((l) =>
-                    l.id === letter.id ? { ...l, title: next.trim() } : l,
-                  ),
-                );
-                toast.success("Renamed");
-              }}
-            />
-          ))}
-        </div>
-      )}
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {sorted.map((letter) => (
+          <SavedCoverLetterCard
+            key={letter.id}
+            letter={letter}
+            disabled={busyId === letter.id}
+            onDuplicate={() => void handleDuplicate(letter)}
+            onDelete={() => setDeleteTarget(letter)}
+            onRename={() => handleRename(letter)}
+          />
+        ))}
+      </div>
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+        title="Delete cover letter?"
+        description={
+          deleteTarget
+            ? `"${deleteTarget.title}" will be permanently removed.`
+            : undefined
+        }
+        confirmLabel="Delete"
+        destructive
+        onConfirm={() => void confirmDelete()}
+      />
     </PageContainer>
   );
 }

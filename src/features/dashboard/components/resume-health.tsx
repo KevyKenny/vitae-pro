@@ -14,7 +14,13 @@ const statusMap = {
   "needs-work": { label: "Needs work", variant: "gold" as const },
 };
 
-export function ResumeHealth({ items }: { items: ResumeHealthItem[] }) {
+export function ResumeHealth({
+  items,
+  onImprove,
+}: {
+  items: ResumeHealthItem[];
+  onImprove?: (item: ResumeHealthItem) => void;
+}) {
   return (
     <SectionCard title="Resume Health">
       <div className="grid gap-3 pb-4 sm:grid-cols-2">
@@ -54,9 +60,11 @@ export function ResumeHealth({ items }: { items: ResumeHealthItem[] }) {
                 shape="soft"
                 className="mt-3"
                 onClick={() =>
-                  toast.message("Opening improvements", {
-                    description: item.label,
-                  })
+                  onImprove
+                    ? onImprove(item)
+                    : toast.message("Opening improvements", {
+                        description: item.label,
+                      })
                 }
               >
                 Improve

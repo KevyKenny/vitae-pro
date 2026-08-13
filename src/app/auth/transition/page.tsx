@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Loader2, Sparkles } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 import { SuccessAnimation } from "@/features/auth/components";
-import { getMockSession, subscribeMockAuth } from "@/features/auth/lib/mock-auth";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 
 const stages = [
   "Verifying secure session…",
@@ -14,27 +14,26 @@ const stages = [
   "Loading your career coach…",
 ] as const;
 
-function useSessionSnapshot() {
-  return useSyncExternalStore(
-    subscribeMockAuth,
-    getMockSession,
-    () => null,
-  );
-}
-
 export default function AuthTransitionPage() {
   const router = useRouter();
-  const session = useSessionSnapshot();
+  const { user, profile, loading: authLoading } = useAuth();
   const [stageIndex, setStageIndex] = useState(0);
   const [done, setDone] = useState(false);
 
-  const name = useMemo(
-    () => session?.name.split(" ")[0] ?? "there",
-    [session?.name],
-  );
+  const name = useMemo(() => {
+    const fromProfile = [profile?.first_name, profile?.last_name]
+      .filter(Boolean)
+      .join(" ")
+      .trim();
+    if (fromProfile) return fromProfile.split(" ")[0];
+    const meta = user?.user_metadata?.first_name as string | undefined;
+    if (meta) return meta;
+    return user?.email?.split("@")[0] ?? "there";
+  }, [profile, user]);
 
   useEffect(() => {
-    if (!session) {
+    if (authLoading) return;
+    if (!user) {
       router.replace("/auth/sign-in");
       return;
     }
@@ -44,66 +43,62 @@ export default function AuthTransitionPage() {
       window.setTimeout(() => setStageIndex(2), 1500),
       window.setTimeout(() => setDone(true), 2300),
       window.setTimeout(() => {
-        router.push(session.needsOnboarding ? "/onboarding" : "/dashboard");
-      }, 3200),
+        const needsOnboarding = profile
+          ? !profile.onboarding_completed
+          : true;
+        router.replace(needsOnboarding ? "/onboarding" : "/dashboard");
+      }, 2800),
     ];
-
     return () => timers.forEach((id) => window.clearTimeout(id));
-  }, [router, session]);
+  }, [authLoading, user, profile, router]);
 
   return (
-    <div className="flex min-h-[70vh] w-full max-w-md flex-col items-center justify-center text-center lg:min-h-dvh">
-      <Logo href="/" className="mb-10" />
+    <div className="relative flex min-h-dvh flex-col items-center justify-center bg-paper px-6">
+      <div className="absolute top-8 left-8">
+        <Logo href="/" />
+      </div>
+      <div className="w-full max-w-md text-center">
+        <div className="mx-auto mb-8 flex size-16 items-center justify-center rounded-[18px] bg-emerald-wash text-emerald">
+          {done ? (
+            <SuccessAnimation size="md" />
+          ) : (
+            <Sparkles className="size-7" aria-hidden />
+          )}
+        </div>
+        <h1 className="font-serif text-3xl font-semibold text-ink">
+          {done ? `Welcome, ${name}` : "Setting things up"}
+        </h1>
+        <p className="mt-2 text-sm text-ink-soft">
+          {done
+            ? "Taking you to your workspace…"
+            : "This only takes a moment."}
+        </p>
 
-      <AnimatePresence mode="wait">
-        {!done ? (
-          <motion.div
-            key="loading"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            className="flex flex-col items-center"
-          >
-            <div className="mb-6 flex size-16 items-center justify-center rounded-full bg-emerald-wash text-emerald">
-              <Loader2 className="size-7 animate-spin" />
-            </div>
-            <h1 className="font-serif text-2xl font-semibold text-ink">
-              Welcome back, {name}
-            </h1>
-            <p className="mt-3 min-h-6 text-sm text-ink-soft" aria-live="polite">
-              {stages[stageIndex]}
-            </p>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="ready"
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center"
-          >
-            <SuccessAnimation className="mb-6" />
-            <h1 className="font-serif text-2xl font-semibold text-ink">
-              You&apos;re in
-            </h1>
-            <p className="mt-3 flex items-center gap-2 text-sm text-ink-soft">
-              <Sparkles className="size-4 text-gold" aria-hidden />
-              Taking you to onboarding…
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="mt-10 h-1.5 w-48 overflow-hidden rounded-full bg-paper-dim">
-        <motion.div
-          className="h-full rounded-full bg-emerald"
-          initial={{ width: "8%" }}
-          animate={{
-            width: done
-              ? "100%"
-              : `${((stageIndex + 1) / stages.length) * 85}%`,
-          }}
-          transition={{ duration: 0.45 }}
-        />
+        <div className="mt-10 space-y-3 text-left">
+          <AnimatePresence mode="wait">
+            {stages.map((stage, index) => {
+              if (index > stageIndex) return null;
+              const active = index === stageIndex && !done;
+              return (
+                <motion.div
+                  key={stage}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-3 rounded-[12px] border border-line bg-surface px-4 py-3"
+                >
+                  {active ? (
+                    <Loader2 className="size-4 shrink-0 animate-spin text-emerald" />
+                  ) : (
+                    <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-emerald text-[10px] font-bold text-paper">
+                      ✓
+                    </span>
+                  )}
+                  <span className="text-sm font-medium text-ink">{stage}</span>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

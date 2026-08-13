@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { ArrowLeft, RotateCcw, Save } from "lucide-react";
-import { toast } from "sonner";
 import { Logo } from "@/components/layout/logo";
 import { Button } from "@/components/ui/button";
 import { CustomizationPanel } from "@/features/templates/components/customization-panel";
@@ -20,9 +19,12 @@ export function CustomizeStudio() {
   const {
     template,
     saveCustom,
+    applyToCv,
     reset,
     drawerOpen,
     setDrawerOpen,
+    applying,
+    saving,
   } = useCustomize();
 
   return (
@@ -56,24 +58,22 @@ export function CustomizeStudio() {
           size="sm"
           shape="soft"
           className="hidden rounded-[8px] lg:inline-flex"
-          onClick={saveCustom}
+          disabled={saving}
+          onClick={() => void saveCustom()}
         >
           <Save className="size-3.5" />
-          Save
+          {saving ? "Saving…" : "Save"}
         </Button>
         <Button
-          asChild
+          type="button"
           size="sm"
           variant="secondary"
           shape="soft"
           className="hidden rounded-[8px] sm:inline-flex"
+          disabled={applying}
+          onClick={() => void applyToCv()}
         >
-          <Link
-            href="/cvs/cv_1/edit"
-            onClick={() => toast.success("Template applied to editor (UI)")}
-          >
-            Apply to CV
-          </Link>
+          {applying ? "Applying…" : "Apply to CV"}
         </Button>
       </header>
 
@@ -135,10 +135,11 @@ export function CustomizeStudio() {
           type="button"
           shape="soft"
           className="flex-1 rounded-[8px]"
-          onClick={saveCustom}
+          disabled={saving}
+          onClick={() => void saveCustom()}
         >
           <Save className="size-4" />
-          Save
+          {saving ? "Saving…" : "Save"}
         </Button>
       </MobileBottomBar>
     </div>

@@ -3,14 +3,16 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Minus, Plus, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CoverLetterDocumentView } from "@/components/document";
 import { useCoverLetter } from "@/features/cover-letter/context/cover-letter-context";
+import { useCoverLetterExport } from "@/features/export/hooks/use-cover-letter-export";
 import { letterTemplates } from "@/mocks/cover-letter-builder";
 import { cn } from "@/lib/utils";
-import { toast } from "sonner";
 
 export function CoverLetterPreview({ className }: { className?: string }) {
   const { document, zoom, setZoom, setTemplate, setTemplatesOpen } =
     useCoverLetter();
+  const { printCoverLetter } = useCoverLetterExport();
   const template = letterTemplates.find((t) => t.id === document.templateId);
   const scale = zoom / 100;
 
@@ -67,8 +69,8 @@ export function CoverLetterPreview({ className }: { className?: string }) {
             variant="outline"
             size="icon-sm"
             shape="soft"
-            aria-label="Print preview"
-            onClick={() => toast.message("Print preview (UI only)")}
+            aria-label="Print"
+            onClick={() => printCoverLetter(document.id, document)}
           >
             <Printer className="size-3.5" />
           </Button>
@@ -99,63 +101,20 @@ export function CoverLetterPreview({ className }: { className?: string }) {
 
       <div className="flex min-h-0 flex-1 justify-center overflow-auto p-3 sm:p-5 md:p-6">
         <AnimatePresence mode="wait">
-          <motion.article
+          <motion.div
             key={document.templateId}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.25 }}
-            className={cn(
-              "origin-top bg-surface shadow-m",
-              document.templateId === "creative" && "border-t-4 border-gold",
-              document.templateId === "executive" && "border-t-4 border-emerald",
-              document.templateId === "minimal" && "shadow-s",
-            )}
+            className="origin-top shadow-m"
             style={{
-              width: "min(420px, calc(100vw - 1.5rem))",
-              minHeight: 594,
               transform: `scale(${scale})`,
               transformOrigin: "top center",
-              padding:
-                document.templateId === "minimal" ? "36px 28px" : "40px 32px",
             }}
-            aria-label="Cover letter A4 preview"
           >
-            <header
-              className={cn(
-                "mb-6 sm:mb-7",
-                document.templateId === "modern" &&
-                  "border-b border-line pb-4",
-              )}
-            >
-              <p
-                className={cn(
-                  "font-semibold text-ink",
-                  document.templateId === "executive"
-                    ? "font-serif text-xl"
-                    : "font-serif text-lg",
-                )}
-              >
-                {document.body.headerName}
-              </p>
-              <p className="mt-1 text-[0.72rem] leading-relaxed break-words text-ink-faint">
-                {document.body.headerMeta}
-              </p>
-            </header>
-            <p className="mb-5 text-[0.78rem] text-ink-soft">
-              {document.body.date}
-            </p>
-            <div className="space-y-3.5 text-[0.82rem] leading-[1.75] text-ink">
-              <p className="whitespace-pre-wrap">{document.body.greeting}</p>
-              <p className="whitespace-pre-wrap">{document.body.opening}</p>
-              <p className="whitespace-pre-wrap">{document.body.experience}</p>
-              <p className="whitespace-pre-wrap">{document.body.skills}</p>
-              <p className="whitespace-pre-wrap">{document.body.closing}</p>
-              <p className="whitespace-pre-wrap pt-2">
-                {document.body.signature}
-              </p>
-            </div>
-          </motion.article>
+            <CoverLetterDocumentView document={document} mode="preview" />
+          </motion.div>
         </AnimatePresence>
       </div>
     </div>

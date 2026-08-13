@@ -34,23 +34,47 @@ import {
 } from "@/components/ui/sheet";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
-import { clearMockSession } from "@/features/auth/lib/mock-auth";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 import { cn, formatRelativeTime, getInitials } from "@/lib/utils";
-import { mockCurrentUser, mockNotifications } from "@/mocks";
+import { mockNotifications } from "@/mocks";
 import { useState } from "react";
+
+function displayName(
+  first?: string | null,
+  last?: string | null,
+  email?: string | null,
+) {
+  const name = [first, last].filter(Boolean).join(" ").trim();
+  return name || email || "Account";
+}
 
 export function TopBar({ className }: { className?: string }) {
   const router = useRouter();
   const { setMobileOpen } = useSidebar();
+  const { user, profile, signOut } = useAuth();
   const unread = mockNotifications.filter((n) => !n.read);
   const notifications = mockNotifications;
   const [signOutOpen, setSignOutOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [signingOut, setSigningOut] = useState(false);
 
-  function handleSignOut() {
-    clearMockSession();
-    router.push("/");
+  const name = displayName(
+    profile?.first_name,
+    profile?.last_name,
+    user?.email,
+  );
+  const email = profile?.email ?? user?.email ?? "";
+
+  async function handleSignOut() {
+    try {
+      setSigningOut(true);
+      await signOut();
+      router.push("/");
+      router.refresh();
+    } finally {
+      setSigningOut(false);
+    }
   }
 
   function handleSearchSubmit(e: React.FormEvent) {
@@ -130,9 +154,14 @@ export function TopBar({ className }: { className?: string }) {
                 ) : null}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80 max-w-[calc(100vw-2rem)] p-0">
+            <DropdownMenuContent
+              align="end"
+              className="w-80 max-w-[calc(100vw-2rem)] p-0"
+            >
               <div className="flex items-center justify-between px-3 py-3">
-                <DropdownMenuLabel className="p-0">Notifications</DropdownMenuLabel>
+                <DropdownMenuLabel className="p-0">
+                  Notifications
+                </DropdownMenuLabel>
                 <Badge variant="outline">{unread.length} new</Badge>
               </div>
               <DropdownMenuSeparator className="m-0" />
@@ -198,10 +227,7 @@ export function TopBar({ className }: { className?: string }) {
                 aria-label="User menu"
               >
                 <Avatar className="size-9">
-                  <AvatarFallback>
-                    {mockCurrentUser.avatarInitials ??
-                      getInitials(mockCurrentUser.name)}
-                  </AvatarFallback>
+                  <AvatarFallback>{getInitials(name)}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
@@ -212,9 +238,9 @@ export function TopBar({ className }: { className?: string }) {
             >
               <DropdownMenuLabel>
                 <div className="flex flex-col gap-0.5">
-                  <span>{mockCurrentUser.name}</span>
+                  <span>{name}</span>
                   <span className="text-xs font-normal text-ink-faint">
-                    {mockCurrentUser.email}
+                    {email}
                   </span>
                 </div>
               </DropdownMenuLabel>
@@ -280,7 +306,7 @@ export function TopBar({ className }: { className?: string }) {
         onOpenChange={setSignOutOpen}
         title="Sign out of VitatePro?"
         description="You can sign back in anytime. Unsaved mock editor drafts stay in this browser only."
-        confirmLabel="Sign out"
+        confirmLabel={signingOut ? "Signing out…" : "Sign out"}
         destructive
         onConfirm={handleSignOut}
       />

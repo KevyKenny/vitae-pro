@@ -3,7 +3,12 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import type { EducationFieldErrors } from "@/features/cv-editor/components/education/education-helpers";
+import { EducationDateRangeFields } from "@/features/cv-editor/components/education/education-date-fields";
+import { EducationDescriptionEditor } from "@/features/cv-editor/components/education/education-description-editor";
+import {
+  patchTertiaryEntry,
+  type EducationFieldErrors,
+} from "@/features/cv-editor/components/education/education-helpers";
 import type {
   CertificateEducation,
   ProfessionalEducation,
@@ -11,6 +16,23 @@ import type {
   VocationalEducation,
 } from "@/features/cv-editor/types";
 import { cn } from "@/lib/utils";
+
+const fieldInputClass =
+  "h-10 border-0 bg-paper-dim shadow-none focus-visible:border-line-strong focus-visible:shadow-none";
+
+function FieldLabel({
+  htmlFor,
+  label,
+}: {
+  htmlFor?: string;
+  label: string;
+}) {
+  return (
+    <Label htmlFor={htmlFor} className="text-[0.82rem] font-medium text-ink-soft">
+      {label}
+    </Label>
+  );
+}
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
@@ -26,39 +48,63 @@ export function TertiaryForm({
   onChange: (next: TertiaryEducation) => void;
   errors: EducationFieldErrors;
 }) {
+  function patch(patch: Partial<TertiaryEducation>) {
+    onChange(patchTertiaryEntry(entry, patch));
+  }
+
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
-      {(
-        [
-          ["institution", "Institution"],
-          ["qualification", "Qualification"],
-          ["field", "Field of study"],
-          ["startDate", "Start year"],
-          ["endDate", "End year"],
-          ["grade", "Grade / classification"],
-          ["achievements", "Achievements"],
-        ] as const
-      ).map(([key, label]) => (
-        <div key={key} className="space-y-1.5">
-          <Label className="text-[0.76rem] uppercase text-ink-soft">{label}</Label>
+    <div className="space-y-4">
+      <div>
+        <FieldLabel htmlFor={`education-${entry.id}`} label="Education" />
+        <Input
+          id={`education-${entry.id}`}
+          value={entry.qualification}
+          onChange={(e) => patch({ qualification: e.target.value })}
+          aria-invalid={errors.qualification ? true : undefined}
+          className={cn(fieldInputClass, errors.qualification && "border-destructive")}
+          placeholder="e.g. BSc (Hons) in Computer Science"
+        />
+        <FieldError message={errors.qualification} />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+        <div>
+          <FieldLabel htmlFor={`institution-${entry.id}`} label="Institution" />
           <Input
-            value={entry[key]}
-            onChange={(e) => onChange({ ...entry, [key]: e.target.value })}
-            aria-invalid={errors[key] ? true : undefined}
-            className={cn("bg-surface", errors[key] && "border-destructive")}
+            id={`institution-${entry.id}`}
+            value={entry.institution}
+            onChange={(e) => patch({ institution: e.target.value })}
+            aria-invalid={errors.institution ? true : undefined}
+            className={cn(fieldInputClass, errors.institution && "border-destructive")}
           />
-          <FieldError message={errors[key]} />
+          <FieldError message={errors.institution} />
         </div>
-      ))}
-      <div className="space-y-1.5 sm:col-span-2">
-        <Label className="text-[0.76rem] uppercase text-ink-soft">
-          Description
-        </Label>
-        <Textarea
-          rows={2}
+        <div>
+          <FieldLabel htmlFor={`city-${entry.id}`} label="City" />
+          <Input
+            id={`city-${entry.id}`}
+            value={entry.city}
+            onChange={(e) => patch({ city: e.target.value })}
+            className={fieldInputClass}
+          />
+        </div>
+      </div>
+
+      <EducationDateRangeFields
+        startMonth={entry.startMonth}
+        startYear={entry.startYear}
+        endMonth={entry.endMonth}
+        endYear={entry.endYear}
+        current={entry.current}
+        onChange={patch}
+        errors={errors}
+      />
+
+      <div>
+        <FieldLabel label="Description" />
+        <EducationDescriptionEditor
           value={entry.description}
-          onChange={(e) => onChange({ ...entry, description: e.target.value })}
-          className="bg-surface"
+          onChange={(description) => patch({ description })}
         />
       </div>
     </div>
@@ -75,7 +121,7 @@ export function CertificateForm({
   errors: EducationFieldErrors;
 }) {
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-2">
       {(
         [
           ["certificateName", "Certificate name"],
@@ -85,25 +131,23 @@ export function CertificateForm({
         ] as const
       ).map(([key, label]) => (
         <div key={key} className="space-y-1.5">
-          <Label className="text-[0.76rem] uppercase text-ink-soft">{label}</Label>
+          <FieldLabel label={label} />
           <Input
             value={entry[key]}
             onChange={(e) => onChange({ ...entry, [key]: e.target.value })}
             aria-invalid={errors[key] ? true : undefined}
-            className={cn("bg-surface", errors[key] && "border-destructive")}
+            className={cn(fieldInputClass, errors[key] && "border-destructive")}
           />
           <FieldError message={errors[key]} />
         </div>
       ))}
       <div className="space-y-1.5 sm:col-span-2">
-        <Label className="text-[0.76rem] uppercase text-ink-soft">
-          Description
-        </Label>
+        <FieldLabel label="Description" />
         <Textarea
-          rows={2}
+          rows={3}
           value={entry.description}
           onChange={(e) => onChange({ ...entry, description: e.target.value })}
-          className="bg-surface"
+          className={fieldInputClass}
         />
       </div>
     </div>
@@ -120,7 +164,7 @@ export function ProfessionalForm({
   errors: EducationFieldErrors;
 }) {
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-2">
       {(
         [
           ["certificationName", "Certification name"],
@@ -132,12 +176,12 @@ export function ProfessionalForm({
         ] as const
       ).map(([key, label]) => (
         <div key={key} className="space-y-1.5">
-          <Label className="text-[0.76rem] uppercase text-ink-soft">{label}</Label>
+          <FieldLabel label={label} />
           <Input
             value={entry[key]}
             onChange={(e) => onChange({ ...entry, [key]: e.target.value })}
             aria-invalid={errors[key] ? true : undefined}
-            className={cn("bg-surface", errors[key] && "border-destructive")}
+            className={cn(fieldInputClass, errors[key] && "border-destructive")}
           />
           <FieldError message={errors[key]} />
         </div>
@@ -156,7 +200,7 @@ export function VocationalForm({
   errors: EducationFieldErrors;
 }) {
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-2">
       {(
         [
           ["trainingProvider", "Training provider"],
@@ -166,27 +210,25 @@ export function VocationalForm({
         ] as const
       ).map(([key, label]) => (
         <div key={key} className="space-y-1.5">
-          <Label className="text-[0.76rem] uppercase text-ink-soft">{label}</Label>
+          <FieldLabel label={label} />
           <Input
             value={entry[key]}
             onChange={(e) => onChange({ ...entry, [key]: e.target.value })}
             aria-invalid={errors[key] ? true : undefined}
-            className={cn("bg-surface", errors[key] && "border-destructive")}
+            className={cn(fieldInputClass, errors[key] && "border-destructive")}
           />
           <FieldError message={errors[key]} />
         </div>
       ))}
       <div className="space-y-1.5 sm:col-span-2">
-        <Label className="text-[0.76rem] uppercase text-ink-soft">
-          Skills acquired
-        </Label>
+        <FieldLabel label="Skills acquired" />
         <Textarea
-          rows={2}
+          rows={3}
           value={entry.skillsAcquired}
           onChange={(e) =>
             onChange({ ...entry, skillsAcquired: e.target.value })
           }
-          className="bg-surface"
+          className={fieldInputClass}
           placeholder="e.g. Plumbing, site safety, customer service"
         />
       </div>

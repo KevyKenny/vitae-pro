@@ -3,10 +3,13 @@
 import Link from "next/link";
 import {
   ArrowLeft,
+  BarChart3,
+  Download,
   Eye,
   History,
   MoreHorizontal,
   Pencil,
+  Printer,
   Redo2,
   Settings,
   Share2,
@@ -26,17 +29,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SaveIndicator } from "@/features/cv-editor/components/save-indicator";
 import { useEditor } from "@/features/cv-editor/context/editor-context";
+import { useCvExport } from "@/features/export/hooks/use-cv-export";
 
 export function EditorToolbar() {
   const {
     document,
+    cvId,
     setTitle,
     saveStatus,
     retrySave,
     setPreviewOpen,
     setVersionsOpen,
     setAiOpen,
+    setAnalysisOpen,
   } = useEditor();
+  const { downloadCvPdf, printCv, status: exportStatus } = useCvExport();
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b border-line bg-surface px-3 sm:gap-3 sm:px-4">
@@ -100,6 +107,28 @@ export function EditorToolbar() {
           variant="outline"
           shape="soft"
           className="hidden rounded-[8px] lg:inline-flex"
+          onClick={() => setAnalysisOpen(true)}
+        >
+          <BarChart3 className="size-4" />
+          Analyze
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="icon-sm"
+          shape="soft"
+          className="lg:hidden"
+          aria-label="Analyze CV"
+          onClick={() => setAnalysisOpen(true)}
+        >
+          <BarChart3 className="size-4" />
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          shape="soft"
+          className="hidden rounded-[8px] lg:inline-flex"
           onClick={() => setAiOpen(true)}
         >
           <Sparkles className="size-4" />
@@ -144,6 +173,57 @@ export function EditorToolbar() {
           <Eye className="size-4" />
         </Button>
 
+        <Button
+          type="button"
+          variant="outline"
+          shape="soft"
+          className="hidden rounded-[8px] sm:inline-flex"
+          aria-label="Print CV"
+          onClick={() => printCv(cvId, document)}
+        >
+          <Printer className="size-4" />
+          Print
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="icon-sm"
+          shape="soft"
+          className="sm:hidden"
+          aria-label="Print CV"
+          onClick={() => printCv(cvId, document)}
+        >
+          <Printer className="size-4" />
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          shape="soft"
+          className="hidden rounded-[8px] md:inline-flex"
+          disabled={exportStatus === "generating" || exportStatus === "preparing"}
+          onClick={() => void downloadCvPdf(cvId, document)}
+        >
+          <Download className="size-4" />
+          {exportStatus === "preparing"
+            ? "Preparing…"
+            : exportStatus === "generating"
+              ? "Generating…"
+              : "Download PDF"}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="icon-sm"
+          shape="soft"
+          className="md:hidden"
+          aria-label="Download PDF"
+          disabled={exportStatus === "generating" || exportStatus === "preparing"}
+          onClick={() => void downloadCvPdf(cvId, document)}
+        >
+          <Download className="size-4" />
+        </Button>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -180,9 +260,6 @@ export function EditorToolbar() {
           className="rounded-[8px]"
           onClick={() => {
             retrySave();
-            toast.success("Saved", {
-              description: "All changes saved (mock).",
-            });
           }}
         >
           Save

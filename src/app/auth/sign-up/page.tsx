@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -20,25 +19,22 @@ import {
 } from "@/components/ui/select";
 import {
   AuthCard,
-  AuthDivider,
   AuthTabs,
   PasswordInput,
   PasswordStrengthMeter,
-  SocialLoginRow,
 } from "@/features/auth/components";
 import { CountrySelector } from "@/features/onboarding/components";
-import { mockSignUp, mockSocialAuth } from "@/features/auth/lib/mock-auth";
 import {
   signUpSchema,
   type SignUpValues,
 } from "@/features/auth/schemas/auth";
+import { authErrorMessage } from "@/lib/auth/errors";
+import { splitFullName } from "@/lib/auth/names";
+import { createClient } from "@/lib/supabase/client";
 import { mockCareerLevels } from "@/mocks/onboarding";
 
 export default function SignUpPage() {
   const router = useRouter();
-  const [loadingProvider, setLoadingProvider] = useState<
-    "google" | "github" | null
-  >(null);
 
   const form = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
@@ -63,30 +59,58 @@ export default function SignUpPage() {
   } = form;
 
   const password = watch("password");
-  const busy = isSubmitting || Boolean(loadingProvider);
 
   async function onSubmit(values: SignUpValues) {
     try {
-      await mockSignUp({
-        email: values.email,
-        fullName: values.fullName,
-        password: values.password,
-      });
-      router.push("/auth/verify-email");
-    } catch {
-      toast.error("Could not create your account. Please try again.");
-    }
-  }
+      const supabase = createClient();
+      const { firstName, lastName } = splitFullName(values.fullName);
 
-  async function handleSocial(provider: "google" | "github") {
-    try {
-      setLoadingProvider(provider);
-      await mockSocialAuth(provider);
-      router.push("/auth/transition");
-    } catch {
-      toast.error("Social sign-up failed. Please try again.");
-    } finally {
-      setLoadingProvider(null);
+      const { data, error } = await supabase.auth.signUp({
+        email: values.email.trim(),
+        password: values.password,
+        options: {
+          data: {
+            full_name: values.fullName.trim(),
+            first_name: firstName,
+            last_name: lastName,
+            country: values.country,
+            career_level: values.careerLevel,
+          },
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/auth/transition`,
+        },
+      });
+      if (error) throw error;
+
+      // Ensure profile row has signup metadata (trigger may race / miss fields)
+      if (data.user) {
+        await supabase
+          .from("profiles")
+          .upsert(
+            {
+              id: data.user.id,
+              email: values.email.trim(),
+              first_name: firstName || null,
+              last_name: lastName || null,
+              country: values.country || null,
+              career_level: values.careerLevel || null,
+            },
+            { onConflict: "id" },
+          );
+      }
+
+      if (data.session) {
+        // Email confirmation disabled — continue into the app funnel
+        router.push("/auth/transition");
+        router.refresh();
+        return;
+      }
+
+      // Confirmation required in this Supabase project
+      router.push(
+        `/auth/verify-email?email=${encodeURIComponent(values.email.trim())}`,
+      );
+    } catch (error) {
+      toast.error(authErrorMessage(error, "Could not create your account."));
     }
   }
 
@@ -107,22 +131,19 @@ export default function SignUpPage() {
       }
     >
       <AuthTabs />
-      <SocialLoginRow
-        onGoogle={() => handleSocial("google")}
-        onGithub={() => handleSocial("github")}
-        loadingProvider={loadingProvider}
-        disabled={busy}
-      />
-      <AuthDivider />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-[18px]" noValidate>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mt-6 space-y-[18px]"
+        noValidate
+      >
         <div className="space-y-2">
           <Label htmlFor="fullName">Full name</Label>
           <Input
             id="fullName"
             autoComplete="name"
             placeholder="Kennedy Sithole"
-            disabled={busy}
+            disabled={isSubmitting}
             aria-invalid={Boolean(errors.fullName)}
             {...register("fullName")}
           />
@@ -139,8 +160,8 @@ export default function SignUpPage() {
             id="signup-email"
             type="email"
             autoComplete="email"
-            placeholder="kennedy.sithole@example.com"
-            disabled={busy}
+            placeholder="you@example.com"
+            disabled={isSubmitting}
             aria-invalid={Boolean(errors.email)}
             {...register("email")}
           />
@@ -150,7 +171,8 @@ export default function SignUpPage() {
             </p>
           ) : (
             <p className="text-xs text-ink-faint">
-              We&apos;ll send a verification link to this address.
+              Use an email you can access — we&apos;ll use it for account
+              recovery.
             </p>
           )}
         </div>
@@ -161,11 +183,14 @@ export default function SignUpPage() {
             id="signup-password"
             autoComplete="new-password"
             placeholder="At least 8 characters"
-            disabled={busy}
+            disabled={isSubmitting}
             aria-invalid={Boolean(errors.password)}
             {...register("password")}
           />
           <PasswordStrengthMeter password={password || ""} />
+          <p className="text-xs text-ink-faint">
+            Use 8+ characters with uppercase, lowercase, and a number.
+          </p>
           {errors.password ? (
             <p className="text-xs font-medium text-destructive">
               {errors.password.message}
@@ -179,7 +204,7 @@ export default function SignUpPage() {
             id="confirmPassword"
             autoComplete="new-password"
             placeholder="Repeat your password"
-            disabled={busy}
+            disabled={isSubmitting}
             aria-invalid={Boolean(errors.confirmPassword)}
             {...register("confirmPassword")}
           />
@@ -252,7 +277,7 @@ export default function SignUpPage() {
                 id="acceptTerms"
                 checked={field.value}
                 onCheckedChange={(checked) => field.onChange(checked === true)}
-                disabled={busy}
+                disabled={isSubmitting}
                 className="mt-0.5"
                 aria-invalid={Boolean(errors.acceptTerms)}
               />
@@ -263,11 +288,11 @@ export default function SignUpPage() {
             className="text-[0.82rem] leading-relaxed font-medium text-ink-soft"
           >
             I agree to VitatePro&apos;s{" "}
-            <Link href="#" className="text-emerald hover:underline">
+            <Link href="/terms" className="text-emerald hover:underline">
               Terms
             </Link>{" "}
             and{" "}
-            <Link href="#" className="text-emerald hover:underline">
+            <Link href="/privacy" className="text-emerald hover:underline">
               Privacy Policy
             </Link>
             .
@@ -282,7 +307,7 @@ export default function SignUpPage() {
         <Button
           type="submit"
           shape="soft"
-          disabled={busy}
+          disabled={isSubmitting}
           className="h-11 w-full rounded-[8px] text-[0.94rem]"
         >
           {isSubmitting ? (

@@ -17,7 +17,6 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { Briefcase, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -29,7 +28,10 @@ import { EditorSectionCard } from "@/features/cv-editor/components/editor-sectio
 import { ExperienceCard } from "@/features/cv-editor/components/experience/experience-card";
 import { ExperienceTypeSelector } from "@/features/cv-editor/components/experience/experience-type-selector";
 import { createExperienceEntry } from "@/features/cv-editor/components/experience/experience-helpers";
+import { SectionSaveBar } from "@/features/cv-editor/components/section-save-bar";
 import { useEditor } from "@/features/cv-editor/context/editor-context";
+import { useSectionId } from "@/features/cv-editor/hooks/use-section-id";
+import { useSectionSave } from "@/features/cv-editor/hooks/use-section-save";
 import type {
   ExperienceEntry,
   ExperienceTypeId,
@@ -37,6 +39,8 @@ import type {
 
 export function ExperienceSection() {
   const { document, updateDocument } = useEditor();
+  const sectionId = useSectionId("experience");
+  const { dirty, status, onSave } = useSectionSave("experience");
   const [pickerOpen, setPickerOpen] = useState(false);
   const [newEntryId, setNewEntryId] = useState<string | null>(null);
 
@@ -47,13 +51,18 @@ export function ExperienceSection() {
     }),
   );
 
-  function setExperience(experience: ExperienceEntry[]) {
-    updateDocument((prev) => ({ ...prev, experience }));
+  function patchExperience(
+    updater: (experience: ExperienceEntry[]) => ExperienceEntry[],
+  ) {
+    updateDocument(
+      (prev) => ({ ...prev, experience: updater(prev.experience) }),
+      { sectionKey: "experience" },
+    );
   }
 
   function addOfType(type: ExperienceTypeId) {
     const entry = createExperienceEntry(type);
-    setExperience([...document.experience, entry]);
+    patchExperience((experience) => [...experience, entry]);
     setNewEntryId(entry.id);
     setPickerOpen(false);
   }
@@ -61,14 +70,16 @@ export function ExperienceSection() {
   function onDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
-    const oldIndex = document.experience.findIndex((e) => e.id === active.id);
-    const newIndex = document.experience.findIndex((e) => e.id === over.id);
-    if (oldIndex < 0 || newIndex < 0) return;
-    setExperience(arrayMove(document.experience, oldIndex, newIndex));
+    patchExperience((experience) => {
+      const oldIndex = experience.findIndex((e) => e.id === active.id);
+      const newIndex = experience.findIndex((e) => e.id === over.id);
+      if (oldIndex < 0 || newIndex < 0) return experience;
+      return arrayMove(experience, oldIndex, newIndex);
+    });
   }
 
   return (
-    <EditorSectionCard sectionId="sec_experience" title="Work Experience">
+    <EditorSectionCard sectionId={sectionId} title="Employment">
       {document.experience.length === 0 ? (
         <EmptyState
           icon={Briefcase}
@@ -95,38 +106,36 @@ export function ExperienceSection() {
                   entry={entry}
                   defaultExpanded={entry.id === newEntryId}
                   onChange={(next) => {
-                    setExperience(
-                      document.experience.map((e) =>
-                        e.id === entry.id ? next : e,
-                      ),
+                    patchExperience((experience) =>
+                      experience.map((e) => (e.id === entry.id ? next : e)),
                     );
                   }}
                   onRemove={() =>
-                    setExperience(
-                      document.experience.filter((e) => e.id !== entry.id),
+                    patchExperience((experience) =>
+                      experience.filter((e) => e.id !== entry.id),
                     )
                   }
-                  onDuplicate={() => {
-                    const copy = structuredClone(entry) as ExperienceEntry;
-                    copy.id = `exp_${Date.now()}`;
-                    setExperience([...document.experience, copy]);
-                    setNewEntryId(copy.id);
-                  }}
                 />
               ))}
             </SortableContext>
           </DndContext>
-          <Button
+          <button
             type="button"
-            variant="outline"
-            shape="soft"
-            className="w-full rounded-[8px] border-dashed"
+            className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface px-3 py-1.5 text-[0.82rem] font-medium text-ink-soft transition-colors hover:border-line-strong hover:text-ink"
             onClick={() => setPickerOpen(true)}
           >
-            <Plus className="size-4" /> Add experience
-          </Button>
+            <Plus className="size-3.5" aria-hidden />
+            Add experience
+          </button>
         </div>
       )}
+
+      <SectionSaveBar
+        dirty={dirty}
+        status={status}
+        onSave={onSave}
+        label="Save Experience"
+      />
 
       <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
         <DialogContent className="max-w-xl">

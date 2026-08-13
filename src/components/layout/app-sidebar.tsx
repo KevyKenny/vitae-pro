@@ -12,8 +12,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 import { cn, getInitials } from "@/lib/utils";
-import { mockCurrentUser } from "@/mocks";
 
 type AppSidebarProps = {
   className?: string;
@@ -21,12 +21,12 @@ type AppSidebarProps = {
 
 export function AppSidebar({ className }: AppSidebarProps) {
   const { collapsed, toggleCollapsed } = useSidebar();
-  const planLabel =
-    mockCurrentUser.plan === "free"
-      ? "Free plan"
-      : mockCurrentUser.plan === "pro"
-        ? "Pro plan"
-        : "Team plan";
+  const { user, profile } = useAuth();
+  const name =
+    [profile?.first_name, profile?.last_name].filter(Boolean).join(" ").trim() ||
+    user?.email ||
+    "Account";
+  const planLabel = "Free plan";
 
   return (
     <motion.aside
@@ -82,15 +82,12 @@ export function AppSidebar({ className }: AppSidebarProps) {
         )}
       >
         <Avatar>
-          <AvatarFallback>
-            {mockCurrentUser.avatarInitials ??
-              getInitials(mockCurrentUser.name)}
-          </AvatarFallback>
+          <AvatarFallback>{getInitials(name)}</AvatarFallback>
         </Avatar>
         {!collapsed ? (
           <div className="min-w-0">
             <p className="truncate text-[0.85rem] font-semibold text-ink">
-              {mockCurrentUser.name}
+              {name}
             </p>
             <p className="text-[0.72rem] text-ink-faint">{planLabel}</p>
           </div>

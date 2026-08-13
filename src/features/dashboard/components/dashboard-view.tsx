@@ -2,9 +2,11 @@
 
 import dynamic from "next/dynamic";
 import { WelcomeHero } from "@/features/dashboard/components/welcome-hero";
-import { QuickActions } from "@/features/dashboard/components/quick-actions";
+import { DashboardQuickActions } from "@/features/dashboard/components/dashboard-quick-actions";
+import { RecentCvs } from "@/features/dashboard/components/recent-cvs";
+import { DashboardCvHealth } from "@/features/dashboard/components/dashboard-cv-health";
 import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
-import { mockActivity, mockQuickActions, mockTips } from "@/mocks";
+import { mockActivity, mockTips } from "@/mocks";
 
 const RecentActivity = dynamic(
   () =>
@@ -26,7 +28,9 @@ export function DashboardView() {
   return (
     <div className="space-y-6 pb-4 sm:space-y-8">
       <WelcomeHero />
-      <QuickActions actions={mockQuickActions} />
+      <DashboardCvHealth />
+      <DashboardQuickActions />
+      <RecentCvs />
       <RecentActivity items={mockActivity} />
       <TipsCarousel tips={mockTips} />
     </div>

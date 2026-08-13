@@ -18,7 +18,6 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { SubjectInput } from "@/features/cv-editor/components/education/subject-input";
 import { createSubject } from "@/features/cv-editor/components/education/education-helpers";
 import type { SubjectGrade } from "@/features/cv-editor/types";
@@ -30,6 +29,7 @@ function SortableSubjectRow({
   errorName,
   errorGrade,
   canRemove,
+  showHeaders,
 }: {
   subject: SubjectGrade;
   onChange: (next: SubjectGrade) => void;
@@ -37,6 +37,7 @@ function SortableSubjectRow({
   errorName?: string;
   errorGrade?: string;
   canRemove: boolean;
+  showHeaders?: boolean;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: subject.id });
@@ -57,6 +58,7 @@ function SortableSubjectRow({
         canRemove={canRemove}
         errorName={errorName}
         errorGrade={errorGrade}
+        showHeaders={showHeaders}
         dragHandleProps={{ ...attributes, ...listeners }}
       />
     </div>
@@ -101,6 +103,7 @@ export function SubjectList({
             <div key={subject.id} role="listitem">
               <SortableSubjectRow
                 subject={subject}
+                showHeaders={index === 0}
                 onChange={(next) => {
                   const copy = [...subjects];
                   copy[index] = next;
@@ -117,15 +120,14 @@ export function SubjectList({
           ))}
         </SortableContext>
       </DndContext>
-      <Button
+      <button
         type="button"
-        variant="outline"
-        shape="soft"
-        className="w-full rounded-[8px] border-dashed"
+        className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface px-3 py-1.5 text-[0.82rem] font-medium text-ink-soft transition-colors hover:border-line-strong hover:text-ink"
         onClick={() => onChange([...subjects, createSubject()])}
       >
-        <Plus className="size-4" /> Add subject
-      </Button>
+        <Plus className="size-3.5" aria-hidden />
+        Add subject
+      </button>
     </div>
   );
 }

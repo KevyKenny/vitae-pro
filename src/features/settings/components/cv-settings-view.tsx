@@ -1,15 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { SectionCard } from "@/components/shared/section-card";
+import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
 import { SettingsPageHeader } from "@/features/settings/components/settings-page-header";
 import { SelectSetting } from "@/features/settings/components/select-setting";
 import { RadioCard } from "@/features/settings/components/preference-card";
 import { useSettingsSave } from "@/features/settings/hooks/use-settings-save";
 import { mockCvPreferences } from "@/mocks/settings";
-import { galleryTemplates, templateFonts, colorPalettes } from "@/mocks/templates-gallery";
+import {
+  galleryTemplates,
+  templateFonts,
+  colorPalettes,
+} from "@/mocks/templates-gallery";
 import { mockLanguages } from "@/mocks/onboarding";
 import type { CvPreferences, CvStylePref } from "@/features/settings/types";
+import type { GalleryTemplate } from "@/features/templates/types";
+import {
+  getTemplateBySlugOrId,
+  getTemplateDbIdBySlug,
+  getUserDefaultTemplateId,
+  listActiveTemplates,
+  setUserDefaultTemplate,
+  templateErrorMessage,
+} from "@/lib/templates";
 
 const CV_STYLES: { id: CvStylePref; label: string; description: string }[] = [
   {
@@ -36,12 +51,83 @@ const CV_STYLES: { id: CvStylePref; label: string; description: string }[] = [
 
 export function CvSettingsView() {
   const [prefs, setPrefs] = useState<CvPreferences>(mockCvPreferences);
+  const [templates, setTemplates] = useState<GalleryTemplate[]>(galleryTemplates);
+  const [loading, setLoading] = useState(true);
+  const prefsRef = useRef(prefs);
   const { saveStatus, scheduleSave, saveNow, retry } = useSettingsSave();
 
-  const update = (patch: Partial<CvPreferences>) => {
-    setPrefs((p) => ({ ...p, ...patch }));
-    scheduleSave();
+  prefsRef.current = prefs;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const [active, defaultTemplateUuid] = await Promise.all([
+          listActiveTemplates(),
+          getUserDefaultTemplateId(),
+        ]);
+        if (cancelled) return;
+
+        const resolvedTemplates =
+          active.length > 0 ? active : galleryTemplates;
+        setTemplates(resolvedTemplates);
+
+        let defaultTemplateSlug = mockCvPreferences.defaultTemplateId;
+        if (defaultTemplateUuid) {
+          const match = await getTemplateBySlugOrId(defaultTemplateUuid);
+          if (match) {
+            defaultTemplateSlug = match.id;
+          }
+        }
+
+        setPrefs((current) => ({
+          ...current,
+          defaultTemplateId: defaultTemplateSlug,
+        }));
+      } catch (error) {
+        if (cancelled) return;
+        toast.error(templateErrorMessage(error));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const persistDefaultTemplate = async (slug: string) => {
+    const uuid = await getTemplateDbIdBySlug(slug);
+    if (!uuid) {
+      throw new Error("We couldn't find that template.");
+    }
+    await setUserDefaultTemplate(uuid);
   };
+
+  const update = (patch: Partial<CvPreferences>) => {
+    setPrefs((p) => {
+      const next = { ...p, ...patch };
+      if (patch.defaultTemplateId !== undefined) {
+        scheduleSave(async () => {
+          await persistDefaultTemplate(next.defaultTemplateId);
+        });
+      } else {
+        scheduleSave();
+      }
+      return next;
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <LoadingSkeleton variant="settings" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -50,7 +136,11 @@ export function CvSettingsView() {
         description="Defaults applied when you create a new CV or open the customizer."
         saveStatus={saveStatus}
         onRetry={retry}
-        onSave={() => void saveNow()}
+        onSave={() =>
+          void saveNow(async () => {
+            await persistDefaultTemplate(prefsRef.current.defaultTemplateId);
+          })
+        }
       />
 
       <SectionCard title="Document defaults">
@@ -60,7 +150,7 @@ export function CvSettingsView() {
             label="Default CV template"
             value={prefs.defaultTemplateId}
             onChange={(v) => update({ defaultTemplateId: v })}
-            options={galleryTemplates.map((t) => ({
+            options={templates.map((t) => ({
               value: t.id,
               label: t.name,
             }))}

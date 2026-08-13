@@ -3,8 +3,7 @@
 import { useMemo, useState } from "react";
 import {
   ChevronDown,
-  Copy,
-  GraduationCap,
+  Check,
   GripVertical,
   Trash2,
 } from "lucide-react";
@@ -32,13 +31,12 @@ export function EducationCard({
   entry,
   onChange,
   onRemove,
-  onDuplicate,
   defaultExpanded = false,
 }: {
   entry: EducationEntry;
   onChange: (next: EducationEntry) => void;
   onRemove: () => void;
-  onDuplicate: () => void;
+  onDuplicate?: () => void;
   defaultExpanded?: boolean;
 }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
@@ -120,10 +118,10 @@ export function EducationCard({
         transition,
         opacity: isDragging ? 0.72 : 1,
       }}
-      className="rounded-[14px] border border-line bg-paper-dim/40 shadow-s"
+      className="rounded-lg border border-line bg-surface shadow-s"
       aria-labelledby={`edu-title-${entry.id}`}
     >
-      <div className="flex items-start gap-2 p-3 sm:p-4">
+      <div className="flex items-start gap-2 border-b border-line px-3 py-3 sm:px-4">
         <Button
           type="button"
           variant="ghost"
@@ -139,86 +137,75 @@ export function EducationCard({
 
         <button
           type="button"
-          className="min-w-0 flex-1 rounded-[10px] text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald/40"
+          className="min-w-0 flex-1 rounded-md text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald/40"
           aria-expanded={expanded}
           aria-controls={`edu-panel-${entry.id}`}
           onClick={() => {
-            setExpanded((v) => !v);
+            setExpanded((value) => !value);
             setShowErrors(true);
           }}
         >
-          <div className="flex items-start gap-3">
-            <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-emerald-wash text-emerald">
-              <GraduationCap className="size-4" aria-hidden />
+          <span
+            id={`edu-title-${entry.id}`}
+            className="block text-[0.92rem] font-semibold text-ink"
+          >
+            {summary.title}
+          </span>
+          <span className="mt-0.5 block text-sm text-ink-soft">
+            {summary.subtitle}
+          </span>
+          {summary.meta ? (
+            <span className="mt-1 block text-[0.78rem] text-ink-faint">
+              {summary.meta}
             </span>
-            <span className="min-w-0">
-              <span
-                id={`edu-title-${entry.id}`}
-                className="block font-semibold text-ink"
-              >
-                {summary.title}
-              </span>
-              <span className="mt-0.5 block text-sm text-ink-soft">
-                {summary.subtitle}
-              </span>
-              {summary.meta ? (
-                <span className="mt-1 block text-[0.78rem] text-ink-faint">
-                  {summary.meta}
-                </span>
-              ) : null}
-            </span>
-          </div>
+          ) : null}
         </button>
 
-        <div className="flex shrink-0 items-center gap-0.5">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            shape="soft"
-            aria-label="Duplicate education entry"
-            onClick={onDuplicate}
-          >
-            <Copy className="size-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            shape="soft"
-            aria-label="Delete education entry"
-            onClick={onRemove}
-          >
-            <Trash2 className="size-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            shape="soft"
-            aria-label={expanded ? "Collapse" : "Expand"}
-            aria-expanded={expanded}
-            onClick={() => {
-              setExpanded((v) => !v);
-              setShowErrors(true);
-            }}
-          >
-            <ChevronDown
-              className={cn(
-                "size-4 transition-transform",
-                expanded && "rotate-180",
-              )}
-            />
-          </Button>
-        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          shape="soft"
+          aria-label={expanded ? "Collapse education entry" : "Expand education entry"}
+          aria-expanded={expanded}
+          onClick={() => {
+            setExpanded((value) => !value);
+            setShowErrors(true);
+          }}
+        >
+          <ChevronDown
+            className={cn(
+              "size-4 transition-transform",
+              expanded && "rotate-180",
+            )}
+          />
+        </Button>
       </div>
 
       {expanded ? (
-        <div
-          id={`edu-panel-${entry.id}`}
-          className="border-t border-line px-3 pt-3 pb-4 sm:px-4"
-        >
+        <div id={`edu-panel-${entry.id}`} className="px-3 py-4 sm:px-4">
           {renderForm()}
+          <div className="mt-4 flex items-center justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              shape="soft"
+              aria-label="Delete education entry"
+              onClick={onRemove}
+              className="rounded-md"
+            >
+              <Trash2 className="size-4" />
+            </Button>
+            <Button
+              type="button"
+              className="rounded-md bg-[#7c3aed] px-4 text-white hover:bg-[#6d28d9]"
+              onClick={() => setExpanded(false)}
+            >
+              <Check className="size-4" />
+              Done
+            </Button>
+          </div>
         </div>
       ) : null}
     </article>

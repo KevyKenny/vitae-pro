@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -28,6 +28,8 @@ import {
   IllustrationContainer,
   SuccessAnimation,
 } from "@/features/auth/components";
+import { useAuth } from "@/features/auth/hooks/use-auth";
+import { persistOnboardingProgress } from "@/features/auth/lib/profile-actions";
 import {
   CountrySelector,
   FeatureCard,
@@ -35,12 +37,6 @@ import {
   PreferenceToggle,
   ProgressStepper,
 } from "@/features/onboarding/components";
-import {
-  getOnboardingDraft,
-  mockCompleteOnboarding,
-  saveOnboardingDraft,
-  subscribeMockAuth,
-} from "@/features/auth/lib/mock-auth";
 import type {
   AiPreferencesValues,
   OnboardingValues,
@@ -53,6 +49,7 @@ import {
   mockLanguages,
 } from "@/mocks/onboarding";
 import { cn } from "@/lib/utils";
+import { authErrorMessage } from "@/lib/auth/errors";
 
 const STEPS = [
   "Welcome",
@@ -96,63 +93,71 @@ const defaultDraft: DraftState = {
 
 export function OnboardingWizard() {
   const router = useRouter();
-  const storedDraft = useSyncExternalStore(
-    subscribeMockAuth,
-    getOnboardingDraft,
-    () => null,
-  );
+  const { user, profile, loading: authLoading, refreshProfile } = useAuth();
   const [saving, setSaving] = useState(false);
   const [completing, setCompleting] = useState(false);
-  const [sessionState, setSessionState] = useState<{
-    step: number;
-    data: DraftState;
-  } | null>(null);
+  const [hydrated, setHydrated] = useState(false);
+  const [step, setStep] = useState(0);
+  const [data, setData] = useState<DraftState>(defaultDraft);
 
-  const step =
-    sessionState?.step ??
-    (storedDraft ? Math.min(storedDraft.step, STEPS.length - 1) : 0);
-  const data = useMemo(
-    () => ({
+  useEffect(() => {
+    if (authLoading || hydrated) return;
+    if (!user) {
+      router.replace("/auth/sign-in");
+      return;
+    }
+    if (profile?.onboarding_completed) {
+      router.replace("/dashboard");
+      return;
+    }
+
+    const experienceLevel =
+      profile?.career_level === "mid-level"
+        ? "mid"
+        : ((profile?.career_level as DraftState["experienceLevel"]) ?? "mid");
+
+    const nextDraft: DraftState = {
       ...defaultDraft,
-      ...(storedDraft?.data as DraftState | undefined),
-      ...sessionState?.data,
-    }),
-    [sessionState?.data, storedDraft?.data],
-  );
+      firstName: profile?.first_name ?? "",
+      lastName: profile?.last_name ?? "",
+      profession: profile?.professional_title ?? "",
+      yearsExperience: profile?.years_of_experience ?? 3,
+      employmentStatus:
+        (profile?.employment_status as DraftState["employmentStatus"]) ??
+        "seeking",
+      country: profile?.country ?? "",
+      preferredLanguage: profile?.preferred_language ?? "en",
+      experienceLevel,
+    };
 
-  function setStep(nextStep: number) {
-    setSessionState((prev) => ({
-      step: nextStep,
-      data: prev?.data ?? data,
-    }));
-  }
+    // Defer so React Compiler / lint does not treat this as cascading render sync.
+    const id = window.setTimeout(() => {
+      setData(nextDraft);
+      setHydrated(true);
+    }, 0);
+    return () => window.clearTimeout(id);
+  }, [authLoading, hydrated, user, profile, router]);
 
   function update<K extends keyof OnboardingValues>(
     key: K,
     value: OnboardingValues[K],
   ) {
-    setSessionState((prev) => ({
-      step: prev?.step ?? step,
-      data: { ...(prev?.data ?? data), [key]: value },
-    }));
-  }
-
-  function persist(nextStep = step) {
-    saveOnboardingDraft({
-      step: nextStep,
-      data,
-      updatedAt: new Date().toISOString(),
-    });
+    setData((prev) => ({ ...prev, [key]: value }));
   }
 
   async function handleSaveForLater() {
     setSaving(true);
-    persist(step);
-    await new Promise((r) => setTimeout(r, 500));
-    setSaving(false);
-    toast.success("Progress saved", {
-      description: "You can return to onboarding anytime.",
-    });
+    try {
+      await persistOnboardingProgress(data, { complete: false });
+      await refreshProfile();
+      toast.success("Progress saved", {
+        description: "You can return to onboarding anytime.",
+      });
+    } catch (error) {
+      toast.error(authErrorMessage(error, "Could not save progress."));
+    } finally {
+      setSaving(false);
+    }
   }
 
   function canContinue(): boolean {
@@ -186,25 +191,22 @@ export function OnboardingWizard() {
       toast.error("Please complete this step to continue.");
       return;
     }
-    const nextStep = Math.min(step + 1, STEPS.length - 1);
-    setStep(nextStep);
-    persist(nextStep);
+    setStep((s) => Math.min(s + 1, STEPS.length - 1));
   }
 
   function previous() {
-    const prevStep = Math.max(step - 1, 0);
-    setStep(prevStep);
-    persist(prevStep);
+    setStep((s) => Math.max(s - 1, 0));
   }
 
   async function finish() {
     try {
       setCompleting(true);
-      persist(STEPS.length - 1);
-      await mockCompleteOnboarding();
-      router.push("/dashboard");
-    } catch {
-      toast.error("Could not finish onboarding.");
+      await persistOnboardingProgress(data, { complete: true });
+      await refreshProfile();
+      router.push("/cvs/new");
+      router.refresh();
+    } catch (error) {
+      toast.error(authErrorMessage(error, "Could not finish onboarding."));
       setCompleting(false);
     }
   }
@@ -223,6 +225,14 @@ export function OnboardingWizard() {
       return "bg-gradient-to-br from-paper via-surface to-ink/90 text-ink";
     return "bg-paper text-ink";
   }, [data.theme]);
+
+  if (authLoading || !hydrated) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-paper">
+        <p className="text-sm text-ink-soft">Loading your profile…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-3xl flex-col px-5 py-8 sm:px-8">
@@ -518,8 +528,8 @@ export function OnboardingWizard() {
                   You&apos;re all set, {data.firstName || "friend"}
                 </h1>
                 <p className="mt-4 max-w-md text-ink-soft">
-                  Your workspace is personalized. Head to the dashboard to create
-                  your first CV — business screens arrive in Phase 3.
+                  Your workspace is personalized. Let&apos;s create your first
+                  professional CV — guided steps make it easy.
                 </p>
                 <Button
                   type="button"
@@ -529,7 +539,7 @@ export function OnboardingWizard() {
                   disabled={completing}
                   onClick={finish}
                 >
-                  {completing ? "Opening dashboard…" : "Go to Dashboard"}
+                  {completing ? "Opening…" : "Create my CV"}
                 </Button>
               </div>
             )}

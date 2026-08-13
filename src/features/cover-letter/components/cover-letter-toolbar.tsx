@@ -7,6 +7,7 @@ import {
   Eye,
   LayoutTemplate,
   MoreHorizontal,
+  Printer,
   Redo2,
   Settings,
   Undo2,
@@ -32,6 +33,7 @@ import {
 import { SaveIndicator } from "@/features/cv-editor/components/save-indicator";
 import { ApplicationStatusBadge } from "@/features/cover-letter/components/application-status-badge";
 import { useCoverLetter } from "@/features/cover-letter/context/cover-letter-context";
+import { useCoverLetterExport } from "@/features/export/hooks/use-cover-letter-export";
 import type { ApplicationStatus } from "@/features/cover-letter/types";
 
 const STATUSES: ApplicationStatus[] = [
@@ -58,6 +60,8 @@ export function CoverLetterToolbar({
     setTemplatesOpen,
     setApplicationStatus,
   } = useCoverLetter();
+  const { downloadCoverLetterPdf, printCoverLetter, status: exportStatus } =
+    useCoverLetterExport();
 
   function handlePreview() {
     onRequestPreview?.();
@@ -176,13 +180,29 @@ export function CoverLetterToolbar({
           </Button>
           <Button
             type="button"
+            variant="outline"
             size="sm"
             shape="soft"
             className="hidden rounded-[8px] sm:inline-flex"
-            onClick={() => toast.success("Download (UI only)")}
+            onClick={() => printCoverLetter(document.id, document)}
+          >
+            <Printer className="size-3.5" />
+            Print
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            shape="soft"
+            className="hidden rounded-[8px] sm:inline-flex"
+            disabled={exportStatus === "generating" || exportStatus === "preparing"}
+            onClick={() => void downloadCoverLetterPdf(document.id, document)}
           >
             <Download className="size-3.5" />
-            Download
+            {exportStatus === "preparing"
+              ? "Preparing…"
+              : exportStatus === "generating"
+                ? "Generating…"
+                : "Download"}
           </Button>
 
           <DropdownMenu>
@@ -238,9 +258,15 @@ export function CoverLetterToolbar({
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="sm:hidden"
-                onClick={() => toast.success("Download (UI only)")}
+                onClick={() => void downloadCoverLetterPdf(document.id, document)}
               >
                 <Download className="size-4" /> Download
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="sm:hidden"
+                onClick={() => printCoverLetter(document.id, document)}
+              >
+                <Printer className="size-4" /> Print
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => toast.message("Letter settings (UI only)")}

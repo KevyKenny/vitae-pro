@@ -4,6 +4,8 @@ import type {
   EditorAiSuggestion,
   EditorTemplate,
 } from "@/features/cv-editor/types";
+import { normalizePersonalInfo } from "@/lib/cvs/personal-info";
+import { normalizeTertiaryEntry } from "@/lib/cvs/education-dates";
 
 export const editorTemplates: EditorTemplate[] = [
   {
@@ -38,7 +40,7 @@ export const mockCvDocument: CvDocument = {
   title: "Senior Product Designer",
   templateId: "modern",
   updatedAt: "2026-08-05T14:00:00.000Z",
-  personal: {
+  personal: normalizePersonalInfo({
     fullName: "Kennedy Sithole",
     title: "Senior Product Designer",
     email: "kennedy.Sithole@email.com",
@@ -47,7 +49,11 @@ export const mockCvDocument: CvDocument = {
     linkedin: "linkedin.com/in/kennedySithole",
     portfolio: "kennedy.design",
     socialLinks: ["dribbble.com/kennedy"],
-  },
+    fieldVisibility: {
+      linkedin: true,
+      website: true,
+    },
+  }),
   summary:
     "Product designer with 8 years of experience leading design for consumer apps. Responsible for onboarding flows and design systems work across cross-functional teams.",
   experience: [
@@ -239,30 +245,42 @@ export const mockCvDocument: CvDocument = {
       credentialNumber: "NC-IT-7721",
       description: "Foundations in hardware, networking, and desktop support.",
     },
-    {
+    normalizeTertiaryEntry({
       id: "edu_diploma",
       qualificationType: "diploma",
       institution: "Harare Polytechnic",
+      city: "Harare",
       qualification: "National Diploma",
       field: "Information Technology",
-      startDate: "2017",
-      endDate: "2019",
+      startDate: "2017-01-01",
+      endDate: "2019-01-01",
+      startMonth: "",
+      startYear: "",
+      endMonth: "",
+      endYear: "",
+      current: false,
       grade: "Merit",
       achievements: "Final year project distinction",
       description: "Systems analysis, databases, and software development.",
-    },
-    {
+    }),
+    normalizeTertiaryEntry({
       id: "edu_degree",
       qualificationType: "masters",
       institution: "Royal College of Art",
+      city: "London",
       qualification: "MA",
       field: "Service Design",
-      startDate: "2017",
-      endDate: "2019",
+      startDate: "2017-09-01",
+      endDate: "2019-06-01",
+      startMonth: "",
+      startYear: "",
+      endMonth: "",
+      endYear: "",
+      current: false,
       grade: "Distinction",
       achievements: "Thesis on activation loops",
       description: "Focus on service ecosystems and participatory research.",
-    },
+    }),
     {
       id: "edu_pro",
       qualificationType: "professional",

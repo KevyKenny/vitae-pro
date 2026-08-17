@@ -56,7 +56,7 @@ export function TemplateComparison({
                 <X className="size-3.5" />
               </button>
               <div className="mb-2 h-28">
-                <MiniPreview accent={t.previewAccent} />
+                <MiniPreview templateId={t.id} />
               </div>
               <p className="font-semibold text-ink">{t.name}</p>
               <p className="text-[0.72rem] capitalize text-ink-faint">{t.style}</p>

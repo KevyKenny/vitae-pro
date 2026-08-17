@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import type { CvDocument } from "@/features/cv-editor/types";
 import { assertCvOwnership } from "@/lib/ai/auth";
+import { AiServiceError } from "@/lib/ai/errors";
 import { getCurrentUser } from "@/lib/auth/session";
 import {
   buildCvFilename,
@@ -48,10 +49,10 @@ export async function POST(request: Request) {
     const origin = new URL(request.url).origin;
     const cookie = request.headers.get("cookie");
 
-    let printUrl = `${origin}/cvs/${body.cvId}/print`;
+    let printUrl = `${origin}/cvs/${body.cvId}/print?pageSize=${pageSize}`;
     if (body.document) {
-      const token = storeCvDraft(user.id, document);
-      printUrl = `${origin}/cvs/${body.cvId}/print?draftToken=${token}`;
+      const token = await storeCvDraft(user.id, document);
+      printUrl = `${origin}/cvs/${body.cvId}/print?draftToken=${token}&pageSize=${pageSize}`;
     }
 
     const pdf = await urlToPdfBuffer(printUrl, cookie, pageSize);
@@ -68,6 +69,9 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
+    if (error instanceof AiServiceError && error.status === 403) {
+      return exportError("You don't have access to this CV.", 403);
+    }
     if (error instanceof z.ZodError) {
       return exportError(error.issues[0]?.message ?? "Invalid request.", 400);
     }

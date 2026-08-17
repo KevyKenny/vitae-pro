@@ -353,10 +353,16 @@ export type CvSectionMeta = {
   content?: string;
 };
 
+import type { TemplateRendererKey } from "@/lib/templates/definitions/types";
+
 export type CvDocument = {
   id: string;
   title: string;
   templateId: EditorTemplateId;
+  /** Gallery slug e.g. tpl_default */
+  templateSlug?: string;
+  /** Renderer registry key */
+  rendererKey?: TemplateRendererKey;
   personal: PersonalInfo;
   summary: string;
   experience: ExperienceEntry[];
@@ -391,7 +397,8 @@ export type CvVersion = {
 };
 
 export type EditorTemplate = {
-  id: EditorTemplateId;
+  id: TemplateRendererKey;
+  slug: TemplateRendererKey;
   name: string;
   description: string;
 };

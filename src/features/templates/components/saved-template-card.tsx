@@ -28,7 +28,7 @@ export function SavedTemplateCard({
       className="overflow-hidden rounded-[14px] border border-line-strong bg-surface shadow-s"
     >
       <div className="aspect-[4/3] bg-paper-dim p-3">
-        <MiniPreview accent={template?.previewAccent ?? "#1F4D3D"} />
+        <MiniPreview templateId={entry.templateId} />
       </div>
       <div className="space-y-2 p-3.5">
         <div className="flex items-start justify-between gap-2">

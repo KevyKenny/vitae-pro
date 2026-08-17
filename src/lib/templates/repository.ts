@@ -172,6 +172,39 @@ export async function getTemplateCustomization(
   return parseTemplateCustomization(data.customization, templateSlug);
 }
 
+/** Resolve saved customization using gallery slug (from cvs.template_id) then editor style key. */
+export async function resolveCvTemplateCustomization(
+  cvId: string,
+  templateStyleKey: string,
+): Promise<TemplateCustomization | null> {
+  const { supabase, user } = await requireAuthUser();
+
+  const { data: cvRow, error: cvError } = await supabase
+    .from("cvs")
+    .select("template_id")
+    .eq("id", cvId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (cvError) throw new Error(templateErrorMessage(cvError));
+
+  if (cvRow?.template_id) {
+    const { data: templateRow, error: templateError } = await supabase
+      .from("templates")
+      .select("slug")
+      .eq("id", cvRow.template_id)
+      .maybeSingle();
+
+    if (templateError) throw new Error(templateErrorMessage(templateError));
+    if (templateRow?.slug) {
+      const bySlug = await getTemplateCustomization(templateRow.slug);
+      if (bySlug) return bySlug;
+    }
+  }
+
+  return getTemplateCustomization(templateStyleKey);
+}
+
 export async function setUserDefaultTemplate(
   templateUuid: string,
 ): Promise<void> {
@@ -213,13 +246,19 @@ export async function applyGalleryTemplateToCv(
     throw new Error(templateErrorMessage(null, "We couldn't find that template."));
   }
 
-  const editorStyle = parseEditorStyle(row.editor_style);
+  const rendererKey =
+    typeof row.metadata === "object" &&
+    row.metadata !== null &&
+    !Array.isArray(row.metadata) &&
+    typeof (row.metadata as Record<string, unknown>).renderer_key === "string"
+      ? String((row.metadata as Record<string, unknown>).renderer_key)
+      : row.slug;
 
   const { error } = await supabase
     .from("cvs")
     .update({
       template_id: row.id,
-      template_key: editorStyle,
+      template_key: rendererKey,
       updated_at: new Date().toISOString(),
     })
     .eq("id", cvId);

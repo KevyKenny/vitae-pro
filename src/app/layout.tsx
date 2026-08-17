@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
+import { Fraunces, Inter, IBM_Plex_Mono, Roboto, Montserrat, Poppins } from "next/font/google";
 import { AppProviders } from "@/providers/app-providers";
 import {
   DEFAULT_DESCRIPTION,
@@ -27,6 +27,27 @@ const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["500"],
   variable: "--font-ibm-plex-mono",
+  display: "swap",
+});
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-roboto",
+  display: "swap",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-montserrat",
+  display: "swap",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
   display: "swap",
 });
 
@@ -87,7 +108,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${fraunces.variable} ${ibmPlexMono.variable} h-full scroll-smooth`}
+      className={`${inter.variable} ${fraunces.variable} ${ibmPlexMono.variable} ${roboto.variable} ${montserrat.variable} ${poppins.variable} h-full scroll-smooth`}
     >
       <body
         className="min-h-full font-sans antialiased"

@@ -3,9 +3,6 @@
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import type { CvDocument } from "@/features/cv-editor/types";
-import {
-  EXPORT_CV_STORAGE_KEY,
-} from "@/features/export/constants";
 import { buildCvFilename } from "@/lib/export/filename";
 import { validateCvExport } from "@/lib/export/validation";
 
@@ -20,20 +17,46 @@ function downloadBlob(blob: Blob, filename: string) {
   URL.revokeObjectURL(url);
 }
 
+async function createPrintDraftToken(
+  cvId: string,
+  document: CvDocument,
+  pageSize: "a4" | "letter",
+): Promise<string | null> {
+  const response = await fetch("/api/export/cv/draft", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ cvId, document, pageSize }),
+  });
+  if (!response.ok) return null;
+  const payload = (await response.json()) as { token: string };
+  return payload.token;
+}
+
 export function useCvExport() {
   const [status, setStatus] = useState<ExportStatus>("idle");
 
+  const openPrintUrl = useCallback((url: string) => {
+    window.open(url, "_blank", "noopener,noreferrer");
+  }, []);
+
   const printCv = useCallback(
-    (cvId: string, document?: CvDocument) => {
+    async (
+      cvId: string,
+      document?: CvDocument,
+      pageSize: "a4" | "letter" = "a4",
+    ) => {
       if (document) {
-        sessionStorage.setItem(
-          EXPORT_CV_STORAGE_KEY(cvId),
-          JSON.stringify(document),
-        );
+        const token = await createPrintDraftToken(cvId, document, pageSize);
+        if (token) {
+          openPrintUrl(
+            `/cvs/${cvId}/print?print=1&draftToken=${encodeURIComponent(token)}&pageSize=${pageSize}`,
+          );
+          return;
+        }
       }
-      window.open(`/cvs/${cvId}/print?print=1`, "_blank", "noopener,noreferrer");
+      openPrintUrl(`/cvs/${cvId}/print?print=1&pageSize=${pageSize}`);
     },
-    [],
+    [openPrintUrl],
   );
 
   const downloadCvPdf = useCallback(
@@ -80,7 +103,7 @@ export function useCvExport() {
             toast.message("Opening print view", {
               description: payload.message,
             });
-            printCv(cvId, document);
+            await printCv(cvId, document, pageSize);
             return;
           }
 
@@ -100,7 +123,7 @@ export function useCvExport() {
         toast.error(
           error instanceof Error ? error.message : "Could not download your CV.",
         );
-        printCv(cvId, document);
+        await printCv(cvId, document, pageSize);
       } finally {
         window.setTimeout(() => setStatus("idle"), 1200);
       }

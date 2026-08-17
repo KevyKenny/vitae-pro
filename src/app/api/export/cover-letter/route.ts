@@ -51,10 +51,10 @@ export async function POST(request: Request) {
     const origin = new URL(request.url).origin;
     const cookie = request.headers.get("cookie");
 
-    let printUrl = `${origin}/cover-letter/${body.coverLetterId}/print`;
+    let printUrl = `${origin}/cover-letter/${body.coverLetterId}/print?pageSize=${pageSize}`;
     if (body.document) {
-      const token = storeCoverLetterDraft(user.id, document);
-      printUrl = `${origin}/cover-letter/${body.coverLetterId}/print?draftToken=${token}`;
+      const token = await storeCoverLetterDraft(user.id, document);
+      printUrl = `${origin}/cover-letter/${body.coverLetterId}/print?draftToken=${token}&pageSize=${pageSize}`;
     }
 
     const pdf = await urlToPdfBuffer(printUrl, cookie, pageSize);

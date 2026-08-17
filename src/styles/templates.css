@@ -1,0 +1,1106 @@
+/* VitatePro CV template styles — shared across preview, print, and PDF */
+
+.tpl-page {
+  font-family: var(--doc-font);
+  font-size: var(--doc-base-size);
+  line-height: var(--doc-line-height);
+  color: var(--doc-ink);
+}
+
+/* Full-bleed rails need to escape the page padding box. */
+.tpl-page > .doc-page-content {
+  overflow: visible;
+}
+
+/* Contact rows */
+.tpl-contact-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.78em;
+  color: var(--doc-ink-soft, #555);
+}
+
+.tpl-contact-row--inline {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+}
+
+.tpl-contact-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.tpl-contact-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Section headings */
+.tpl-section-title {
+  font-family: var(--doc-font-heading, var(--doc-font));
+  font-size: 0.85em;
+  font-weight: 700;
+  letter-spacing: normal;
+  color: var(--doc-accent);
+  margin: 0.75em 0 0.35em;
+  padding-bottom: 0.15em;
+  border-bottom: 1px solid var(--doc-line, #e4e0d3);
+}
+
+.tpl-section-title--uppercase {
+  font-size: 0.72em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tpl-section-title--form {
+  font-size: 0.8em;
+  color: var(--doc-accent);
+  border-bottom: none;
+  margin-top: 0.5em;
+}
+
+/* Borderless heading used by the reference sidebar/main columns */
+.tpl-section-title--plain {
+  font-size: 1.5em;
+  font-weight: 400;
+  line-height: 1.25;
+  color: var(--doc-accent);
+  border-bottom: none;
+  padding-bottom: 0;
+  margin: 1em 0 0.35em;
+}
+
+.tpl-section-title--sidebar {
+  font-size: 1.28em;
+  font-weight: 400;
+  line-height: 1.25;
+  color: var(--doc-accent);
+  border-bottom: none;
+  padding-bottom: 0;
+  margin: 1.15em 0 0.45em;
+}
+
+/* Tag grid */
+.tpl-tag-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.25rem 0.75rem;
+}
+
+.tpl-tag {
+  font-size: 0.78em;
+  color: var(--doc-ink-soft, #555);
+}
+
+/* Label/value form list */
+.tpl-label-value-list {
+  margin: 0;
+}
+
+.tpl-label-value-row {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  gap: 0.35rem;
+  margin-bottom: 0.25rem;
+  font-size: 0.78em;
+}
+
+.tpl-label-value-row dt {
+  font-weight: 600;
+  color: var(--doc-ink-soft, #555);
+}
+
+.tpl-label-value-row dd {
+  margin: 0;
+}
+
+/* Grouped skills */
+.tpl-grouped-skills {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tpl-skill-group-label {
+  font-size: 0.78em;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin: 0 0 0.2em;
+}
+
+.tpl-skill-group-items {
+  font-size: 0.86em;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.tpl-qualities-list {
+  margin: 0;
+  padding-left: 1em;
+  font-size: 0.75em;
+}
+
+.tpl-qualities-list li {
+  margin-top: 0.15em;
+}
+
+/* Square-bullet quality item (one block per item so the list can split) */
+.tpl-quality-item {
+  position: relative;
+  padding-left: 1.05em;
+  font-size: 0.86em;
+  line-height: 1.4;
+  margin: 0.5em 0 0;
+}
+
+.tpl-quality-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.4em;
+  width: 0.48em;
+  height: 0.48em;
+  background: var(--doc-accent);
+}
+
+.tpl-resume-badge {
+  display: inline-block;
+  font-size: 0.7em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--doc-accent);
+  border: 1px solid var(--doc-accent);
+  padding: 0.15em 0.5em;
+  margin-bottom: 0.5em;
+}
+
+/* ---------------------------------------------------------------------------
+   Sidebar layout: tinted rail bleeding to all three page edges
+   --------------------------------------------------------------------------- */
+.tpl-sidebar-layout {
+  display: flex;
+  align-items: stretch;
+  height: calc(100% + (2 * var(--doc-pad-y)));
+  margin: calc(-1 * var(--doc-pad-y)) calc(-1 * var(--doc-pad-x));
+}
+
+.tpl-sidebar-panel {
+  box-sizing: border-box;
+  position: relative;
+  width: var(--tpl-rail-width, 33%);
+  flex-shrink: 0;
+  padding: var(--doc-pad-y) var(--tpl-rail-pad, 24px);
+  overflow: hidden;
+}
+
+.tpl-sidebar-panel > *:first-child {
+  margin-top: 0;
+}
+
+.tpl-sidebar-panel--blue {
+  background: var(--tpl-rail-bg, #e8f0fa);
+  color: var(--tpl-rail-ink, #333);
+}
+
+.tpl-sidebar-panel--red {
+  background: var(--tpl-rail-bg, #fdecea);
+  color: var(--tpl-rail-ink, #333);
+}
+
+.tpl-sidebar-panel--plain {
+  background: var(--tpl-rail-bg, #f3f4f6);
+  color: var(--tpl-rail-ink, #333);
+}
+
+.tpl-sidebar-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55em;
+  font-size: 0.86em;
+  line-height: 1.4;
+  margin-top: 0.55em;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.tpl-sidebar-contact-item a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.tpl-sidebar-contact-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding-top: 0.1em;
+  color: var(--tpl-icon-color, var(--doc-accent));
+}
+
+.tpl-sidebar-icon {
+  width: 1.05em;
+  height: 1.05em;
+  stroke-width: 1.9;
+}
+
+/* Name band: bleeds over the rail padding to reach the page corner */
+.tpl-header-band {
+  position: relative;
+  background: var(--tpl-band-bg, var(--doc-accent));
+  color: #fff;
+  margin: calc(-1 * var(--doc-pad-y)) calc(-1 * var(--tpl-rail-pad, 24px))
+    1.05rem;
+  padding: calc(var(--doc-pad-y) + 0.1rem) var(--tpl-rail-pad, 24px) 0.85rem;
+}
+
+.tpl-header-band::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 0.95rem 1.5rem;
+  border-color: transparent transparent var(--tpl-band-accent, #3d6b9c)
+    transparent;
+}
+
+.tpl-header-name {
+  font-family: var(--doc-font-heading, var(--doc-font));
+  font-size: 1.32em;
+  font-weight: 700;
+  letter-spacing: normal;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.tpl-header-title {
+  display: inline-block;
+  font-size: 0.9em;
+  line-height: 1.3;
+  margin: 0.55em 0 0;
+  padding: 0.2em 0.55em;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* Decorative block closing the rail on the last page */
+.tpl-sidebar-footer-mark {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2.4rem;
+  background: var(--tpl-band-bg, var(--doc-accent));
+}
+
+.tpl-sidebar-footer-mark::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0.85rem 1.35rem 0 0;
+  border-color: var(--tpl-band-accent, #3d6b9c) transparent transparent
+    transparent;
+}
+
+.tpl-main-column {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: var(--doc-pad-y) var(--doc-pad-x) var(--doc-pad-y)
+    var(--tpl-main-gap, 24px);
+}
+
+.tpl-main-column > *:first-child .tpl-section-title,
+.tpl-main-column > *:first-child.tpl-section-title {
+  margin-top: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Reference entry rows: bold title left, date right, accent organisation
+   --------------------------------------------------------------------------- */
+.tpl-entry {
+  margin-top: 0.7em;
+}
+
+.tpl-entry-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.85em;
+}
+
+.tpl-entry-title {
+  font-size: 0.94em;
+  font-weight: 700;
+  color: var(--doc-ink);
+}
+
+.tpl-entry-date {
+  flex-shrink: 0;
+  font-size: 0.88em;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--doc-ink);
+}
+
+.tpl-entry-subtitle {
+  font-size: 0.88em;
+  color: var(--doc-accent);
+  margin: 0.15em 0 0;
+}
+
+.tpl-entry-contact {
+  font-size: 0.88em;
+  margin: 0.1em 0 0;
+  color: var(--tpl-body-ink, #333);
+}
+
+.tpl-entry-body {
+  font-size: 0.9em;
+  margin-top: 0.25em;
+  color: var(--tpl-body-ink, #333);
+}
+
+.tpl-entry-bullets {
+  margin: 0.3em 0 0;
+  padding-left: 1.15em;
+  list-style: disc;
+  font-size: 0.9em;
+  color: var(--tpl-body-ink, #333);
+}
+
+.tpl-entry-bullets li {
+  margin-top: 0.18em;
+  padding-left: 0.1em;
+}
+
+.tpl-summary {
+  font-size: 0.92em;
+  line-height: 1.5;
+  text-align: justify;
+  margin: 0;
+  color: var(--tpl-body-ink, #333);
+}
+
+.tpl-cert-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.85em;
+  font-size: 0.9em;
+  margin-top: 0.5em;
+  color: var(--tpl-body-ink, #333);
+}
+
+.tpl-cert-name {
+  min-width: 0;
+  font-weight: 600;
+}
+
+.tpl-cert-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.08em;
+}
+
+.tpl-cert-provider {
+  color: var(--doc-ink-soft, #555);
+  font-size: 0.9em;
+}
+
+.tpl-link {
+  color: var(--doc-accent);
+  text-decoration: none;
+}
+
+.tpl-link-icon {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  vertical-align: -0.08em;
+}
+
+.tpl-numbered-row {
+  display: flex;
+  gap: 0.45em;
+  font-size: 0.9em;
+  line-height: 1.45;
+  margin-top: 0.35em;
+  color: var(--tpl-body-ink, #333);
+}
+
+.tpl-numbered-marker {
+  flex-shrink: 0;
+}
+
+.tpl-numbered-body {
+  min-width: 0;
+}
+
+/* Technology chips sitting on the project heading line */
+.tpl-tech-badges {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25em;
+  margin-left: 0.45em;
+  vertical-align: baseline;
+}
+
+.tpl-tech-badge {
+  display: inline-block;
+  font-size: 0.74em;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  padding: 0.05em 0.42em;
+  border-radius: 0.28em;
+  color: var(--doc-ink-soft, #55584f);
+  background: color-mix(in srgb, var(--doc-accent) 7%, var(--doc-bg, #fff));
+  border: 1px solid color-mix(in srgb, var(--doc-accent) 14%, var(--doc-bg, #fff));
+}
+
+.tpl-subject-table {
+  border-collapse: collapse;
+  margin-top: 0.3em;
+  font-size: 0.88em;
+}
+
+.tpl-subject-table td {
+  padding: 0.08em 1.2em 0.08em 0;
+  vertical-align: top;
+}
+
+.tpl-subject-table--row {
+  margin-top: 0;
+}
+
+.doc-page-content:has(.tpl-4-main-header) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.doc-page-content:has(.tpl-4-main-header) .tpl-sidebar-layout {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+}
+
+.tpl-sidebar-panel:has(.tpl-sidebar-footer-mark) {
+  padding-bottom: calc(var(--doc-pad-y) + 2.4rem);
+}
+
+/* Single column templates */
+.tpl-single-column {
+  height: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   Professional (tpl_1) — parity with templates-layout/template-0.pdf.
+
+   Measured from the reference PDF: Roboto throughout, 11pt body, 20pt bold
+   name, 535.28pt content width (30pt side margins) and 1.25pt section rules.
+   Base font size is set to 11pt, so 1em below == 11pt in the reference.
+   --------------------------------------------------------------------------- */
+.tpl-1 {
+  --doc-accent: #38bdf8;
+  --tpl-body-ink: #171717;
+  --tpl-icon-color: #38bdf8;
+  --tpl-1-rule: 1.67px; /* 1.25pt */
+}
+
+.tpl-2-header {
+  margin-bottom: 0.75rem;
+}
+
+.tpl-1-name {
+  font-family: var(--doc-font);
+  font-size: 1.818em; /* 20pt */
+  font-weight: 700;
+  color: var(--tpl-body-ink);
+  text-align: center;
+  margin: 0 0 0.3em;
+  line-height: 1.2;
+}
+
+.tpl-1-contact.tpl-contact-row {
+  justify-content: center;
+  font-size: 1em;
+  line-height: 1.3;
+  color: var(--tpl-body-ink);
+  gap: 0.15em 0.95em;
+  margin-bottom: 0.15em;
+}
+
+.tpl-1-contact .tpl-contact-item {
+  gap: 0.3em;
+}
+
+.tpl-1-contact .tpl-sidebar-icon {
+  width: 1em;
+  height: 1em;
+  color: var(--doc-accent);
+  stroke-width: 2;
+}
+
+.tpl-1 .tpl-section-title,
+.tpl-1 .tpl-section-title--uppercase {
+  font-family: var(--doc-font);
+  font-size: 1em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--doc-accent);
+  border-bottom: var(--tpl-1-rule) solid var(--tpl-body-ink);
+  padding-bottom: 0.2em;
+  margin: 0.85em 0 0.35em;
+}
+
+.tpl-1 .tpl-summary,
+.tpl-1 .doc-body {
+  font-size: 1em;
+  line-height: 1.32;
+  color: var(--tpl-body-ink);
+  text-align: left;
+}
+
+.tpl-1 .tpl-entry,
+.tpl-1 .tpl-entry--open-resume {
+  margin-top: 0.45em;
+}
+
+/* Consecutive roles at the same employer stay visually grouped. */
+.tpl-1 .tpl-entry--continues {
+  margin-top: 0.2em;
+}
+
+.tpl-1 .tpl-entry-row {
+  gap: 0.9em;
+  line-height: 1.32;
+}
+
+.tpl-1 .tpl-entry-company {
+  font-size: 1em;
+  font-weight: 700;
+  line-height: 1.32;
+  color: var(--tpl-body-ink);
+  margin: 0;
+}
+
+.tpl-1 .tpl-entry-title,
+.tpl-1 .tpl-entry-date,
+.tpl-1 .tpl-entry-note,
+.tpl-1 .tpl-entry-subtitle {
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.32;
+  color: var(--tpl-body-ink);
+  margin: 0;
+}
+
+.tpl-1 .tpl-entry-bullets {
+  list-style: none;
+  margin: 0;
+  padding-left: 1em;
+  font-size: 1em;
+  line-height: 1.32;
+  color: var(--tpl-body-ink);
+}
+
+.tpl-1 .tpl-entry-bullets li {
+  position: relative;
+  margin-top: 0.05em;
+  padding-left: 0;
+}
+
+.tpl-1 .tpl-entry-bullets li::before {
+  content: "•";
+  position: absolute;
+  left: -0.85em;
+}
+
+.tpl-1 .tpl-link {
+  color: var(--doc-accent);
+  text-decoration: none;
+}
+
+.tpl-1 .tpl-link-icon {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  vertical-align: -0.1em;
+}
+
+/* Exam subjects sit two-up, strongest grade first, so eight O-Levels close
+   in four rows instead of a tall Subject/Grade table. */
+.tpl-1 .tpl-subject-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1.6em;
+  row-gap: 0;
+  margin: 0;
+  font-size: 0.95em;
+  line-height: 1.32;
+  color: var(--tpl-body-ink);
+}
+
+.tpl-1 .tpl-subject-grid--lead {
+  margin-top: 0.12em;
+}
+
+.tpl-1 .tpl-subject-cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.65em;
+  min-width: 0;
+}
+
+.tpl-1 .tpl-subject-name {
+  min-width: 0;
+}
+
+.tpl-1 .tpl-subject-grade {
+  flex: none;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.tpl-2-name {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--doc-accent);
+  margin: 0 0 0.35em;
+}
+
+.tpl-2 .tpl-section-title--uppercase,
+.tpl-2 .doc-section-title {
+  color: var(--doc-accent);
+}
+
+/* Form layout */
+.tpl-form-layout {
+  display: flex;
+  gap: 1rem;
+  height: 100%;
+  align-items: flex-start;
+}
+
+.tpl-form-left {
+  width: 34%;
+  flex-shrink: 0;
+}
+
+.tpl-form-left--measure {
+  width: 34%;
+  flex-shrink: 0;
+}
+
+.tpl-form-right {
+  flex: 1;
+  min-width: 0;
+}
+
+.tpl-form-layout--continued .tpl-form-right {
+  flex: 1 1 100%;
+  max-width: 100%;
+}
+
+.tpl-form-title {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: var(--doc-accent);
+  margin: 0 0 0.65rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Template palettes
+   --------------------------------------------------------------------------- */
+.tpl-default {
+  --doc-accent: #2f6099;
+  --tpl-band-bg: #1f4471;
+  --tpl-band-accent: #3d6b9c;
+  --tpl-rail-bg: #e9eef4;
+  --tpl-rail-ink: #333333;
+  --tpl-body-ink: #333333;
+  --tpl-icon-color: #1f4471;
+  --tpl-rail-width: 33.25%;
+  --tpl-rail-pad: 26px;
+  --tpl-main-gap: 26px;
+}
+
+.tpl-0 {
+  --doc-accent: #1e4a8a;
+  --tpl-band-bg: #1e4a8a;
+  --tpl-band-accent: #4472a8;
+  --tpl-rail-bg: #f3f4f6;
+  --tpl-rail-ink: #333333;
+  --tpl-body-ink: #333333;
+  --tpl-icon-color: #1e4a8a;
+  --tpl-rail-width: 33%;
+  --tpl-rail-pad: 24px;
+  --tpl-main-gap: 24px;
+}
+
+.tpl-1,
+.tpl-2 {
+  --doc-accent: #2563eb;
+}
+
+.tpl-1 {
+  --doc-accent: #38bdf8;
+}
+
+.tpl-3 {
+  --doc-accent: #8b6914;
+}
+
+.tpl-4 {
+  --doc-accent: #c0392b;
+  --tpl-band-bg: #c0392b;
+  --tpl-band-accent: #d4695c;
+  --tpl-rail-bg: #fdecea;
+  --tpl-rail-ink: #333333;
+  --tpl-body-ink: #333333;
+  --tpl-icon-color: #c0392b;
+  --tpl-rail-width: 33%;
+  --tpl-rail-pad: 24px;
+  --tpl-main-gap: 24px;
+}
+
+.tpl-4 .tpl-2-name,
+.tpl-4 .tpl-1-name,
+.tpl-4-name {
+  color: #c0392b;
+}
+
+.tpl-4-main-header {
+  margin-bottom: 0.65rem;
+}
+
+.tpl-4-name {
+  font-size: 1.35em;
+  font-weight: 700;
+  margin: 0 0 0.35em;
+}
+
+/* ---------------------------------------------------------------------------
+   Resume Form (Compact) (tpl_5) — parity with templates-layout/template-1.pdf.
+
+   Measured from the reference: Montserrat, 10pt body on a 13.75pt leading
+   grid, 20pt page margins, a 160pt dated rail, a hairline rule at x=180pt and
+   375pt of body starting at x=200pt. The document base font size is 10pt, so
+   `1em` below equals one point of the reference.
+   --------------------------------------------------------------------------- */
+.tpl-5 {
+  --doc-accent: #3d94e3;
+  --tpl-5-ink: #333333;
+  --tpl-5-band-bg: #f5f5f5;
+  --tpl-5-rule-ink: #ededed;
+  /* The reference rails at 160pt, but its widest date only needs ~105pt. Pulling
+     the rule in buys the body column 30pt so long titles stop being clipped. */
+  --tpl-5-aside-width: 13em;
+  --tpl-5-gutter: 2em; /* rule -> body offset */
+}
+
+/* Full-height rule between the rail and the body, repeated on every page.
+   Anchored to the content box so the rail width alone positions it. */
+.tpl-5 > .doc-page-content {
+  position: relative;
+  /* Keeps the band's negative top margin from collapsing out of the content
+     box, which would drag the whole page flow up by one page margin. */
+  display: flow-root;
+  /* Inherited by the band and every timeline row: a token with no break
+     opportunity (a long URL, a run-together product name) would otherwise slide
+     under the page edge and be clipped by the sheet's overflow. */
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.tpl-5-rule {
+  position: absolute;
+  top: calc(-1 * var(--doc-pad-y));
+  bottom: calc(-1 * var(--doc-pad-y));
+  left: var(--tpl-5-aside-width);
+  width: 1px;
+  background: var(--tpl-5-rule-ink);
+}
+
+/* Intro band ------------------------------------------------------------- */
+.tpl-5-band {
+  position: relative;
+  z-index: 1; /* paints over the rule, which starts at the page top */
+  margin: calc(-1 * var(--doc-pad-y)) calc(-1 * var(--doc-pad-x)) 2.07em;
+  padding: var(--doc-pad-y) var(--doc-pad-x) 2em;
+  background: var(--tpl-5-band-bg);
+}
+
+.tpl-5-name {
+  font-family: var(--doc-font);
+  font-size: 2.5em; /* 25pt */
+  font-weight: 700;
+  line-height: 1.48;
+  color: var(--tpl-5-ink);
+  margin: 0;
+}
+
+.tpl-5-contact.tpl-contact-row {
+  justify-content: flex-start;
+  font-size: 1em;
+  line-height: 1.375;
+  color: var(--tpl-5-ink);
+  gap: 0.74em 1.4em; /* 18pt row pitch in the reference */
+  margin: 0;
+}
+
+.tpl-5-contact .tpl-contact-item {
+  gap: 0.4em;
+}
+
+.tpl-5-contact .tpl-sidebar-icon {
+  width: 0.9em;
+  height: 0.9em;
+  color: var(--doc-accent);
+  stroke-width: 2;
+}
+
+/* Only the icons carry the accent; the details stay in body ink. */
+.tpl-5-contact .tpl-contact-link,
+.tpl-5-contact .tpl-contact-item {
+  color: var(--tpl-5-ink);
+  text-decoration: none;
+}
+
+.tpl-5-summary {
+  font-size: 1em;
+  line-height: 1.375;
+  color: var(--tpl-5-ink);
+  margin: 1.2em 0 0;
+}
+
+/* Timeline rows ---------------------------------------------------------- */
+.tpl-5 .tpl-tl-row {
+  display: flex;
+  align-items: flex-start;
+}
+
+.tpl-5 .tpl-tl-aside {
+  width: var(--tpl-5-aside-width);
+  flex: none;
+  padding-right: 1em;
+  box-sizing: border-box;
+}
+
+.tpl-5 .tpl-tl-main {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  padding-left: var(--tpl-5-gutter);
+}
+
+.tpl-5 .tpl-tl-marker {
+  position: absolute;
+  left: -0.3em; /* 7.5pt square straddling the 1pt rule */
+  top: 0.35em;
+  width: 0.75em;
+  height: 0.75em;
+  background: var(--doc-accent);
+}
+
+.tpl-5 .tpl-tl-heading {
+  font-family: var(--doc-font);
+  font-size: 1.1em; /* 11pt */
+  font-weight: 700;
+  line-height: 1.375;
+  color: var(--doc-accent);
+  margin: 0;
+}
+
+/* Vertical rhythm: 10pt opens a new entry, 14.5pt opens a new section. The gap
+   sits on the row so the rail date and the body title share a baseline. */
+.tpl-5 .tpl-tl-row--lead {
+  margin-top: 1em;
+}
+
+.tpl-5 .tpl-tl-row--heading,
+.tpl-5 .tpl-tl-row--tight {
+  margin-top: 1.45em;
+}
+
+/* A continuation page opens flush with the top margin. */
+.tpl-5 .tpl-single-column > *:first-child .tpl-tl-row {
+  margin-top: 0;
+}
+
+/* An undated section hangs its heading in the rail of its first row; the body
+   still drops by the entry gap so it clears the 11pt heading. */
+.tpl-5 .tpl-tl-row--tight > .tpl-tl-main {
+  margin-top: 1em;
+}
+
+.tpl-5 .tpl-tl-date {
+  font-size: 1em;
+  font-weight: 700;
+  line-height: 1.375;
+  color: var(--tpl-5-ink);
+  margin: 0;
+}
+
+.tpl-5 .tpl-tl-title {
+  font-size: 1em;
+  font-weight: 700;
+  line-height: 1.375;
+  color: var(--tpl-5-ink);
+  margin: 0;
+}
+
+.tpl-5 .tpl-tl-org {
+  font-size: 1em;
+  font-weight: 700;
+  line-height: 1.375;
+  color: var(--doc-accent);
+  margin: 0;
+}
+
+.tpl-5 .tpl-tl-org--ink {
+  color: var(--tpl-5-ink);
+  font-weight: 400;
+}
+
+/* Open-in-new-tab affordance trailing an entry title. */
+.tpl-5 .tpl-tl-open {
+  display: inline-block;
+  margin-left: 0.4em;
+  color: var(--doc-accent);
+}
+
+.tpl-5 .tpl-tl-open .tpl-link-icon {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  vertical-align: -0.08em;
+}
+
+/* Stack chips sit on the title line, tinted just off the page colour. */
+.tpl-5 .tpl-tl-badge {
+  display: inline-block;
+  margin-left: 0.4em;
+  padding: 0.02em 0.42em;
+  border-radius: 0.25em;
+  font-size: 0.85em;
+  font-weight: 500;
+  line-height: 1.3;
+  background: color-mix(in srgb, var(--doc-accent) 9%, var(--doc-bg, #fff));
+  color: color-mix(in srgb, var(--doc-accent) 45%, var(--tpl-5-ink));
+}
+
+.tpl-5 .tpl-tl-meta {
+  font-size: 1em;
+  line-height: 1.375;
+  color: var(--tpl-5-ink);
+  margin: 0;
+}
+
+.tpl-5 .tpl-tl-link {
+  color: var(--doc-accent);
+  text-decoration: none;
+}
+
+.tpl-5 .tpl-tl-bullets,
+.tpl-5 .tpl-tl-html ul,
+.tpl-5 .tpl-tl-html ol {
+  list-style: disc;
+  margin: 0;
+  padding-left: 2em; /* body 200pt -> bullet text 220pt */
+  font-size: 1em;
+  line-height: 1.375;
+  color: var(--tpl-5-ink);
+}
+
+.tpl-5 .tpl-tl-html p {
+  margin: 0;
+  font-size: 1em;
+  line-height: 1.375;
+  color: var(--tpl-5-ink);
+}
+
+.tpl-5 .tpl-tl-bullets li::marker,
+.tpl-5 .tpl-tl-html li::marker {
+  font-size: 1em;
+}
+
+/* Technical skills: one wrapped keyword run, closing the section in two or
+   three rows instead of a tall column of pairs. */
+.tpl-5 .tpl-tl-skills {
+  margin: 0;
+  font-size: 1em;
+  font-weight: 700;
+  line-height: 1.375;
+  color: var(--tpl-5-ink);
+}
+
+.tpl-5 .tpl-tl-skills-sep {
+  font-weight: 400;
+  color: var(--doc-accent);
+}
+
+/* Skills / qualities grids ----------------------------------------------- */
+.tpl-5 .tpl-tl-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 0.9em;
+  font-size: 1em;
+  line-height: 1.375;
+}
+
+.tpl-5 .tpl-tl-grid--skill .tpl-tl-grid-cell {
+  font-weight: 700;
+  color: var(--tpl-5-ink);
+}
+
+.tpl-5 .tpl-tl-grid--quality .tpl-tl-grid-cell {
+  position: relative;
+  padding-left: 1.65em;
+  color: var(--tpl-5-ink);
+}
+
+.tpl-5 .tpl-tl-grid--quality .tpl-tl-grid-cell::before {
+  content: "";
+  position: absolute;
+  left: 0.35em;
+  top: 0.35em;
+  width: 0.75em;
+  height: 0.75em;
+  background: var(--doc-accent);
+}
+
+@media print {
+  .tpl-header-band,
+  .tpl-header-title,
+  .tpl-sidebar-footer-mark,
+  .tpl-quality-item::before,
+  .tpl-sidebar-panel--blue,
+  .tpl-sidebar-panel--red,
+  .tpl-sidebar-panel--plain,
+  .tpl-tech-badge,
+  .tpl-5-band,
+  .tpl-5-rule,
+  .tpl-5 .tpl-tl-marker,
+  .tpl-5 .tpl-tl-badge,
+  .tpl-5 .tpl-tl-grid--quality .tpl-tl-grid-cell::before {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

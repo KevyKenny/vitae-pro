@@ -5,8 +5,26 @@ import { useEffect } from "react";
 export function AutoPrint({ enabled }: { enabled: boolean }) {
   useEffect(() => {
     if (!enabled) return;
-    const timer = window.setTimeout(() => window.print(), 400);
-    return () => window.clearTimeout(timer);
+
+    let cancelled = false;
+    let timer: number | undefined;
+
+    const tryPrint = () => {
+      if (cancelled) return;
+      const ready = document.querySelector('[data-document-ready="true"]');
+      if (ready) {
+        window.print();
+        return;
+      }
+      timer = window.setTimeout(tryPrint, 100);
+    };
+
+    timer = window.setTimeout(tryPrint, 100);
+
+    return () => {
+      cancelled = true;
+      if (timer) window.clearTimeout(timer);
+    };
   }, [enabled]);
 
   return (

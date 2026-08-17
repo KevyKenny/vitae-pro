@@ -3,6 +3,7 @@
 import { editorTemplates } from "@/mocks/cv-editor";
 import { useEditor } from "@/features/cv-editor/context/editor-context";
 import { cn } from "@/lib/utils";
+import { resolveRendererKey } from "@/lib/templates/definitions";
 
 export function TemplateSelector({
   className,
@@ -12,6 +13,11 @@ export function TemplateSelector({
   compact?: boolean;
 }) {
   const { document, setTemplate } = useEditor();
+  const activeKey = resolveRendererKey({
+    rendererKey: document.rendererKey,
+    templateSlug: document.templateSlug,
+    legacyTemplateId: document.templateId,
+  });
 
   return (
     <div
@@ -24,7 +30,7 @@ export function TemplateSelector({
       aria-label="CV template style"
     >
       {editorTemplates.map((template) => {
-        const active = document.templateId === template.id;
+        const active = activeKey === template.id;
         return (
           <button
             key={template.id}

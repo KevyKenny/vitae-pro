@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TemplateBadges } from "@/features/templates/components/template-badges";
+import { TemplateThumbnail } from "@/features/templates/components/template-thumbnail";
 import type { GalleryTemplate } from "@/features/templates/types";
 import { cn } from "@/lib/utils";
 
@@ -27,8 +28,8 @@ export function TemplateCard({
         selected ? "border-emerald ring-2 ring-emerald/15" : "border-line",
       )}
     >
-      <div className="relative aspect-[3/4] overflow-hidden bg-paper-dim p-4">
-        <MiniPreview accent={template.previewAccent} />
+      <div className="relative aspect-[3/4] overflow-hidden bg-paper-dim p-3">
+        <TemplateThumbnail templateId={template.id} />
         <div className="absolute inset-0 flex items-center justify-center gap-2 bg-emerald/90 opacity-0 transition-opacity group-hover:opacity-100">
           <Button asChild size="sm" shape="soft" className="rounded-full bg-paper text-emerald hover:bg-paper">
             <Link href={`/customize?template=${template.id}`}>Use Template</Link>
@@ -82,13 +83,24 @@ export function TemplateCard({
   );
 }
 
-export function MiniPreview({ accent }: { accent: string }) {
+export function MiniPreview({
+  accent,
+  templateId,
+}: {
+  accent?: string;
+  templateId?: string;
+}) {
+  if (templateId) {
+    return <TemplateThumbnail templateId={templateId} />;
+  }
+
   const widths = [60, 90, 40, 75, 65, 80, 55];
+  const barColor = accent ?? "#2563eb";
   return (
     <div className="h-full rounded-[8px] border border-line bg-surface p-3 shadow-s">
       <div
         className="mb-3 h-2.5 rounded-sm opacity-90"
-        style={{ width: `${widths[0]}%`, background: accent }}
+        style={{ width: `${widths[0]}%`, background: barColor }}
       />
       {widths.slice(1).map((w, i) => (
         <div

@@ -3,17 +3,15 @@
 import Link from "next/link";
 import {
   ArrowLeft,
-  BarChart3,
   Download,
   Eye,
   History,
-  MoreHorizontal,
+  MoreVertical,
   Pencil,
-  Printer,
   Redo2,
+  Save,
   Settings,
   Share2,
-  Sparkles,
   Undo2,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -40,10 +38,16 @@ export function EditorToolbar() {
     retrySave,
     setPreviewOpen,
     setVersionsOpen,
-    setAiOpen,
-    setAnalysisOpen,
   } = useEditor();
-  const { downloadCvPdf, printCv, status: exportStatus } = useCvExport();
+  const { downloadCvPdf, status: exportStatus } = useCvExport();
+  const exportBusy =
+    exportStatus === "generating" || exportStatus === "preparing";
+  const downloadLabel =
+    exportStatus === "preparing"
+      ? "Preparing…"
+      : exportStatus === "generating"
+        ? "Generating…"
+        : "Download";
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b border-line bg-surface px-3 sm:gap-3 sm:px-4">
@@ -106,50 +110,6 @@ export function EditorToolbar() {
           type="button"
           variant="outline"
           shape="soft"
-          className="hidden rounded-[8px] lg:inline-flex"
-          onClick={() => setAnalysisOpen(true)}
-        >
-          <BarChart3 className="size-4" />
-          Analyze
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="icon-sm"
-          shape="soft"
-          className="lg:hidden"
-          aria-label="Analyze CV"
-          onClick={() => setAnalysisOpen(true)}
-        >
-          <BarChart3 className="size-4" />
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          shape="soft"
-          className="hidden rounded-[8px] lg:inline-flex"
-          onClick={() => setAiOpen(true)}
-        >
-          <Sparkles className="size-4" />
-          AI Assistant
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="icon-sm"
-          shape="soft"
-          className="lg:hidden"
-          aria-label="AI Assistant"
-          onClick={() => setAiOpen(true)}
-        >
-          <Sparkles className="size-4" />
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          shape="soft"
           className="hidden rounded-[8px] sm:inline-flex"
           aria-label="Focus Preview"
           onClick={() => {
@@ -162,46 +122,9 @@ export function EditorToolbar() {
         <Button
           type="button"
           variant="outline"
-          size="icon-sm"
-          shape="soft"
-          className="sm:hidden"
-          aria-label="Focus Preview"
-          onClick={() => {
-            setPreviewOpen(true);
-          }}
-        >
-          <Eye className="size-4" />
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          shape="soft"
-          className="hidden rounded-[8px] sm:inline-flex"
-          aria-label="Print CV"
-          onClick={() => printCv(cvId, document)}
-        >
-          <Printer className="size-4" />
-          Print
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="icon-sm"
-          shape="soft"
-          className="sm:hidden"
-          aria-label="Print CV"
-          onClick={() => printCv(cvId, document)}
-        >
-          <Printer className="size-4" />
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
           shape="soft"
           className="hidden rounded-[8px] md:inline-flex"
-          disabled={exportStatus === "generating" || exportStatus === "preparing"}
+          disabled={exportBusy}
           onClick={() => void downloadCvPdf(cvId, document)}
         >
           <Download className="size-4" />
@@ -210,18 +133,6 @@ export function EditorToolbar() {
             : exportStatus === "generating"
               ? "Generating…"
               : "Download PDF"}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="icon-sm"
-          shape="soft"
-          className="md:hidden"
-          aria-label="Download PDF"
-          disabled={exportStatus === "generating" || exportStatus === "preparing"}
-          onClick={() => void downloadCvPdf(cvId, document)}
-        >
-          <Download className="size-4" />
         </Button>
 
         <DropdownMenu>
@@ -233,11 +144,34 @@ export function EditorToolbar() {
               shape="soft"
               aria-label="More actions"
             >
-              <MoreHorizontal className="size-4" />
+              <MoreVertical className="size-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setVersionsOpen(true)}>
+          <DropdownMenuContent align="end" className="w-52">
+            <DropdownMenuItem
+              className="sm:hidden"
+              onClick={() => retrySave()}
+            >
+              <Save className="size-4" /> Save
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="sm:hidden"
+              onClick={() => setPreviewOpen(true)}
+            >
+              <Eye className="size-4" /> Preview
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="md:hidden"
+              disabled={exportBusy}
+              onClick={() => void downloadCvPdf(cvId, document)}
+            >
+              <Download className="size-4" /> {downloadLabel}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="sm:hidden" />
+            <DropdownMenuItem
+              className="hidden sm:flex"
+              onClick={() => setVersionsOpen(true)}
+            >
               <History className="size-4" /> Version history
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -257,7 +191,7 @@ export function EditorToolbar() {
         <Button
           type="button"
           shape="soft"
-          className="rounded-[8px]"
+          className="hidden rounded-[8px] sm:inline-flex"
           onClick={() => {
             retrySave();
           }}

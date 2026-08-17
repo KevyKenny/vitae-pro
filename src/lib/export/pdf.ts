@@ -69,6 +69,9 @@ export async function urlToPdfBuffer(
     }
     await page.goto(url, { waitUntil: "networkidle2", timeout: 60_000 });
     await page.waitForSelector(".doc-page", { timeout: 30_000 });
+    await page.waitForSelector('[data-document-ready="true"]', {
+      timeout: 30_000,
+    });
     const pdf = await page.pdf({
       format: pageSize === "letter" ? "letter" : "a4",
       printBackground: true,

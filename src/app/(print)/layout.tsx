@@ -1,4 +1,5 @@
 import "@/styles/document.css";
+import "@/styles/templates.css";
 
 export default function PrintLayout({
   children,

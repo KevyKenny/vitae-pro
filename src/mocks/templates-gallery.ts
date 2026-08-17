@@ -5,433 +5,130 @@ import type {
   SavedTemplateEntry,
   TemplateCustomization,
 } from "@/features/templates/types";
+import { TEMPLATE_DEFINITIONS } from "@/lib/templates/definitions";
+import { createTemplateDefaultCustomization } from "@/lib/templates/definitions/defaults";
 
 export const templateFonts: FontOption[] = [
   {
     id: "inter",
     label: "Inter",
-    stack: "var(--font-sans), Inter, system-ui, sans-serif",
+    stack: "var(--font-inter), Inter, system-ui, sans-serif",
   },
   {
     id: "roboto",
     label: "Roboto",
-    stack: "Roboto, var(--font-sans), sans-serif",
+    stack: "var(--font-roboto), Roboto, system-ui, sans-serif",
   },
   {
     id: "open-sans",
     label: "Open Sans",
-    stack: "'Open Sans', var(--font-sans), sans-serif",
+    stack: "'Open Sans', var(--font-inter), sans-serif",
   },
   {
     id: "lato",
     label: "Lato",
-    stack: "Lato, var(--font-sans), sans-serif",
+    stack: "Lato, var(--font-inter), sans-serif",
   },
   {
     id: "merriweather",
     label: "Merriweather",
-    stack: "Merriweather, var(--font-serif), serif",
+    stack: "Merriweather, var(--font-fraunces), serif",
   },
   {
     id: "fraunces",
     label: "Fraunces",
-    stack: "var(--font-serif), Fraunces, serif",
+    stack: "var(--font-fraunces), Fraunces, serif",
+  },
+  {
+    id: "montserrat",
+    label: "Montserrat",
+    stack: "var(--font-montserrat), Montserrat, system-ui, sans-serif",
   },
 ];
 
 export const colorPalettes: ColorPalette[] = [
   {
-    id: "emerald",
-    name: "Emerald",
-    primary: "#1F4D3D",
-    accent: "#B08D3E",
+    id: "blue",
+    name: "Blue",
+    primary: "#1e4a8a",
+    accent: "#2563eb",
     background: "#FFFFFF",
-    text: "#1B1D1B",
+    text: "#1a1a1a",
   },
   {
-    id: "slate",
-    name: "Slate",
-    primary: "#2C3E50",
-    accent: "#7F8C8D",
+    id: "red",
+    name: "Red",
+    primary: "#c0392b",
+    accent: "#c0392b",
     background: "#FFFFFF",
-    text: "#1A1A1A",
+    text: "#1a1a1a",
   },
   {
-    id: "navy",
-    name: "Navy",
-    primary: "#1B3A4B",
-    accent: "#C9A227",
-    background: "#FAFBFC",
-    text: "#12202A",
-  },
-  {
-    id: "charcoal",
-    name: "Charcoal",
-    primary: "#1B1D1B",
-    accent: "#6B4A8A",
+    id: "brown",
+    name: "Brown",
+    primary: "#8b6914",
+    accent: "#8b6914",
     background: "#FFFFFF",
-    text: "#1B1D1B",
-  },
-  {
-    id: "terracotta",
-    name: "Terracotta",
-    primary: "#A8622E",
-    accent: "#2F7A5C",
-    background: "#FFFCF8",
-    text: "#2A2118",
-  },
-  {
-    id: "forest",
-    name: "Forest",
-    primary: "#2F7A5C",
-    accent: "#B08D3E",
-    background: "#FFFFFF",
-    text: "#1B1D1B",
+    text: "#1a1a1a",
   },
 ];
 
-export const galleryTemplates: GalleryTemplate[] = [
-  {
-    id: "tpl_meridian",
-    name: "Meridian",
-    description:
-      "Clean serif headings with measured whitespace — ideal for product and senior IC roles.",
+function layoutStyleFor(definition: (typeof TEMPLATE_DEFINITIONS)[number]): string {
+  switch (definition.layoutFamily) {
+    case "sidebar":
+      return "Sidebar + main column";
+    case "form-two-column":
+      return "Form two-column";
+    default:
+      return "Single column";
+  }
+}
+
+export const galleryTemplates: GalleryTemplate[] = TEMPLATE_DEFINITIONS.map(
+  (definition, index) => ({
+    id: definition.slug,
+    name: definition.name,
+    description: definition.description,
     style: "modern",
-    careerLevels: ["mid-level", "senior"],
-    industries: ["technology", "design", "marketing"],
-    rating: 4.9,
-    reviews: 428,
-    popularity: 98,
-    badges: ["recommended", "recruiter-favorite"],
-    isPremium: false,
-    isFeatured: true,
-    accent: "#1F4D3D",
-    previewAccent: "#1F4D3D",
-    editorStyle: "modern",
-    typography: "Fraunces headings · Inter body",
-    layoutStyle: "Single column · airy rhythm",
-    bestFor: ["Product designers", "PMs", "Senior ICs"],
-    features: ["Clear section headings", "Skill chips", "Metric-forward bullets"],
-    readability: 94,
-  },
-  {
-    id: "tpl_ledger",
-    name: "Ledger",
-    description:
-      "Structured columns suited to fintech, consulting, and formal corporate applications.",
-    style: "professional",
     careerLevels: ["junior", "mid-level", "senior"],
-    industries: ["finance", "technology"],
+    industries: ["technology", "engineering", "design"],
     rating: 4.8,
-    reviews: 312,
-    popularity: 92,
-    badges: ["popular"],
+    reviews: 120 + index * 10,
+    popularity: 95 - index * 3,
+    badges: index === 0 ? ["recommended", "popular"] : ["free"],
     isPremium: false,
-    accent: "#B08D3E",
-    previewAccent: "#B08D3E",
-    editorStyle: "professional",
-    typography: "Inter throughout · mono dates",
-    layoutStyle: "Two column · dense clarity",
-    bestFor: ["Analysts", "Consultants", "Finance"],
-    features: ["Strict section order", "Date alignment", "Low ornament"],
-    readability: 91,
-  },
-  {
-    id: "tpl_bureau",
-    name: "Bureau",
-    description:
-      "Bold hierarchy and confident whitespace for director and leadership resumes.",
-    style: "executive",
-    careerLevels: ["senior", "executive"],
-    industries: ["finance", "healthcare", "technology"],
-    rating: 4.7,
-    reviews: 198,
-    popularity: 84,
-    badges: ["premium", "recommended"],
-    isPremium: true,
-    accent: "#1B1D1B",
-    previewAccent: "#1B1D1B",
-    editorStyle: "executive",
-    typography: "Fraunces display · Inter body",
-    layoutStyle: "Sidebar accent · executive rail",
-    bestFor: ["Directors", "VPs", "Founders"],
-    features: ["Leadership summary", "Board-ready density", "Accent rail"],
-    readability: 88,
-  },
-  {
-    id: "tpl_atelier",
-    name: "Atelier",
-    description:
-      "Editorial layout with accent rules for design, brand, and creative portfolios.",
-    style: "creative",
-    careerLevels: ["junior", "mid-level", "senior"],
-    industries: ["design", "marketing"],
-    rating: 4.6,
-    reviews: 256,
-    popularity: 88,
-    badges: ["premium", "popular"],
-    isPremium: true,
-    accent: "#2F7A5C",
-    previewAccent: "#2F7A5C",
-    editorStyle: "creative",
-    typography: "Fraunces + generous leading",
-    layoutStyle: "Single column · editorial rules",
-    bestFor: ["Designers", "Brand leads", "Creatives"],
-    features: ["Project gallery feel", "Gold accent bar", "Portfolio links"],
-    readability: 86,
-  },
-  {
-    id: "tpl_cordial",
-    name: "Cordial",
-    description:
-      "Friendly modern layout that feels warm, approachable, and polished.",
-    style: "modern",
-    careerLevels: ["graduate", "junior", "mid-level"],
-    industries: ["healthcare", "marketing", "technology"],
-    rating: 4.8,
-    reviews: 189,
-    popularity: 79,
-    badges: ["free"],
-    isPremium: false,
-    accent: "#3E6B5C",
-    previewAccent: "#3E6B5C",
+    isFeatured: index === 0,
+    accent: definition.defaultCustomization.accentColor,
+    previewAccent: definition.defaultCustomization.accentColor,
     editorStyle: "modern",
-    typography: "Inter headings · soft hierarchy",
-    layoutStyle: "Single column · balanced",
-    bestFor: ["Client-facing roles", "Ops", "CS"],
-    features: ["Soft section labels", "Compact skills", "Clear hierarchy"],
-    readability: 93,
-  },
-  {
-    id: "tpl_foundry",
-    name: "Foundry",
-    description:
-      "Serious executive presence with restrained ornament and strong typographic scale.",
-    style: "executive",
-    careerLevels: ["senior", "executive"],
-    industries: ["engineering", "finance", "technology"],
-    rating: 4.5,
-    reviews: 141,
-    popularity: 71,
-    badges: ["premium"],
-    isPremium: true,
-    accent: "#4A4238",
-    previewAccent: "#4A4238",
-    editorStyle: "executive",
-    typography: "Merriweather-inspired scale",
-    layoutStyle: "Two column · leadership",
-    bestFor: ["Engineering leaders", "Ops executives"],
-    features: ["Impact first", "Sparse color", "Print-ready"],
-    readability: 87,
-  },
-  {
-    id: "tpl_halcyon",
-    name: "Halcyon",
-    description:
-      "Minimal single-column resume with a clear, recruiter-friendly hierarchy.",
-    style: "minimal",
-    careerLevels: ["student", "graduate", "junior", "mid-level"],
-    industries: ["technology", "engineering", "healthcare"],
-    rating: 4.9,
-    reviews: 502,
-    popularity: 95,
-    badges: ["recruiter-favorite", "free"],
-    isPremium: false,
-    isFeatured: true,
-    accent: "#6B7A63",
-    previewAccent: "#6B7A63",
-    editorStyle: "minimal",
-    typography: "Inter · maximal clarity",
-    layoutStyle: "Single column · focused",
-    bestFor: ["Early-career professionals"],
-    features: ["Focused layout", "Clear headings", "Easy scanning"],
-    readability: 97,
-  },
-  {
-    id: "tpl_marquee",
-    name: "Marquee",
-    description:
-      "Creative spotlight layout for marketers and storytellers who still need structure.",
-    style: "creative",
-    careerLevels: ["mid-level", "senior"],
-    industries: ["marketing", "design"],
-    rating: 4.4,
-    reviews: 167,
-    popularity: 76,
-    badges: ["popular", "premium"],
-    isPremium: true,
-    accent: "#B5562B",
-    previewAccent: "#B5562B",
-    editorStyle: "creative",
-    typography: "Display headers · Inter body",
-    layoutStyle: "Sidebar layout · accent wash",
-    bestFor: ["Marketers", "Content leads"],
-    features: ["Campaign highlights", "Bold intro", "Link row"],
-    readability: 84,
-  },
-  {
-    id: "tpl_vantage",
-    name: "Vantage",
-    description:
-      "Modern tech-forward CV with clean skills taxonomy and project emphasis.",
-    style: "modern",
-    careerLevels: ["junior", "mid-level", "senior"],
-    industries: ["technology", "engineering"],
-    rating: 4.7,
-    reviews: 274,
-    popularity: 90,
-    badges: ["recommended"],
-    isPremium: false,
-    accent: "#2F7A5C",
-    previewAccent: "#2F7A5C",
-    editorStyle: "modern",
-    typography: "Sans stack · mono accents",
-    layoutStyle: "Two column · skills rail",
-    bestFor: ["Engineers", "Product", "Data"],
-    features: ["Skills taxonomy", "Project block", "GitHub-ready"],
+    typography: definition.fonts.body.includes("Montserrat")
+      ? "Montserrat"
+      : definition.fonts.body.includes("Poppins")
+        ? "Poppins"
+        : definition.fonts.body.includes("Roboto")
+          ? "Roboto"
+          : "Inter",
+    layoutStyle: layoutStyleFor(definition),
+    bestFor: ["Software engineers", "Graduates", "Professionals"],
+    features: ["ATS-friendly", "Reference matched", "A4 layout"],
     readability: 92,
-  },
-  {
-    id: "tpl_printrow",
-    name: "Print Row",
-    description:
-      "Classic executive print layout with hairline rules and boardroom calm.",
-    style: "executive",
-    careerLevels: ["executive", "senior"],
-    industries: ["finance", "healthcare"],
-    rating: 4.6,
-    reviews: 120,
-    popularity: 68,
-    badges: ["premium", "recommended"],
-    isPremium: true,
-    accent: "#3D3A2E",
-    previewAccent: "#3D3A2E",
-    editorStyle: "executive",
-    typography: "Serif display · restrained body",
-    layoutStyle: "Single column · print rules",
-    bestFor: ["C-suite", "Board nominations"],
-    features: ["Print margins", "Hat tips to classic CVs"],
-    readability: 89,
-  },
-  {
-    id: "tpl_kiln",
-    name: "Kiln",
-    description:
-      "Warm creative system for design leads who want craft without chaos.",
-    style: "creative",
-    careerLevels: ["mid-level", "senior"],
-    industries: ["design"],
-    rating: 4.5,
-    reviews: 98,
-    popularity: 64,
-    badges: ["premium"],
-    isPremium: true,
-    accent: "#A8622E",
-    previewAccent: "#A8622E",
-    editorStyle: "creative",
-    typography: "Warm serif headings",
-    layoutStyle: "Sidebar · craft accent",
-    bestFor: ["Design managers", "Brand"],
-    features: ["Case study stubs", "Palette cue"],
-    readability: 85,
-  },
-  {
-    id: "tpl_overleaf",
-    name: "Overleaf",
-    description:
-      "Academic-leaning minimal template for research, graduate, and teaching applications.",
-    style: "academic",
-    careerLevels: ["student", "graduate", "junior"],
-    industries: ["healthcare", "engineering", "technology"],
-    rating: 4.8,
-    reviews: 210,
-    popularity: 73,
-    badges: ["free"],
-    isPremium: false,
-    accent: "#4E6E5D",
-    previewAccent: "#4E6E5D",
-    editorStyle: "minimal",
-    typography: "Classic academic stack",
-    layoutStyle: "Single column · publications-ready",
-    bestFor: ["Graduates", "Researchers", "Clinicians"],
-    features: ["Publications block cue", "Clean degrees", "Clear structure"],
-    readability: 95,
-  },
-  {
-    id: "tpl_folio",
-    name: "Folio",
-    description:
-      "Single-column professional layout with crisp mono metadata treatment.",
-    style: "minimal",
-    careerLevels: ["graduate", "junior", "mid-level"],
-    industries: ["technology", "engineering", "marketing"],
-    rating: 4.7,
-    reviews: 330,
-    popularity: 86,
-    badges: ["free", "popular"],
-    isPremium: false,
-    accent: "#1F4D3D",
-    previewAccent: "#1F4D3D",
-    editorStyle: "minimal",
-    typography: "Inter · IBM Plex Mono meta",
-    layoutStyle: "Single column · crisp",
-    bestFor: ["General tech applications"],
-    features: ["Mono dates", "Minimal visual treatment"],
-    readability: 96,
-  },
-  {
-    id: "tpl_signal",
-    name: "Signal",
-    description:
-      "Compact density for engineering and product management CVs.",
-    style: "professional",
-    careerLevels: ["mid-level", "senior"],
-    industries: ["technology", "engineering"],
-    rating: 4.6,
-    reviews: 188,
-    popularity: 81,
-    badges: ["premium", "recommended"],
-    isPremium: true,
-    accent: "#2F7A5C",
-    previewAccent: "#2F7A5C",
-    editorStyle: "professional",
-    typography: "Dense Inter · sharp labels",
-    layoutStyle: "Two column · compact",
-    bestFor: ["PMs", "Engineers", "Tech leads"],
-    features: ["High density", "Bullet-focused achievements", "Role-specific keywords"],
-    readability: 90,
-  },
-];
+  }),
+);
 
 export const savedTemplates: SavedTemplateEntry[] = [
   {
     id: "saved_1",
-    templateId: "tpl_meridian",
-    name: "Meridian — Product",
+    templateId: "tpl_default",
+    name: "Classic Sidebar",
     kind: "recent",
     updatedAt: "2026-08-05T16:00:00.000Z",
   },
   {
     id: "saved_2",
-    templateId: "tpl_halcyon",
-    name: "Halcyon Base",
+    templateId: "tpl_1",
+    name: "Professional",
     kind: "saved",
     updatedAt: "2026-08-04T11:20:00.000Z",
-  },
-  {
-    id: "saved_3",
-    templateId: "tpl_atelier",
-    name: "Atelier custom emerald",
-    kind: "custom",
-    updatedAt: "2026-08-03T09:10:00.000Z",
-    customizationId: "cust_1",
-  },
-  {
-    id: "saved_4",
-    templateId: "tpl_vantage",
-    name: "Vantage Eng",
-    kind: "recent",
-    updatedAt: "2026-08-02T14:40:00.000Z",
   },
 ];
 
@@ -442,43 +139,11 @@ export function getGalleryTemplateById(id: string): GalleryTemplate | undefined 
 export function createDefaultCustomization(
   templateOrId: string | GalleryTemplate,
 ): TemplateCustomization {
-  const template =
-    typeof templateOrId === "string"
-      ? getGalleryTemplateById(templateOrId) ?? galleryTemplates[0]
-      : templateOrId;
-  const palette =
-    colorPalettes.find((p) => p.primary === template.accent) ?? colorPalettes[0];
-
-  return {
-    templateId: template.id,
-    primaryColor: palette.primary,
-    accentColor: palette.accent,
-    backgroundColor: palette.background,
-    textColor: palette.text,
-    fontFamily: template.editorStyle === "creative" ? "fraunces" : "inter",
-    fontSize: 11,
-    headingStyle:
-      template.editorStyle === "executive" || template.editorStyle === "creative"
-        ? "serif"
-        : "sans",
-    bodySpacing: 1.45,
-    layout:
-      template.editorStyle === "executive"
-        ? "sidebar"
-        : template.editorStyle === "professional"
-          ? "two-column"
-          : "single",
-    sectionSpacing: 14,
-    margins: 48,
-    pageSize: "a4",
-    sections: [
-      { id: "summary", label: "Summary", visible: true },
-      { id: "experience", label: "Experience", visible: true },
-      { id: "education", label: "Education", visible: true },
-      { id: "skills", label: "Skills", visible: true },
-      { id: "projects", label: "Projects", visible: true },
-      { id: "certificates", label: "Certificates", visible: false },
-      { id: "languages", label: "Languages", visible: true },
-    ],
-  };
+  const templateId =
+    typeof templateOrId === "string" ? templateOrId : templateOrId.id;
+  const match = TEMPLATE_DEFINITIONS.find((d) => d.slug === templateId);
+  if (match) {
+    return createTemplateDefaultCustomization(match.id);
+  }
+  return createTemplateDefaultCustomization("tpl_default");
 }

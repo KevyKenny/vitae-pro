@@ -4,41 +4,25 @@ import type {
   EditorAiSuggestion,
   EditorTemplate,
 } from "@/features/cv-editor/types";
+import { TEMPLATE_DEFINITIONS } from "@/lib/templates/definitions";
 import { normalizePersonalInfo } from "@/lib/cvs/personal-info";
 import { normalizeTertiaryEntry } from "@/lib/cvs/education-dates";
 
-export const editorTemplates: EditorTemplate[] = [
-  {
-    id: "modern",
-    name: "Modern",
-    description: "Clean serifs and airy spacing for product roles.",
-  },
-  {
-    id: "professional",
-    name: "Professional",
-    description: "Structured columns suited to corporate applications.",
-  },
-  {
-    id: "executive",
-    name: "Executive",
-    description: "Bold hierarchy for senior leadership CVs.",
-  },
-  {
-    id: "minimal",
-    name: "Minimal",
-    description: "Single-column layout with crisp density.",
-  },
-  {
-    id: "creative",
-    name: "Creative",
-    description: "Editorial accent rules for design portfolios.",
-  },
-];
+export const editorTemplates: EditorTemplate[] = TEMPLATE_DEFINITIONS.map(
+  (definition) => ({
+    id: definition.id,
+    slug: definition.id,
+    name: definition.name,
+    description: definition.description,
+  }),
+);
 
 export const mockCvDocument: CvDocument = {
   id: "cv_1",
   title: "Senior Product Designer",
   templateId: "modern",
+  templateSlug: "tpl_default",
+  rendererKey: "tpl_default",
   updatedAt: "2026-08-05T14:00:00.000Z",
   personal: normalizePersonalInfo({
     fullName: "Kennedy Sithole",

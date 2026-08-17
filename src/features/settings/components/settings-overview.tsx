@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SETTINGS_NAV } from "@/features/settings/components/settings-sidebar";
-import { mockBillingState, subscriptionPlans } from "@/mocks/settings";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SectionCard } from "@/components/shared/section-card";
@@ -14,9 +13,6 @@ import { useProfile } from "@/features/auth/hooks/use-auth";
 export function SettingsOverview() {
   const router = useRouter();
   const { profile, completion, loading } = useProfile();
-  const plan = subscriptionPlans.find(
-    (p) => p.id === mockBillingState.currentPlanId,
-  );
   const firstName = profile?.first_name ?? "";
   const lastName = profile?.last_name ?? "";
   const title = profile?.professional_title ?? "Add your professional title";
@@ -44,7 +40,9 @@ export function SettingsOverview() {
             <p className="text-sm text-ink-soft">{title}</p>
             <div className="mt-2 flex flex-wrap gap-2">
               <Badge variant="default">Profile {completion}%</Badge>
-              <Badge variant="gold">{plan?.name ?? "Free"} plan</Badge>
+              <Badge variant="gold">
+                Free to create · $1.99 for 14 days
+              </Badge>
             </div>
           </div>
           <Button asChild shape="soft" className="rounded-[8px]">

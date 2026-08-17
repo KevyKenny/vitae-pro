@@ -5,11 +5,13 @@ import { toast } from "sonner";
 import { createCv, cvErrorMessage } from "@/lib/cvs";
 import { trackProductEvent } from "@/lib/analytics/events";
 import type { CreateCvMethod } from "@/features/cv-creation/types";
+import type { EditorTemplateId } from "@/features/cv-editor/types";
 
 type StartCreationOptions = {
   method: CreateCvMethod;
   targetRole?: string;
   targetIndustry?: string;
+  templateKey?: EditorTemplateId;
 };
 
 export function useCreateCvFlow() {
@@ -27,6 +29,7 @@ export function useCreateCvFlow() {
 
       try {
         const { id } = await createCv({
+          templateKey: options.templateKey,
           targetRole: options.targetRole ?? null,
           targetIndustry: options.targetIndustry ?? null,
         });

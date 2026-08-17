@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -33,8 +34,10 @@ import { splitFullName } from "@/lib/auth/names";
 import { createClient } from "@/lib/supabase/client";
 import { mockCareerLevels } from "@/mocks/onboarding";
 
-export default function SignUpPage() {
+function SignUpForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect");
 
   const form = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
@@ -99,8 +102,11 @@ export default function SignUpPage() {
       }
 
       if (data.session) {
-        // Email confirmation disabled — continue into the app funnel
-        router.push("/auth/transition");
+        const next =
+          redirectTo && redirectTo.startsWith("/")
+            ? redirectTo
+            : "/auth/transition";
+        router.push(next);
         router.refresh();
         return;
       }
@@ -117,12 +123,16 @@ export default function SignUpPage() {
   return (
     <AuthCard
       title="Create your account"
-      subtitle="Start building your CV with an AI coach, free."
+      subtitle="Create your CV for free. Pay $1.99 to download for 14 days, then $6/month."
       footer={
         <p className="text-center text-[0.8rem] text-ink-faint">
           Already have an account?{" "}
           <Link
-            href="/auth/sign-in"
+            href={
+              redirectTo
+                ? `/auth/sign-in?redirect=${encodeURIComponent(redirectTo)}`
+                : "/auth/sign-in"
+            }
             className="font-semibold text-emerald hover:underline"
           >
             Sign in
@@ -321,5 +331,21 @@ export default function SignUpPage() {
         </Button>
       </form>
     </AuthCard>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense
+      fallback={
+        <AuthCard title="Create your account" subtitle="Loading…">
+          <div className="flex justify-center py-10">
+            <Loader2 className="size-6 animate-spin text-emerald" />
+          </div>
+        </AuthCard>
+      }
+    >
+      <SignUpForm />
+    </Suspense>
   );
 }

@@ -8,27 +8,19 @@ export const landingStats = [
 export const landingSteps = [
   {
     id: "1",
-    title: "Enter your career information",
-    description:
-      "Import a draft or start fresh — roles, wins, and skills in one place.",
+    title: "Enter your details",
+    description: "Add your experience, education, and skills — free.",
   },
   {
     id: "2",
-    title: "AI improves your content",
-    description:
-      "Quantify impact, tighten language, and match keywords from real postings.",
+    title: "Improve with AI",
+    description: "Tighten language, add impact, and pick a professional template.",
   },
   {
     id: "3",
-    title: "Choose your professional design",
+    title: "Download when satisfied",
     description:
-      "Switch templates while your content stays intact and clearly presented.",
-  },
-  {
-    id: "4",
-    title: "Download and apply",
-    description:
-      "Export a polished CV and generate a cover letter for every opportunity.",
+      "Pay $1.99 to download — it lasts 14 days. Then upgrade to $6/month.",
   },
 ];
 
@@ -111,7 +103,13 @@ export const landingFaqs = [
     id: "free",
     question: "Is VitatePro free?",
     answer:
-      "Yes — start on Free with AI suggestions. Upgrade when you need unlimited generations and premium layouts.",
+      "Yes. Create and edit your CV for free. Pay $1.99 when you download — that access lasts 14 days. After that, upgrade to $6/month.",
+  },
+  {
+    id: "when-pay",
+    question: "When do I pay?",
+    answer:
+      "Pay $1.99 when you download the finished CV. That unlocks downloads for 14 days. After 14 days, upgrade to $6/month to keep downloading.",
   },
   {
     id: "write",
@@ -144,4 +142,5 @@ export const landingTemplatePreview = [
   { id: "executive", name: "Executive", accent: "#1B1D1B" },
   { id: "minimal", name: "Minimal", accent: "#6B7A63" },
   { id: "creative", name: "Creative", accent: "#2F7A5C" },
+  { id: "folio", name: "Folio", accent: "#2C3E50" },
 ];

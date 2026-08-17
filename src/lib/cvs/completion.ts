@@ -23,24 +23,15 @@ function sectionScore(
 
 function experienceEntryCompletion(entry: ExperienceEntry): number {
   const hasRole =
-    "position" in entry
-      ? hasText(entry.position)
-      : "role" in entry
-        ? hasText(entry.role)
-        : "programmeName" in entry
-          ? hasText(entry.programmeName)
-          : "clientName" in entry
-            ? hasText(entry.clientName)
-            : "projectName" in entry
-              ? hasText(entry.projectName)
-              : false;
+    ("position" in entry && hasText(entry.position)) ||
+    ("role" in entry && hasText(entry.role)) ||
+    ("programmeName" in entry && hasText(entry.programmeName)) ||
+    ("clientName" in entry && hasText(entry.clientName)) ||
+    ("projectName" in entry && hasText(entry.projectName));
 
   const hasOrg =
-    "company" in entry
-      ? hasText(entry.company)
-      : "organization" in entry
-        ? hasText(entry.organization)
-        : false;
+    ("company" in entry && hasText(entry.company)) ||
+    ("organization" in entry && hasText(entry.organization));
 
   const bullets =
     "responsibilities" in entry
@@ -99,7 +90,7 @@ export function calculateSectionCompletion(
         let score = 0;
         if ("institution" in entry && hasText(entry.institution)) score += 40;
         if ("schoolName" in entry && hasText(entry.schoolName)) score += 40;
-        if ("degree" in entry && hasText(entry.degree)) score += 30;
+        if ("qualification" in entry && hasText(entry.qualification)) score += 30;
         if ("qualificationType" in entry) score += 30;
         if ("subjects" in entry && entry.subjects.some((s) => hasText(s.name))) {
           score += 30;

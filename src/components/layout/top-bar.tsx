@@ -2,20 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  Bell,
-  HelpCircle,
-  LogOut,
-  Menu,
-  Search,
-  Settings,
-  UserRound,
-} from "lucide-react";
+import { HelpCircle, LogOut, Menu, Search, Settings, UserRound } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { useSidebar } from "@/components/layout/sidebar-context";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -32,11 +23,9 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { EmptyState } from "@/components/shared/empty-state";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { cn, formatRelativeTime, getInitials } from "@/lib/utils";
-import { mockNotifications } from "@/mocks";
+import { cn, getInitials } from "@/lib/utils";
 import { useState } from "react";
 
 function displayName(
@@ -45,15 +34,26 @@ function displayName(
   email?: string | null,
 ) {
   const name = [first, last].filter(Boolean).join(" ").trim();
-  return name || email || "Account";
+  return name || email?.toLowerCase() || "Account";
 }
+
+function accountInitials(
+  first?: string | null,
+  last?: string | null,
+  email?: string | null,
+) {
+  const name = [first, last].filter(Boolean).join(" ").trim();
+  if (name) return getInitials(name);
+  const letter = email?.trim().charAt(0);
+  return letter ? letter.toUpperCase() : "?";
+}
+
+const MENU_ITEM_CLASS = "min-h-11 gap-2.5 px-3 py-2.5 text-sm sm:min-h-9 sm:py-2";
 
 export function TopBar({ className }: { className?: string }) {
   const router = useRouter();
   const { setMobileOpen } = useSidebar();
   const { user, profile, signOut } = useAuth();
-  const unread = mockNotifications.filter((n) => !n.read);
-  const notifications = mockNotifications;
   const [signOutOpen, setSignOutOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,7 +64,12 @@ export function TopBar({ className }: { className?: string }) {
     profile?.last_name,
     user?.email,
   );
-  const email = profile?.email ?? user?.email ?? "";
+  const email = (profile?.email ?? user?.email ?? "").toLowerCase();
+  const initials = accountInitials(
+    profile?.first_name,
+    profile?.last_name,
+    user?.email,
+  );
 
   async function handleSignOut() {
     try {
@@ -136,84 +141,7 @@ export function TopBar({ className }: { className?: string }) {
             <Search className="size-4" />
           </Button>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                shape="soft"
-                className="relative"
-                aria-label={`Notifications${unread.length ? `, ${unread.length} unread` : ""}`}
-              >
-                <Bell className="size-4" />
-                {unread.length > 0 ? (
-                  <span className="absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full bg-gold text-[10px] font-bold text-paper">
-                    {unread.length}
-                  </span>
-                ) : null}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-80 max-w-[calc(100vw-2rem)] p-0"
-            >
-              <div className="flex items-center justify-between px-3 py-3">
-                <DropdownMenuLabel className="p-0">
-                  Notifications
-                </DropdownMenuLabel>
-                <Badge variant="outline">{unread.length} new</Badge>
-              </div>
-              <DropdownMenuSeparator className="m-0" />
-              {notifications.length === 0 ? (
-                <div className="p-3">
-                  <EmptyState
-                    title="No notifications"
-                    description="You’re all caught up. Career tips will show up here."
-                    className="border-0 bg-transparent py-8"
-                  />
-                </div>
-              ) : (
-                <div className="max-h-80 overflow-y-auto py-1">
-                  {notifications.map((notification) => (
-                    <DropdownMenuItem
-                      key={notification.id}
-                      className="flex flex-col items-start gap-1 rounded-none px-3 py-3"
-                    >
-                      <div className="flex w-full items-center justify-between gap-2">
-                        <span className="font-semibold text-ink">
-                          {notification.title}
-                        </span>
-                        {!notification.read ? (
-                          <Badge variant="gold">New</Badge>
-                        ) : null}
-                      </div>
-                      <span className="text-xs text-ink-soft">
-                        {notification.body}
-                      </span>
-                      <span className="text-[0.7rem] text-ink-faint">
-                        {formatRelativeTime(notification.createdAt)}
-                      </span>
-                    </DropdownMenuItem>
-                  ))}
-                </div>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
           <ThemeToggle />
-
-          <Button
-            asChild
-            variant="outline"
-            size="icon"
-            shape="soft"
-            className="hidden sm:inline-flex"
-          >
-            <Link href="/help" aria-label="Help">
-              <HelpCircle className="size-4" />
-            </Link>
-          </Button>
 
           {/* modal={false} avoids Radix locking body pointer-events during soft navigations */}
           <DropdownMenu modal={false}>
@@ -224,47 +152,56 @@ export function TopBar({ className }: { className?: string }) {
                 size="icon"
                 shape="soft"
                 className="rounded-full p-0"
-                aria-label="User menu"
+                aria-label="Account menu"
               >
-                <Avatar className="size-9">
-                  <AvatarFallback>{getInitials(name)}</AvatarFallback>
+                <Avatar className="size-9 sm:size-8">
+                  <AvatarFallback className="text-[0.72rem] font-semibold tracking-normal uppercase">
+                    {initials}
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="w-56"
+              className="w-56 max-w-[calc(100vw-1.5rem)]"
               onCloseAutoFocus={(e) => e.preventDefault()}
             >
-              <DropdownMenuLabel>
-                <div className="flex flex-col gap-0.5">
-                  <span>{name}</span>
-                  <span className="text-xs font-normal text-ink-faint">
-                    {email}
+              <DropdownMenuLabel className="px-3 py-2.5 font-normal normal-case tracking-normal text-ink">
+                <div className="flex min-w-0 flex-col gap-0.5">
+                  <span className="truncate text-sm font-semibold text-ink">
+                    {name}
                   </span>
+                  {email ? (
+                    <span className="truncate text-xs font-normal lowercase text-ink-faint">
+                      {email}
+                    </span>
+                  ) : null}
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
+              <DropdownMenuItem asChild className={MENU_ITEM_CLASS}>
                 <Link href="/settings/profile">
                   <UserRound className="size-4" />
                   Profile
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/settings">
-                  <Settings className="size-4" />
-                  Settings
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild className="sm:hidden">
+              <DropdownMenuItem asChild className={MENU_ITEM_CLASS}>
                 <Link href="/help">
                   <HelpCircle className="size-4" />
                   Help
                 </Link>
               </DropdownMenuItem>
+              <DropdownMenuItem asChild className={MENU_ITEM_CLASS}>
+                <Link href="/settings">
+                  <Settings className="size-4" />
+                  Settings
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setSignOutOpen(true)}>
+              <DropdownMenuItem
+                className={MENU_ITEM_CLASS}
+                onClick={() => setSignOutOpen(true)}
+              >
                 <LogOut className="size-4" />
                 Sign out
               </DropdownMenuItem>
@@ -294,7 +231,7 @@ export function TopBar({ className }: { className?: string }) {
                 aria-label="Search"
               />
             </div>
-            <Button type="submit" shape="soft" className="w-full rounded-[8px]">
+            <Button type="submit" shape="soft" className="h-12 w-full rounded-[8px]">
               Search
             </Button>
           </form>

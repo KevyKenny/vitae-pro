@@ -29,7 +29,7 @@ import { SectionCard } from "@/components/shared/section-card";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
 import { useCreateCv } from "@/features/cv-editor/hooks/use-create-cv";
-import { useCvExport } from "@/features/export/hooks/use-cv-export";
+import { usePaidCvDownload } from "@/features/export/hooks/use-paid-cv-download";
 import {
   archiveCv,
   cvErrorMessage,
@@ -44,7 +44,7 @@ import { formatRelativeTime } from "@/lib/utils";
 export function RecentCvs() {
   const router = useRouter();
   const { creating, createAndOpen } = useCreateCv();
-  const { downloadCvPdf } = useCvExport();
+  const { requestDownload, paymentDialog } = usePaidCvDownload();
   const [items, setItems] = useState<CvListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteTarget, setDeleteTarget] = useState<CvListItem | null>(null);
@@ -215,7 +215,7 @@ export function RecentCvs() {
                       <Copy className="size-4" />
                       Duplicate
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => void downloadCvPdf(cv.id)}>
+                    <DropdownMenuItem onClick={() => requestDownload(cv.id)}>
                       <Download className="size-4" />
                       Download PDF
                     </DropdownMenuItem>
@@ -256,6 +256,7 @@ export function RecentCvs() {
         destructive
         onConfirm={() => void confirmDelete()}
       />
+      {paymentDialog}
     </>
   );
 }

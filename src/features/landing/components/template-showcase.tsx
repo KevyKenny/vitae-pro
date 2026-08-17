@@ -1,62 +1,58 @@
 "use client";
 
-import Link from "next/link";
-import { motion } from "framer-motion";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { landingTemplatePreview } from "@/mocks/landing";
+import { CreateCvLink } from "@/features/landing/components/create-cv-link";
+import { LAYOUT_TEMPLATES } from "@/features/landing/lib/template-previews";
 
 export function TemplateShowcase() {
   return (
     <section id="templates" className="border-y border-line bg-surface">
-      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <h2 className="font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-              Templates that look hired, not handmade overnight
-            </h2>
-            <p className="mt-3 max-w-xl text-ink-soft">
-              Modern, Executive, Minimal, Creative — designed to present your
-              experience with clarity.
-            </p>
-          </div>
-          <Button asChild variant="outline" shape="soft">
-            <Link href="/templates">Browse Templates</Link>
-          </Button>
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+        <div className="max-w-xl">
+          <h2 className="font-serif text-[1.55rem] font-semibold tracking-tight text-ink sm:text-3xl">
+            Choose your CV template
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-ink-soft sm:text-base">
+            These are the actual layouts. Pick one and start writing — you can
+            switch later.
+          </p>
         </div>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {landingTemplatePreview.map((t, i) => (
-            <motion.article
-              key={t.id}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              whileHover={{ y: -4 }}
-              className="overflow-hidden rounded-[16px] border border-line bg-paper shadow-s"
+        <div className="-mx-4 mt-6 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:thin] sm:mx-0 sm:mt-8 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 xl:grid-cols-4">
+          {LAYOUT_TEMPLATES.map((template) => (
+            <article
+              key={template.slug}
+              className="w-[min(78vw,280px)] shrink-0 snap-start overflow-hidden rounded-[14px] border border-line bg-paper shadow-s sm:w-auto"
             >
-              <div className="aspect-[3/4] bg-paper-dim p-4">
-                <div className="h-full rounded-[8px] border border-line bg-surface p-3">
-                  <div
-                    className="mb-3 h-2.5 w-2/5 rounded-sm opacity-90"
-                    style={{ background: t.accent }}
-                  />
-                  {[85, 70, 60, 75, 50].map((w) => (
-                    <div
-                      key={w}
-                      className="mb-1.5 h-1.5 rounded-sm bg-ink/10"
-                      style={{ width: `${w}%` }}
-                    />
-                  ))}
+              <div className="relative aspect-[210/297] overflow-hidden bg-white">
+                <Image
+                  src={template.previewSrc}
+                  alt={`${template.name} CV layout`}
+                  fill
+                  className="object-cover object-top"
+                  sizes="(max-width: 640px) 78vw, (max-width: 1024px) 45vw, 25vw"
+                />
+              </div>
+              <div className="space-y-3 border-t border-line p-3.5">
+                <div>
+                  <h3 className="font-semibold text-ink">{template.name}</h3>
+                  <p className="mt-0.5 line-clamp-2 text-[0.75rem] leading-snug text-ink-faint">
+                    {template.description}
+                  </p>
                 </div>
+                <Button
+                  asChild
+                  size="sm"
+                  shape="soft"
+                  className="h-11 w-full rounded-[8px] text-[0.82rem]"
+                >
+                  <CreateCvLink templateId={template.id}>
+                    Use this template
+                  </CreateCvLink>
+                </Button>
               </div>
-              <div className="flex items-center justify-between px-4 py-3">
-                <p className="font-semibold text-ink">{t.name}</p>
-                <span className="text-[0.68rem] font-bold tracking-wide text-emerald uppercase">
-                  Professional
-                </span>
-              </div>
-            </motion.article>
+            </article>
           ))}
         </div>
       </div>

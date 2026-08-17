@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SaveIndicator } from "@/features/cv-editor/components/save-indicator";
 import { useEditor } from "@/features/cv-editor/context/editor-context";
-import { useCvExport } from "@/features/export/hooks/use-cv-export";
+import { usePaidCvDownload } from "@/features/export/hooks/use-paid-cv-download";
 
 export function EditorToolbar() {
   const {
@@ -43,7 +43,12 @@ export function EditorToolbar() {
     setAiOpen,
     setAnalysisOpen,
   } = useEditor();
-  const { downloadCvPdf, printCv, status: exportStatus } = useCvExport();
+  const {
+    requestDownload,
+    printCv,
+    status: exportStatus,
+    paymentDialog,
+  } = usePaidCvDownload();
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b border-line bg-surface px-3 sm:gap-3 sm:px-4">
@@ -202,7 +207,7 @@ export function EditorToolbar() {
           shape="soft"
           className="hidden rounded-[8px] md:inline-flex"
           disabled={exportStatus === "generating" || exportStatus === "preparing"}
-          onClick={() => void downloadCvPdf(cvId, document)}
+          onClick={() => requestDownload(cvId, document)}
         >
           <Download className="size-4" />
           {exportStatus === "preparing"
@@ -219,7 +224,7 @@ export function EditorToolbar() {
           className="md:hidden"
           aria-label="Download PDF"
           disabled={exportStatus === "generating" || exportStatus === "preparing"}
-          onClick={() => void downloadCvPdf(cvId, document)}
+          onClick={() => requestDownload(cvId, document)}
         >
           <Download className="size-4" />
         </Button>
@@ -265,6 +270,7 @@ export function EditorToolbar() {
           Save
         </Button>
       </div>
+      {paymentDialog}
     </header>
   );
 }

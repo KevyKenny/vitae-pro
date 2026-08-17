@@ -5,6 +5,8 @@ export const metadata: Metadata = {
   description: "Build CVs and cover letters with an AI career coach.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default function EditorRouteLayout({
   children,
 }: Readonly<{

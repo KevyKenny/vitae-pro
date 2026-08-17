@@ -188,9 +188,8 @@ export function educationEntryParts(entry: EducationEntry): EducationEntryParts 
         bullets: entry.candidateNumber
           ? [`Candidate number: ${entry.candidateNumber}`]
           : [],
-        subjects: sortSubjectsForDocument(
-          entry.subjects.filter((s) => s.name.trim()),
-        ),
+        // Keep the user's subject order. Alignment is CSS-only.
+        subjects: entry.subjects.filter((s) => s.name.trim()),
       };
     }
     case "certificate":

@@ -26,6 +26,8 @@ export type SidebarBlockOptions = {
   skillsLabel?: string;
   qualitiesLabel?: string;
   groupSkills?: boolean;
+  /** Override a skill-category heading, e.g. technical → Programming Languages. */
+  skillGroupLabel?: (group: { id: string; label: string }) => string;
 };
 
 export function SidebarHeaderBand({
@@ -177,7 +179,9 @@ export function appendSidebarBlocks(
             <DocGroupedSkills
               groups={[
                 {
-                  label: group.label.toUpperCase(),
+                  label: (
+                    options.skillGroupLabel?.(group) ?? group.label
+                  ).toUpperCase(),
                   skills: group.skills.map((s) => s.name),
                 },
               ]}

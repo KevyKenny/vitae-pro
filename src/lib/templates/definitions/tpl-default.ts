@@ -21,21 +21,32 @@ export const tplDefaultDefinition: TemplateDefinition = {
     heading: "var(--font-inter), Inter, system-ui, sans-serif",
   },
   cssClass: "tpl-default",
-  // Matches .tpl-sidebar-footer-mark height (2.4rem) reserved only on the last rail page.
-  regionLastPageReserve: { sidebar: 40 },
+  // template-default.pdf: ~15pt side inset, ~25pt top/bottom on the main column.
+  pagePaddingRatio: { x: 0.61, y: 1 },
+  // Quarter-circle footer mark on the last rail page (~4.2rem).
+  regionLastPageReserve: { sidebar: 68 },
   buildBlocks(document: CvDocument, ctx) {
     return [
       ...buildSidebarBlocks(document, {
         withHeaderBand: true,
         withIcons: true,
+        skillGroupLabel: (group) => {
+          if (group.id === "technical") return "Programming Languages";
+          if (group.id === "frameworks") return "Frameworks";
+          if (group.id === "tools") return "Tools";
+          return group.label;
+        },
       }),
       ...buildMainSectionBlocks(document, ctx, {
         region: "main",
         entryStyle: "date-right",
         sectionHeadingVariant: "plain",
+        preferTemplateLabels: true,
         summaryLabel: "Professional Summary",
         experienceLabel: "Employment",
         certificationsLabel: "Certificates",
+        achievementsLabel: "Achievements",
+        projectsLabel: "PROJECTS",
         sectionOrder: [
           "summary",
           "education",

@@ -5,6 +5,7 @@
   font-size: var(--doc-base-size);
   line-height: var(--doc-line-height);
   color: var(--doc-ink);
+  overflow-wrap: break-word;
 }
 
 /* Full-bleed rails need to escape the page padding box. */
@@ -337,12 +338,16 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 0.85em;
+  min-width: 0;
 }
 
 .tpl-entry-title {
+  min-width: 0;
+  flex: 1 1 auto;
   font-size: 0.94em;
   font-weight: 700;
   color: var(--doc-ink);
+  overflow-wrap: break-word;
 }
 
 .tpl-entry-date {
@@ -369,6 +374,7 @@
   font-size: 0.9em;
   margin-top: 0.25em;
   color: var(--tpl-body-ink, #333);
+  overflow-wrap: break-word;
 }
 
 .tpl-entry-bullets {
@@ -377,6 +383,7 @@
   list-style: disc;
   font-size: 0.9em;
   color: var(--tpl-body-ink, #333);
+  overflow-wrap: break-word;
 }
 
 .tpl-entry-bullets li {
@@ -472,14 +479,25 @@
 }
 
 .tpl-subject-table {
+  width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   margin-top: 0.3em;
   font-size: 0.88em;
 }
 
+.tpl-subject-table th,
 .tpl-subject-table td {
-  padding: 0.08em 1.2em 0.08em 0;
+  padding: 0.08em 0.75em 0.08em 0;
   vertical-align: top;
+  overflow-wrap: break-word;
+}
+
+.tpl-subject-table th:last-child,
+.tpl-subject-table td:last-child {
+  width: 3.6em;
+  padding-right: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .tpl-subject-table--row {
@@ -643,8 +661,7 @@
   vertical-align: -0.1em;
 }
 
-/* Exam subjects sit two-up, strongest grade first, so eight O-Levels close
-   in four rows instead of a tall Subject/Grade table. */
+/* Exam subjects sit two-up in the order the user entered them. */
 .tpl-1 .tpl-subject-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -661,19 +678,19 @@
 }
 
 .tpl-1 .tpl-subject-cell {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.4em;
+  column-gap: 0.5em;
   align-items: baseline;
-  gap: 0.65em;
   min-width: 0;
 }
 
 .tpl-1 .tpl-subject-name {
   min-width: 0;
+  overflow-wrap: break-word;
 }
 
 .tpl-1 .tpl-subject-grade {
-  flex: none;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
@@ -729,16 +746,209 @@
    Template palettes
    --------------------------------------------------------------------------- */
 .tpl-default {
-  --doc-accent: #2f6099;
-  --tpl-band-bg: #1f4471;
-  --tpl-band-accent: #3d6b9c;
-  --tpl-rail-bg: #e9eef4;
+  --doc-accent: #395a86;
+  --tpl-band-bg: #385987;
+  --tpl-band-accent: #385987;
+  --tpl-rail-bg: #f5f7fa;
   --tpl-rail-ink: #333333;
   --tpl-body-ink: #333333;
-  --tpl-icon-color: #1f4471;
-  --tpl-rail-width: 33.25%;
-  --tpl-rail-pad: 26px;
-  --tpl-main-gap: 26px;
+  --tpl-icon-color: #385987;
+  --tpl-rail-width: 33.6%; /* 200pt of A4 */
+  --tpl-rail-pad: 20px; /* 15pt */
+  --tpl-main-gap: 20px; /* 15pt gutter after the rail */
+}
+
+/* Name band: centred 15pt / 11pt type, convex curve along the full rail.
+   template-default.pdf: ~87.5pt tall at the rail edges, ~104.5pt at centre. */
+.tpl-default .tpl-header-band {
+  text-align: center;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  padding-top: calc(var(--doc-pad-y) + 0.2rem);
+  padding-bottom: 3.25rem;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  /* Circular cap: r=302pt, sagitta=17pt, chord=200pt rail. */
+  clip-path: circle(302pt at 50% -197.5pt);
+}
+
+.tpl-default .tpl-header-band::after {
+  content: none;
+}
+
+.tpl-default .tpl-main-column {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.tpl-default .tpl-header-name {
+  font-size: 1.5em; /* 15pt */
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.tpl-default .tpl-header-title {
+  display: block;
+  font-size: 1.1em; /* 11pt */
+  font-weight: 400;
+  line-height: 1.3;
+  margin: 0.55em 0 0;
+  padding: 0;
+  background: none;
+}
+
+.tpl-default .tpl-section-title--plain,
+.tpl-default .tpl-section-title--sidebar {
+  font-size: 1.8em; /* 18pt */
+  font-weight: 400;
+  line-height: 1.25;
+  color: var(--doc-accent);
+  margin: 0.65em 0 0.28em;
+  padding-bottom: 0;
+  border-bottom: none;
+  /* Hairline under the heading without changing pack heights. */
+  box-shadow: 0 1px 0 #f0f0f0;
+}
+
+.tpl-default .tpl-entry {
+  margin-top: 0.45em;
+}
+
+.tpl-default .tpl-entry-bullets {
+  margin-top: 0.12em;
+  padding-left: 2.2em; /* body 215pt → bullet text ~237pt */
+}
+
+.tpl-default .tpl-entry-bullets li {
+  margin-top: 0.05em;
+}
+
+.tpl-default .tpl-cert-row {
+  margin-top: 0.28em;
+}
+
+.tpl-default .tpl-sidebar-contact-item {
+  font-size: 1em;
+  line-height: 1.375;
+  margin-top: 1.05em;
+  gap: 1.35em; /* icon at ~15pt, text at ~39pt */
+}
+
+.tpl-default .tpl-sidebar-icon {
+  width: 1em;
+  height: 1em;
+  stroke-width: 1.8;
+}
+
+.tpl-default .tpl-skill-group-label {
+  font-size: 1em;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--doc-accent);
+}
+
+.tpl-default .tpl-skill-group-items {
+  font-size: 1em;
+  line-height: 1.375;
+}
+
+.tpl-default .tpl-grouped-skills {
+  gap: 0.85em;
+}
+
+.tpl-default .tpl-quality-item {
+  font-size: 1em;
+  line-height: 1.375;
+  padding-left: 1.25em;
+  margin: 0.85em 0 0;
+}
+
+.tpl-default .tpl-quality-item::before {
+  left: 0;
+  top: 0.32em;
+  width: 0.75em; /* 7.5pt square */
+  height: 0.75em;
+  background: var(--tpl-band-bg);
+}
+
+.tpl-default .tpl-summary {
+  font-size: 1em;
+  line-height: 1.375;
+  text-align: left;
+}
+
+.tpl-default .tpl-entry-title,
+.tpl-default .tpl-entry-date {
+  font-size: 1em;
+  font-weight: 700;
+  color: var(--tpl-body-ink);
+}
+
+.tpl-default .tpl-entry-subtitle {
+  font-size: 1em;
+  color: var(--doc-accent);
+}
+
+.tpl-default .tpl-entry-bullets,
+.tpl-default .tpl-entry-body,
+.tpl-default .tpl-entry-contact,
+.tpl-default .tpl-numbered-row,
+.tpl-default .tpl-cert-row {
+  font-size: 1em;
+  line-height: 1.375;
+  color: var(--tpl-body-ink);
+}
+
+.tpl-default .tpl-numbered-row {
+  gap: 0.55em;
+  margin-top: 0.28em;
+  padding-left: 0.45em; /* numbers sit ~6pt in, wrap with bullets at 235pt */
+}
+
+.tpl-default .tpl-cert-name {
+  font-weight: 700;
+}
+
+.tpl-default .tpl-cert-copy {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0;
+}
+
+.tpl-default .tpl-cert-provider {
+  color: var(--tpl-body-ink);
+  font-size: 1em;
+  font-weight: 700;
+}
+
+.tpl-default .tpl-cert-provider::before {
+  content: "\00a0(";
+}
+
+.tpl-default .tpl-cert-provider::after {
+  content: ")";
+}
+
+/* Last-page rail closer: a quarter-circle in the bottom-left corner. */
+.tpl-default .tpl-sidebar-footer-mark {
+  height: 4.2rem;
+  background: transparent;
+}
+
+.tpl-default .tpl-sidebar-footer-mark::before {
+  content: none;
+}
+
+.tpl-default .tpl-sidebar-footer-mark::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 4.2rem;
+  height: 4.2rem;
+  background: var(--tpl-band-bg);
+  border-top-right-radius: 100%;
 }
 
 .tpl-0 {
@@ -1090,6 +1300,7 @@
   .tpl-header-band,
   .tpl-header-title,
   .tpl-sidebar-footer-mark,
+  .tpl-sidebar-footer-mark::after,
   .tpl-quality-item::before,
   .tpl-sidebar-panel--blue,
   .tpl-sidebar-panel--red,

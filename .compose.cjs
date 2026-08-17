@@ -18,10 +18,10 @@ for (let i = 1; i <= count; i += 1) {
   const b = toSrc(`${curPrefix}-p${i}.png`);
   if (!a && !b) continue;
   rows.push(`<div class="row">
-    <div class="col"><div class="cap">REFERENCE template-1.pdf — page ${i}</div>${
+    <div class="col"><div class="cap">REFERENCE ${refPrefix} — page ${i}</div>${
       a ? `<img src="${a}">` : '<div class="miss">no page</div>'
     }</div>
-    <div class="col"><div class="cap">CURRENT Resume Form (Compact) — page ${i}</div>${
+    <div class="col"><div class="cap">CURRENT ${curPrefix} — page ${i}</div>${
       b ? `<img src="${b}">` : '<div class="miss">no page</div>'
     }</div>
   </div>`);

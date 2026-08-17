@@ -159,6 +159,8 @@
 }
 
 .doc-subject-table {
+  width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
 }
 
@@ -167,6 +169,13 @@
   font-size: 0.78em;
   color: var(--doc-ink-soft);
   vertical-align: top;
+  overflow-wrap: break-word;
+}
+
+.doc-subject-table th:last-child,
+.doc-subject-table td:last-child {
+  width: 3.6em;
+  font-variant-numeric: tabular-nums;
 }
 
 .doc-subject-table th {

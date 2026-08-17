@@ -33,17 +33,19 @@ export function createTemplateDefaultCustomization(
     >
   > = {
     tpl_default: {
-      primaryColor: "#1f4471",
-      accentColor: "#2f6099",
+      // Measured from template-default.pdf: 10pt body, #385987 band/headings,
+      // 200pt rail, 15pt side insets.
+      primaryColor: "#385987",
+      accentColor: "#395a86",
       backgroundColor: "#ffffff",
-      textColor: "#1a1a1a",
+      textColor: "#333333",
       fontFamily: "inter",
       headingStyle: "sans",
       layout: "sidebar",
-      margins: 32,
+      margins: 33,
       sectionSpacing: 10,
-      fontSize: 13,
-      bodySpacing: 1.45,
+      fontSize: 13.33,
+      bodySpacing: 1.375,
     },
     tpl_0: {
       primaryColor: "#1e4a8a",

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Suspense } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Logo } from "@/components/layout/logo";
 import { cn } from "@/lib/utils";
 
@@ -9,10 +10,13 @@ type AuthTabsProps = {
   className?: string;
 };
 
-export function AuthTabs({ className }: AuthTabsProps) {
+function AuthTabsInner({ className }: AuthTabsProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const isSignIn = pathname.includes("sign-in");
   const isSignUp = pathname.includes("sign-up");
+  const query = searchParams.toString();
+  const suffix = query ? `?${query}` : "";
 
   return (
     <div
@@ -24,7 +28,7 @@ export function AuthTabs({ className }: AuthTabsProps) {
       aria-label="Authentication"
     >
       <Link
-        href="/auth/sign-in"
+        href={`/auth/sign-in${suffix}`}
         role="tab"
         aria-selected={isSignIn}
         className={cn(
@@ -35,7 +39,7 @@ export function AuthTabs({ className }: AuthTabsProps) {
         Sign in
       </Link>
       <Link
-        href="/auth/sign-up"
+        href={`/auth/sign-up${suffix}`}
         role="tab"
         aria-selected={isSignUp}
         className={cn(
@@ -46,6 +50,23 @@ export function AuthTabs({ className }: AuthTabsProps) {
         Create account
       </Link>
     </div>
+  );
+}
+
+export function AuthTabs({ className }: AuthTabsProps) {
+  return (
+    <Suspense
+      fallback={
+        <div
+          className={cn(
+            "mb-8 h-[46px] rounded-full border border-line bg-surface p-1",
+            className,
+          )}
+        />
+      }
+    >
+      <AuthTabsInner className={className} />
+    </Suspense>
   );
 }
 

@@ -77,7 +77,11 @@ function SignInForm() {
           <p className="text-center text-[0.8rem] text-ink-faint">
             Don&apos;t have an account?{" "}
             <Link
-              href="/auth/sign-up"
+              href={
+                redirectTo
+                  ? `/auth/sign-up?redirect=${encodeURIComponent(redirectTo)}`
+                  : "/auth/sign-up"
+              }
               className="font-semibold text-emerald hover:underline"
             >
               Create one free

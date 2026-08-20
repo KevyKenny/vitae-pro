@@ -9,7 +9,7 @@ export const SITE_TAGLINE = APP_TAGLINE;
 
 export const DEFAULT_TITLE = `${SITE_NAME} — AI CV & Cover Letter Builder`;
 export const DEFAULT_DESCRIPTION =
-  "Create professional CVs and personalized cover letters with AI assistance. Templates, coaching, and exports in one career workspace.";
+  "Create a professional CV for free with AI assistance. Pay $1.99 to download for 14 days, then $6/month.";
 
 export const DEFAULT_KEYWORDS = [
   "CV builder",
@@ -30,6 +30,14 @@ export const PUBLIC_MARKETING_ROUTES = [
     description: DEFAULT_DESCRIPTION,
     changeFrequency: "weekly" as const,
     priority: 1,
+  },
+  {
+    path: "/pricing",
+    title: "Pricing",
+    description:
+      "Create your CV for free. Pay $1.99 to download for 14 days, then $6/month.",
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
   },
   {
     path: "/contact",

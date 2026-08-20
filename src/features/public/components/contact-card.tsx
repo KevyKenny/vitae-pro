@@ -7,16 +7,29 @@ import { cn } from "@/lib/utils";
 export function ContactCard({
   title,
   description,
+  href,
   meta,
   icon: Icon,
   className,
 }: {
   title: string;
   description: string;
+  href?: string;
   meta?: string;
   icon?: LucideIcon;
   className?: string;
 }) {
+  const value = href ? (
+    <a
+      href={href}
+      className="mt-1 block text-sm font-medium text-emerald hover:underline"
+    >
+      {description}
+    </a>
+  ) : (
+    <p className="mt-1 text-sm text-ink-soft">{description}</p>
+  );
+
   return (
     <motion.article
       whileHover={{ y: -2 }}
@@ -31,7 +44,7 @@ export function ContactCard({
         </span>
       ) : null}
       <h3 className="font-semibold text-ink">{title}</h3>
-      <p className="mt-1 text-sm text-ink-soft">{description}</p>
+      {value}
       {meta ? (
         <p className="mt-3 font-mono text-[0.78rem] text-emerald">{meta}</p>
       ) : null}

@@ -7,6 +7,7 @@ export { ProcessStep } from "./how-it-works-section";
 export { TemplateShowcase } from "./template-showcase";
 export { TestimonialCard } from "./testimonials-section";
 export { PricingCard } from "./pricing-preview-section";
+export { PricingPageView } from "./pricing-page";
 export { FAQAccordion } from "./faq-section";
 export { CTASection } from "./cta-section";
 export { LandingFooter } from "./landing-footer";

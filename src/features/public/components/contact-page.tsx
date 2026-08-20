@@ -1,19 +1,31 @@
 "use client";
 
-import {
-  BookOpen,
-  Clock,
-  MessagesSquare,
-  Share2,
-} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Clock, Mail, MessagesSquare, Phone } from "lucide-react";
 import { PublicPageLayout } from "@/features/public/components/public-page-layout";
 import { ContactCard } from "@/features/public/components/contact-card";
 import { ContactForm } from "@/features/public/components/contact-form";
 import { FAQCard } from "@/features/public/components/faq-card";
-import { EmptyState } from "@/components/shared/empty-state";
 import { contactFaqs } from "@/mocks/public-pages";
 
-const INFO_CARDS = [
+const INFO_CARDS: Array<{
+  title: string;
+  description: string;
+  href?: string;
+  icon: LucideIcon;
+}> = [
+  {
+    title: "Email",
+    description: "kennedysithole50@gmail.com",
+    href: "mailto:kennedysithole50@gmail.com",
+    icon: Mail,
+  },
+  {
+    title: "Phone",
+    description: "0782186683",
+    href: "tel:+263782186683",
+    icon: Phone,
+  },
   {
     title: "Business Hours",
     description: "Monday–Friday, 9:00–18:00 CET (excluding holidays).",
@@ -23,16 +35,6 @@ const INFO_CARDS = [
     title: "Response Time",
     description: "We aim to reply within two business days.",
     icon: MessagesSquare,
-  },
-  {
-    title: "Knowledge Base",
-    description: "Guides and tutorials — coming soon.",
-    icon: BookOpen,
-  },
-  {
-    title: "Community",
-    description: "Share templates and tips with other builders (placeholder).",
-    icon: Share2,
   },
 ];
 
@@ -73,17 +75,11 @@ export function ContactPage() {
               key={card.title}
               title={card.title}
               description={card.description}
+              href={card.href}
               icon={card.icon}
             />
           ))}
         </div>
-        <EmptyState
-          icon={Share2}
-          title="Social media"
-          description="We'll share updates on LinkedIn and X once channels are public. For now, use the form above."
-          guidance="Placeholder — no active social profiles yet."
-          className="py-10 sm:py-12"
-        />
       </section>
 
       <section aria-labelledby="contact-faq-heading" className="space-y-5">

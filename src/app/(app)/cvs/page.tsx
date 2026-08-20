@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useCreateCv } from "@/features/cv-editor/hooks/use-create-cv";
 import { TailorCvDialog } from "@/features/cv-creation/components/tailor-cv-dialog";
-import { useCvExport } from "@/features/export/hooks/use-cv-export";
+import { usePaidCvDownload } from "@/features/export/hooks/use-paid-cv-download";
 import {
   archiveCv,
   cvErrorMessage,
@@ -48,7 +48,7 @@ import { formatRelativeTime } from "@/lib/utils";
 export default function CvsPage() {
   const router = useRouter();
   const { creating, createAndOpen } = useCreateCv();
-  const { downloadCvPdf } = useCvExport();
+  const { requestDownload, paymentDialog } = usePaidCvDownload();
   const [items, setItems] = useState<CvListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteTarget, setDeleteTarget] = useState<CvListItem | null>(null);
@@ -223,7 +223,7 @@ export default function CvsPage() {
                       <Copy className="size-4" />
                       Duplicate
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => void downloadCvPdf(cv.id)}>
+                    <DropdownMenuItem onClick={() => requestDownload(cv.id)}>
                       <Download className="size-4" />
                       Download PDF
                     </DropdownMenuItem>
@@ -279,6 +279,7 @@ export default function CvsPage() {
           defaultJobTitle={tailorTarget.targetRole ?? ""}
         />
       ) : null}
+      {paymentDialog}
     </PageContainer>
   );
 }

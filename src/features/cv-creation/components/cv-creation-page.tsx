@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FilePlus2, Sparkles, Upload } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,14 +17,51 @@ import {
 import { ProgressStepper } from "@/features/onboarding/components/progress-stepper";
 import { useCreateCvFlow } from "@/features/cv-creation/hooks/use-create-cv-flow";
 import type { CreateCvMethod } from "@/features/cv-creation/types";
+import { useUser } from "@/features/auth/hooks/use-auth";
+import type { EditorTemplateId } from "@/features/cv-editor/types";
+import { parseEditorStyle } from "@/lib/templates/mappers";
+import {
+  SELECTED_TEMPLATE_STORAGE_KEY,
+} from "@/lib/constants/pricing";
+import { editorTemplates } from "@/mocks/cv-editor";
 import { cn } from "@/lib/utils";
+import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
 
-export function CvCreationPage() {
+function readStoredTemplate(): EditorTemplateId | undefined {
+  try {
+    const value = sessionStorage.getItem(SELECTED_TEMPLATE_STORAGE_KEY);
+    if (!value) return undefined;
+    return parseEditorStyle(value);
+  } catch {
+    return undefined;
+  }
+}
+
+function CvCreationPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { user, loading: authLoading } = useUser();
   const { creating, startCreation } = useCreateCvFlow();
   const [targetRole, setTargetRole] = useState("");
   const [targetIndustry, setTargetIndustry] = useState("");
   const [importOpen, setImportOpen] = useState(false);
+
+  const templateKey = useMemo(() => {
+    const fromQuery = searchParams.get("template");
+    if (fromQuery) return parseEditorStyle(fromQuery);
+    return readStoredTemplate();
+  }, [searchParams]);
+
+  const selectedTemplate = editorTemplates.find((t) => t.id === templateKey);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (user) return;
+    const next = searchParams.get("template")
+      ? `/cvs/new?template=${searchParams.get("template")}`
+      : "/cvs/new";
+    router.replace(`/auth/sign-in?redirect=${encodeURIComponent(next)}`);
+  }, [authLoading, router, searchParams, user]);
 
   async function handleCreate(method: CreateCvMethod) {
     if (method === "import") {
@@ -35,17 +71,32 @@ export function CvCreationPage() {
 
     const { id } = await startCreation({
       method,
+      templateKey: templateKey,
       targetRole: targetRole.trim() || undefined,
       targetIndustry: targetIndustry.trim() || undefined,
     });
 
     if (!id) return;
 
+    try {
+      sessionStorage.removeItem(SELECTED_TEMPLATE_STORAGE_KEY);
+    } catch {
+      // Ignore storage failures.
+    }
+
     if (method === "guided") {
       router.push(`/cvs/${id}/edit?guided=1`);
     } else {
       router.push(`/cvs/${id}/edit`);
     }
+  }
+
+  if (authLoading || !user) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-8 sm:py-12">
+        <LoadingSkeleton variant="cards" />
+      </div>
+    );
   }
 
   return (
@@ -61,6 +112,11 @@ export function CvCreationPage() {
           professional CV. No experience yet? Add education, attachment, or
           skills instead.
         </p>
+        {selectedTemplate ? (
+          <p className="mt-3 rounded-[10px] bg-emerald-wash px-3 py-2 text-sm font-medium text-emerald">
+            Template: {selectedTemplate.name}
+          </p>
+        ) : null}
 
         <div className="mt-6 space-y-4 rounded-[12px] border border-line bg-paper-dim/40 p-4">
           <p className="text-[0.72rem] font-bold tracking-[0.06em] text-ink-faint uppercase">
@@ -130,6 +186,20 @@ export function CvCreationPage() {
 
       <ImportCvDialog open={importOpen} onOpenChange={setImportOpen} />
     </div>
+  );
+}
+
+export function CvCreationPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-2xl px-4 py-8 sm:py-12">
+          <LoadingSkeleton variant="cards" />
+        </div>
+      }
+    >
+      <CvCreationPageInner />
+    </Suspense>
   );
 }
 

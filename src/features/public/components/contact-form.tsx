@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CheckCircle2, Paperclip } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -156,32 +156,6 @@ export function ContactForm() {
           />
         )}
       </FormField>
-
-      <div className="rounded-[12px] border border-dashed border-line-strong bg-paper-dim/60 px-4 py-5">
-        <div className="flex items-start gap-3">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-emerald-wash text-emerald">
-            <Paperclip className="size-4" aria-hidden />
-          </span>
-          <div>
-            <p className="text-sm font-semibold text-ink">Attachment</p>
-            <p className="mt-0.5 text-sm text-ink-soft">
-              File uploads unlock with backend storage. For now, describe
-              screenshots in your message.
-            </p>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              shape="soft"
-              className="mt-3 rounded-[8px]"
-              disabled
-              aria-disabled
-            >
-              Add file (coming soon)
-            </Button>
-          </div>
-        </div>
-      </div>
 
       <div className="flex flex-wrap items-center gap-3 pt-1">
         <Button type="submit" shape="soft" disabled={submitting}>

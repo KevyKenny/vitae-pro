@@ -59,9 +59,10 @@ export function softwareApplicationJsonLd() {
     description: DEFAULT_DESCRIPTION,
     offers: {
       "@type": "Offer",
-      price: "0",
+      price: "1.99",
       priceCurrency: "USD",
-      description: "Free plan with AI suggestions",
+      description:
+        "Create your CV for free. Pay $1.99 to download for 14 days, then upgrade to $6/month.",
     },
   };
 }

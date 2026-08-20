@@ -27,7 +27,7 @@ export function FAQAccordion() {
 
 export function FaqSection() {
   return (
-    <section id="faq" className="mx-auto max-w-3xl px-4 py-20 sm:px-6 lg:px-8">
+    <section id="faq" className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
       <div className="text-center">
         <h2 className="font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
           Frequently asked questions
@@ -36,7 +36,7 @@ export function FaqSection() {
           Straight answers before you create your first document.
         </p>
       </div>
-      <div className="mt-10">
+      <div className="mt-6 sm:mt-10">
         <FAQAccordion />
       </div>
     </section>

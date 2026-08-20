@@ -22,6 +22,7 @@ import {
   experienceHeadingParts,
   shortenDateLabel,
 } from "@/components/document/templates/entries";
+import { WholeWords } from "@/components/document/templates/whole-words";
 import { experienceBulletLines } from "@/features/cv-editor/components/experience/experience-preview";
 import type { CvDocument, CvSectionType } from "@/features/cv-editor/types";
 import {
@@ -32,7 +33,7 @@ import { isBlankHtml } from "@/lib/cvs/sanitize-html";
 import { cn } from "@/lib/utils";
 
 /**
- * Timeline layout used by `Resume Form (Compact)` (templates-layout/template-1.pdf).
+ * Timeline layout used by `Timeline` / `tpl_5` (templates-layout/template-1.pdf).
  *
  * Every block is a row: a fixed-width aside holding the section heading or the
  * entry date, and a body column separated by the page's vertical rule. Rows are
@@ -51,6 +52,22 @@ type RowSpec = {
   /** Opens a new item, so it takes the inter-entry gap. */
   lead?: boolean;
   body?: ReactNode;
+};
+
+export type TimelineBlockOptions = {
+  sectionOrder?: TimelineSection[];
+  preferTemplateLabels?: boolean;
+  /** Compact (tpl_5) draws a square on the rule; the form layout does not. */
+  showMarkers?: boolean;
+  /** Two-up skill names instead of a middot keyword run. */
+  skillsAsGrid?: boolean;
+  /**
+   * Undated sections (skills, qualities, references, …) span the full
+   * content width instead of hanging the heading in the date rail.
+   */
+  undatedFullWidth?: boolean;
+  /** Put project names in the body column under a rail heading (form layout). */
+  datedProjects?: boolean;
 };
 
 export function TimelineRow({
@@ -98,9 +115,15 @@ function labeled(
 
 function appendSection(
   state: BlockBuilderState,
-  options: { heading: string; dated: boolean; rows: RowSpec[] },
+  options: {
+    heading: string;
+    dated: boolean;
+    rows: RowSpec[];
+    showMarkers: boolean;
+    undatedFullWidth: boolean;
+  },
 ) {
-  const { heading, dated, rows } = options;
+  const { heading, dated, rows, showMarkers, undatedFullWidth } = options;
   if (rows.length === 0) return;
 
   if (dated) {
@@ -128,17 +151,28 @@ function appendSection(
       groupId: row.groupId,
       orphanGuard: withHeading || undefined,
       keepWithNext: row.keepWithNext,
-      render: () => (
-        <TimelineRow
-          aside={
-            withHeading ? <TimelineHeading title={heading} /> : row.aside
-          }
-          marker={row.marker}
-          variant={withHeading ? "tight" : row.lead ? "lead" : undefined}
-        >
-          {row.body}
-        </TimelineRow>
-      ),
+      render: () =>
+        undatedFullWidth && !dated ? (
+          <div
+            className={cn(
+              "tpl-tl-stack",
+              row.lead && !withHeading && "tpl-tl-stack--lead",
+            )}
+          >
+            {withHeading ? <TimelineHeading title={heading} /> : null}
+            {row.body}
+          </div>
+        ) : (
+          <TimelineRow
+            aside={
+              withHeading ? <TimelineHeading title={heading} /> : row.aside
+            }
+            marker={showMarkers && Boolean(row.marker)}
+            variant={withHeading ? "tight" : row.lead ? "lead" : undefined}
+          >
+            {row.body}
+          </TimelineRow>
+        ),
     });
   });
 }
@@ -147,6 +181,7 @@ function EntryHead({
   title,
   org,
   orgTone = "accent",
+  orgInline = false,
   href,
   badges,
 }: {
@@ -154,6 +189,8 @@ function EntryHead({
   org?: string;
   /** Projects set their strapline as body copy rather than an accent heading. */
   orgTone?: "accent" | "ink";
+  /** Put the org/body on the same line, immediately after the title. */
+  orgInline?: boolean;
   /** Renders an open-in-new-tab affordance directly after the title. */
   href?: string;
   /** Muted chips trailing the title, e.g. a project's stack. */
@@ -161,11 +198,17 @@ function EntryHead({
 }) {
   const trimmedHref = href?.trim();
   const chips = badges?.filter((badge) => badge.trim()) ?? [];
+  const orgText = org?.trim();
+  const orgClass = cn(
+    "tpl-tl-org",
+    orgTone === "ink" && "tpl-tl-org--ink",
+    orgInline && "tpl-tl-org--inline",
+  );
   return (
     <>
       {title ? (
         <p className="tpl-tl-title">
-          {title}
+          <WholeWords text={title} />
           {trimmedHref ? (
             <DocResolvedLink
               raw={trimmedHref}
@@ -173,7 +216,14 @@ function EntryHead({
               kind="web"
             >
               <DocExternalLinkIcon />
+              <span className="sr-only">Open {title}</span>
             </DocResolvedLink>
+          ) : null}
+          {orgInline && orgText ? (
+            <span className={orgClass}>
+              {" "}
+              <WholeWords text={orgText} />
+            </span>
           ) : null}
           {chips.map((badge) => (
             <span key={badge} className="tpl-tl-badge">
@@ -182,9 +232,9 @@ function EntryHead({
           ))}
         </p>
       ) : null}
-      {org ? (
-        <p className={cn("tpl-tl-org", orgTone === "ink" && "tpl-tl-org--ink")}>
-          {org}
+      {!orgInline && orgText ? (
+        <p className={orgClass}>
+          <WholeWords text={orgText} />
         </p>
       ) : null}
     </>
@@ -194,7 +244,9 @@ function EntryHead({
 function Bullet({ text }: { text: string }) {
   return (
     <ul className="tpl-tl-bullets">
-      <li>{text}</li>
+      <li>
+        <WholeWords text={text} />
+      </li>
     </ul>
   );
 }
@@ -264,14 +316,18 @@ const DEFAULT_ORDER: TimelineSection[] = [
 
 export function buildTimelineBlocks(
   document: CvDocument,
-  options: {
-    sectionOrder?: TimelineSection[];
-    preferTemplateLabels?: boolean;
-  } = {},
+  options: TimelineBlockOptions = {},
 ): ContentBlock[] {
   const state = createBlockBuilder();
   const order = options.sectionOrder ?? DEFAULT_ORDER;
   const preferLabels = Boolean(options.preferTemplateLabels);
+  const showMarkers = options.showMarkers !== false;
+  const skillsAsGrid = Boolean(options.skillsAsGrid);
+  const undatedFullWidth = Boolean(options.undatedFullWidth);
+  const datedProjects = Boolean(options.datedProjects);
+  const addSection = (
+    opts: Pick<Parameters<typeof appendSection>[1], "heading" | "dated" | "rows">,
+  ) => appendSection(state, { ...opts, showMarkers, undatedFullWidth });
 
   for (const type of order) {
     switch (type) {
@@ -346,7 +402,7 @@ export function buildTimelineBlocks(
             });
           }
         }
-        appendSection(state, {
+        addSection({
           heading: labeled(
             document,
             "education",
@@ -391,7 +447,7 @@ export function buildTimelineBlocks(
             });
           });
         }
-        appendSection(state, {
+        addSection({
           heading: labeled(
             document,
             "experience",
@@ -407,7 +463,7 @@ export function buildTimelineBlocks(
       case "skills": {
         if (!sectionVisible(document, "skills")) break;
         const technical = technicalSkillNames(document);
-        appendSection(state, {
+        addSection({
           heading: labeled(
             document,
             "skills",
@@ -415,20 +471,25 @@ export function buildTimelineBlocks(
             preferLabels,
           ),
           dated: false,
-          // Chunked only so an unusually long list keeps page-break
-          // opportunities; a normal one flows as a single wrapped run.
-          rows: chunk(technical, 24).map((group, index) => ({
-            key: `tl-skill-${index}`,
-            kind: "skills-group",
-            body: <SkillFlow items={group} />,
-          })),
+          rows: skillsAsGrid
+            ? chunk(technical, 2).map((pair, index) => ({
+                key: `tl-skill-${index}`,
+                kind: "skills-group" as const,
+                lead: true,
+                body: <GridRow cells={pair} variant="skill" />,
+              }))
+            : chunk(technical, 24).map((group, index) => ({
+                key: `tl-skill-${index}`,
+                kind: "skills-group" as const,
+                body: <SkillFlow items={group} />,
+              })),
         });
         break;
       }
 
       case "qualities": {
         if (!sectionVisible(document, "skills")) break;
-        appendSection(state, {
+        addSection({
           heading: "Qualities",
           dated: false,
           rows: chunk(softSkillItems(document), 2).map((pair, index) => ({
@@ -443,7 +504,7 @@ export function buildTimelineBlocks(
 
       case "references": {
         if (!sectionVisible(document, "references")) break;
-        appendSection(state, {
+        addSection({
           heading: labeled(
             document,
             "references",
@@ -471,7 +532,7 @@ export function buildTimelineBlocks(
 
       case "certifications": {
         if (!sectionVisible(document, "certifications")) break;
-        appendSection(state, {
+        addSection({
           heading: labeled(
             document,
             "certifications",
@@ -495,6 +556,8 @@ export function buildTimelineBlocks(
                 <EntryHead
                   title={cert.name}
                   org={cert.provider}
+                  orgTone="ink"
+                  orgInline
                   href={cert.credentialUrl}
                 />
               ),
@@ -509,7 +572,7 @@ export function buildTimelineBlocks(
         const labels = document.languages.map((lang) =>
           lang.proficiency ? `${lang.name} (${lang.proficiency})` : lang.name,
         );
-        appendSection(state, {
+        addSection({
           heading: labeled(
             document,
             "languages",
@@ -529,7 +592,7 @@ export function buildTimelineBlocks(
 
       case "achievements": {
         if (!sectionVisible(document, "achievements")) break;
-        appendSection(state, {
+        addSection({
           heading: labeled(
             document,
             "achievements",
@@ -557,9 +620,9 @@ export function buildTimelineBlocks(
 
       case "projects": {
         if (!sectionVisible(document, "projects")) break;
-        appendSection(state, {
+        addSection({
           heading: labeled(document, "projects", "PROJECTS", preferLabels),
-          dated: false,
+          dated: datedProjects,
           rows: document.projects.map((project) => ({
             key: `tl-proj-${project.id}`,
             kind: "project" as const,
@@ -588,7 +651,7 @@ export function buildTimelineBlocks(
   for (const section of document.sections) {
     if (section.type !== "custom" || !section.visible) continue;
     if (!section.content?.trim() || isBlankHtml(section.content)) continue;
-    appendSection(state, {
+    addSection({
       heading: section.label || SECTION_LABELS.custom,
       dated: false,
       rows: splitHtmlBlocks(section.content).map((part, index) => ({

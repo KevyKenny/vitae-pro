@@ -10,7 +10,7 @@ import { renderSidebarTemplatePage } from "@/components/document/templates/rende
 export const tplDefaultDefinition: TemplateDefinition = {
   id: "tpl_default",
   slug: "tpl_default",
-  name: "Classic Sidebar",
+  name: "Default",
   description: "Blue sidebar with grouped skills — ideal for technical roles.",
   version: 1,
   layoutFamily: "sidebar",

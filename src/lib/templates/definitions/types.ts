@@ -57,7 +57,7 @@ export type TemplateDefinition = {
   contentHeightReserve?: number;
   /**
    * Extra height reserved on the final packed page of a region
-   * (Classic Sidebar decorative footer mark).
+   * (Default / Classic Sidebar decorative footer mark).
    */
   regionLastPageReserve?: Partial<Record<TemplateRegionId, number>>;
   /** Build measurable content blocks assigned to regions. */

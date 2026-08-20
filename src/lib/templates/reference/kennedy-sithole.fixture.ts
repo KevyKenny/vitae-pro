@@ -99,6 +99,36 @@ export const kennedySitholeReferenceFixture: CvDocument = {
   ],
   education: [
     {
+      id: "edu-o",
+      qualificationType: "o-level",
+      examinationBoard: "zimsec",
+      examinationBoardOther: "",
+      schoolName: "Secondary School",
+      yearCompleted: "2018",
+      candidateNumber: "",
+      subjects: [
+        { id: "subj-o1", name: "English Language", grade: "A" },
+        { id: "subj-o2", name: "Mathematics", grade: "A" },
+        { id: "subj-o3", name: "Combined Science", grade: "B" },
+        { id: "subj-o4", name: "Computer Science", grade: "A" },
+        { id: "subj-o5", name: "Geography", grade: "B" },
+      ],
+    },
+    {
+      id: "edu-a",
+      qualificationType: "a-level",
+      examinationBoard: "zimsec",
+      examinationBoardOther: "",
+      schoolName: "Sixth Form College",
+      yearCompleted: "2020",
+      candidateNumber: "",
+      subjects: [
+        { id: "subj-a1", name: "Mathematics", grade: "A" },
+        { id: "subj-a2", name: "Physics", grade: "B" },
+        { id: "subj-a3", name: "Computer Science", grade: "A" },
+      ],
+    },
+    {
       id: "edu-1",
       qualificationType: "honours",
       institution: "University Of Zimbabwe",
@@ -115,7 +145,8 @@ export const kennedySitholeReferenceFixture: CvDocument = {
       grade: "1st Class",
       achievements:
         "First Class Degree (Awarded with University Book Prize)",
-      description: "",
+      description:
+        "Focused on AI, IoT, and full-stack web application development. Built an AI-powered cattle sales platform with intelligent recommendations as a final thesis.",
     },
   ],
   skills: [
@@ -172,22 +203,22 @@ export const kennedySitholeReferenceFixture: CvDocument = {
       name: "Sell-Cattle",
       description:
         "AI-Powered Digital Platform for Direct meat sales and Farm Optimization (Thesis: June 2025)",
-      technologies: [],
-      link: "",
+      technologies: ["Next.js", "Supabase", "TensorFlow"],
+      link: "https://sell-cattle.vercel.app",
     },
     {
       id: "p2",
       name: "TillMate",
       description: "Offline-first Point-of-Sale mobile application",
-      technologies: [],
-      link: "",
+      technologies: ["Ionic", "React", "SQLite"],
+      link: "https://kennedy-sithole-portfolio.vercel.app",
     },
     {
       id: "p3",
       name: "SpeakFlow AI",
       description: "AI-powered Language and confidence Learning mobile application",
-      technologies: [],
-      link: "",
+      technologies: ["Ionic", "React", "OpenAI"],
+      link: "https://kennedy-sithole-portfolio.vercel.app",
     },
   ],
   certifications: [
@@ -196,14 +227,14 @@ export const kennedySitholeReferenceFixture: CvDocument = {
       name: "JavaScript Essentials 1",
       provider: "Cisco",
       date: "2023-09",
-      credentialUrl: "",
+      credentialUrl: "https://www.netacad.com/certificates?issuanceId=js-1",
     },
     {
       id: "c2",
       name: "Pythons Essentials 1",
       provider: "Cisco",
       date: "2023-10",
-      credentialUrl: "",
+      credentialUrl: "https://www.netacad.com/certificates?issuanceId=py-1",
     },
   ],
   languages: [],

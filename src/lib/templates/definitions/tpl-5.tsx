@@ -19,7 +19,7 @@ import {
 export const tpl5Definition: TemplateDefinition = {
   id: "tpl_5",
   slug: "tpl_5",
-  name: "Resume Form (Compact)",
+  name: "Timeline",
   description:
     "Compact timeline resume with a full-width intro band and dated left rail.",
   version: 1,

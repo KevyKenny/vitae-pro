@@ -30,8 +30,9 @@ import {
   DocEducationDescription,
   DocEducationEntryHeader,
   DocEntryBullets,
+  DocEntrySubtitle,
+  DocEntryTitleRow,
   DocExperienceEntryHeader,
-  DocExternalLinkIcon,
   DocNumberedProject,
   DocOpenResumeAward,
   DocOpenResumeCertificate,
@@ -41,7 +42,7 @@ import {
   DocSubjectGridRow,
   DocSubjectTableHeader,
   DocSubjectTableRow,
-  DocTechBadges,
+  DocTitleLinkAndBadges,
   educationEntryParts,
 } from "@/components/document/templates/entries";
 import { isBlankHtml } from "@/lib/cvs/sanitize-html";
@@ -78,6 +79,8 @@ export type SectionBlockOptions = {
    * O-Level / A-Level lists from stretching the document.
    */
   compactSubjects?: boolean;
+  /** Title + optional date/description rows instead of numbered projects. */
+  projectsAsEntries?: boolean;
 };
 
 const DEFAULT_ORDER: CvSectionType[] = [
@@ -461,20 +464,29 @@ export function appendMainSectionBlocks(
                   <div className="tpl-entry tpl-entry--open-resume">
                     <p className="tpl-entry-company">
                       {project.name}
-                      <DocTechBadges items={project.technologies} />
-                      {project.link?.trim() ? (
-                        <>
-                          {" "}
-                          <DocResolvedLink raw={project.link} className="tpl-link">
-                            <DocExternalLinkIcon />
-                            <span className="sr-only">
-                              Open project {project.name}
-                            </span>
-                          </DocResolvedLink>
-                        </>
-                      ) : null}
+                      <DocTitleLinkAndBadges
+                        href={project.link}
+                        badges={project.technologies}
+                        srLabel={`Open project ${project.name}`}
+                      />
                     </p>
                     <DocEntryBullets items={[project.description]} />
+                  </div>
+                ) : options.projectsAsEntries ? (
+                  <div className="tpl-entry">
+                    <p className="tpl-entry-title">
+                      {project.name}
+                      <DocTitleLinkAndBadges
+                        href={project.link}
+                        badges={project.technologies}
+                        srLabel={`Open project ${project.name}`}
+                      />
+                    </p>
+                    {project.description?.trim() ? (
+                      <p className="tpl-entry-body">
+                        {project.description.trim()}
+                      </p>
+                    ) : null}
                   </div>
                 ) : dateRight ? (
                   <DocNumberedProject
@@ -488,21 +500,11 @@ export function appendMainSectionBlocks(
                   <div className="doc-entry tpl-project-entry">
                     <p className="doc-entry-title">
                       {project.name}
-                      <DocTechBadges items={project.technologies} />
-                      {project.link?.trim() ? (
-                        <>
-                          {" "}
-                          <DocResolvedLink
-                            raw={project.link}
-                            className="tpl-link"
-                          >
-                            <DocExternalLinkIcon />
-                            <span className="sr-only">
-                              Open project {project.name}
-                            </span>
-                          </DocResolvedLink>
-                        </>
-                      ) : null}
+                      <DocTitleLinkAndBadges
+                        href={project.link}
+                        badges={project.technologies}
+                        srLabel={`Open project ${project.name}`}
+                      />
                     </p>
                     {project.description ? (
                       <p className="doc-entry-meta">{project.description}</p>

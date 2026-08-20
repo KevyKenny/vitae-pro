@@ -28,6 +28,8 @@ export type SidebarBlockOptions = {
   groupSkills?: boolean;
   /** Override a skill-category heading, e.g. technical → Programming Languages. */
   skillGroupLabel?: (group: { id: string; label: string }) => string;
+  /** One skill name per line, no category labels (template-4.pdf). */
+  flatSkillList?: boolean;
 };
 
 export function SidebarHeaderBand({
@@ -99,6 +101,7 @@ export function appendSidebarBlocks(
     skillsLabel = "Skills",
     qualitiesLabel = "Qualities",
     groupSkills = true,
+    flatSkillList = false,
   } = options;
 
   if (withHeaderBand) {
@@ -169,29 +172,43 @@ export function appendSidebarBlocks(
       render: () => <DocSectionHeading title={skillsLabel} variant="sidebar" />,
     });
 
-    for (const group of skillGroups) {
-      pushBlock(state, {
-        id: nextId(state, `sidebar-skill-${group.id}`),
-        kind: "skills-group",
-        region: "sidebar",
-        render: () =>
-          groupSkills ? (
-            <DocGroupedSkills
-              groups={[
-                {
-                  label: (
-                    options.skillGroupLabel?.(group) ?? group.label
-                  ).toUpperCase(),
-                  skills: group.skills.map((s) => s.name),
-                },
-              ]}
-            />
-          ) : (
-            <p className="tpl-skill-group-items">
-              {group.skills.map((s) => s.name).join(", ")}
-            </p>
-          ),
+    if (flatSkillList) {
+      const names = skillGroups.flatMap((group) =>
+        group.skills.map((skill) => skill.name).filter(Boolean),
+      );
+      names.forEach((name, index) => {
+        pushBlock(state, {
+          id: nextId(state, `sidebar-skill-line-${index}`),
+          kind: "skills-group",
+          region: "sidebar",
+          render: () => <p className="tpl-skill-line">{name}</p>,
+        });
       });
+    } else {
+      for (const group of skillGroups) {
+        pushBlock(state, {
+          id: nextId(state, `sidebar-skill-${group.id}`),
+          kind: "skills-group",
+          region: "sidebar",
+          render: () =>
+            groupSkills ? (
+              <DocGroupedSkills
+                groups={[
+                  {
+                    label: (
+                      options.skillGroupLabel?.(group) ?? group.label
+                    ).toUpperCase(),
+                    skills: group.skills.map((s) => s.name),
+                  },
+                ]}
+              />
+            ) : (
+              <p className="tpl-skill-group-items">
+                {group.skills.map((s) => s.name).join(", ")}
+              </p>
+            ),
+        });
+      }
     }
   }
 

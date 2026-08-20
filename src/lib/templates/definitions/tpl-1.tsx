@@ -16,15 +16,15 @@ import {
 } from "@/components/document/templates/block-builder-utils";
 
 /**
- * Professional — visual match for `templates-layout/template-0.pdf`
+ * Compact — visual match for `templates-layout/template-0.pdf`
  * (OpenResume / react-pdf single-column: Roboto, sky accent, icon contacts).
  *
- * Keeps registry identity `tpl_1` / "Professional".
+ * Keeps registry identity `tpl_1` / "Compact".
  */
 export const tpl1Definition: TemplateDefinition = {
   id: "tpl_1",
   slug: "tpl_1",
-  name: "Professional",
+  name: "Compact",
   description:
     "Single-column OpenResume-style layout with icon contacts and uppercase sections.",
   version: 1,

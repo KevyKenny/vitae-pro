@@ -72,12 +72,14 @@ describe("document link rendering", () => {
     );
 
     const headingEnd = markup.indexOf("</strong>");
+    const linkStart = markup.indexOf('href="https://example.com/vitatepro"');
     const badgesStart = markup.indexOf("tpl-tech-badges");
     const descriptionStart = markup.indexOf("CV builder");
 
     expect(headingEnd).toBeGreaterThan(-1);
-    expect(badgesStart).toBeGreaterThan(headingEnd);
+    expect(linkStart).toBeGreaterThan(headingEnd);
+    expect(badgesStart).toBeGreaterThan(linkStart);
     expect(descriptionStart).toBeGreaterThan(badgesStart);
-    expect(markup).toContain('href="https://example.com/vitatepro"');
+    expect(markup).toContain("tpl-link-icon");
   });
 });

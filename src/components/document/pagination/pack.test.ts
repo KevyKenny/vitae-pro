@@ -300,12 +300,8 @@ describe("template definitions", () => {
         mode: "preview",
       });
 
-      if (key === "tpl_2" || key === "tpl_5") {
-        expect(blocks.some((block) => block.kind === "header")).toBe(true);
-      } else {
-        expect(blocks.some((block) => block.region === "left")).toBe(true);
-        expect(definition.contentHeightReserve).toBeGreaterThan(0);
-      }
+      expect(blocks.some((block) => block.kind === "header")).toBe(true);
+      expect(blocks.some((block) => block.region === "left")).toBe(false);
     }
   });
 });

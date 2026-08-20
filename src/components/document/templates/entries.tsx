@@ -16,6 +16,7 @@ import type {
 import { formatEducationDateRange } from "@/lib/cvs/education-dates";
 import { isBlankHtml, sanitizeCvHtml } from "@/lib/cvs/sanitize-html";
 import { DocResolvedLink } from "@/components/document/document-links";
+import { WholeWords } from "@/components/document/templates/whole-words";
 import { cn } from "@/lib/utils";
 
 export type EntryHeadingParts = {
@@ -281,7 +282,9 @@ export function DocEntryBullets({ items }: { items: string[] }) {
   return (
     <ul className="tpl-entry-bullets">
       {lines.map((line, index) => (
-        <li key={`${line}-${index}`}>{line}</li>
+        <li key={`${line}-${index}`}>
+          <WholeWords text={line} />
+        </li>
       ))}
     </ul>
   );
@@ -387,6 +390,36 @@ export function DocExternalLinkIcon() {
       <path d="M10 14 21 3" />
       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
     </svg>
+  );
+}
+
+/**
+ * Title extras shared by every template family: open-in-new-tab icon first,
+ * then technology chips. Call immediately after the title text.
+ */
+export function DocTitleLinkAndBadges({
+  href,
+  badges,
+  srLabel,
+}: {
+  href?: string;
+  badges?: string[];
+  srLabel: string;
+}) {
+  const trimmed = href?.trim();
+  return (
+    <>
+      {trimmed ? (
+        <>
+          {" "}
+          <DocResolvedLink raw={trimmed} className="tpl-link" kind="web">
+            <DocExternalLinkIcon />
+            <span className="sr-only">{srLabel}</span>
+          </DocResolvedLink>
+        </>
+      ) : null}
+      <DocTechBadges items={badges} />
+    </>
   );
 }
 
@@ -557,7 +590,7 @@ export function DocEducationEntry({ entry }: { entry: EducationEntry }) {
   );
 }
 
-/** Certification name/link left, optional provider below, date at line end. */
+/** Certification name/link, provider body immediately after the name, date at line end. */
 export function DocCertificateRow({
   name,
   provider,
@@ -569,22 +602,18 @@ export function DocCertificateRow({
   date?: string;
   credentialUrl?: string;
 }) {
+  const body = provider?.trim();
   return (
     <div className="tpl-cert-row">
       <span className="tpl-cert-copy">
         <span className="tpl-cert-name">
           {name}
-          {credentialUrl?.trim() ? (
-            <>
-              {" "}
-              <DocResolvedLink raw={credentialUrl} className="tpl-link">
-                <DocExternalLinkIcon />
-                <span className="sr-only">Open credential for {name}</span>
-              </DocResolvedLink>
-            </>
-          ) : null}
+          <DocTitleLinkAndBadges
+            href={credentialUrl}
+            srLabel={`Open credential for ${name}`}
+          />
         </span>
-        {provider ? <span className="tpl-cert-provider">{provider}</span> : null}
+        {body ? <span className="tpl-cert-provider">{body}</span> : null}
       </span>
       {date ? (
         <span className="tpl-entry-date">{shortenDateLabel(date)}</span>
@@ -632,16 +661,11 @@ export function DocNumberedProject({
       <span className="tpl-numbered-marker">{index}.</span>
       <span className="tpl-numbered-body">
         <strong>{name}</strong>
-        <DocTechBadges items={technologies} />
-        {link?.trim() ? (
-          <>
-            {" "}
-            <DocResolvedLink raw={link} className="tpl-link">
-              <DocExternalLinkIcon />
-              <span className="sr-only">Open project {name}</span>
-            </DocResolvedLink>
-          </>
-        ) : null}
+        <DocTitleLinkAndBadges
+          href={link}
+          badges={technologies}
+          srLabel={`Open project ${name}`}
+        />
         {detail ? ` (${detail})` : ""}
       </span>
     </div>

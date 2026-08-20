@@ -6,12 +6,18 @@ import { createTemplateDefaultCustomization } from "@/lib/templates/definitions/
 import { buildMainSectionBlocks } from "@/components/document/templates/build-section-blocks";
 import { buildSidebarBlocks } from "@/components/document/templates/sidebar-layout";
 import { renderSidebarTemplatePage } from "@/components/document/templates/render-pages";
+import {
+  createBlockBuilder,
+  nextId,
+  pushBlock,
+} from "@/components/document/templates/block-builder-utils";
 
 export const tpl4Definition: TemplateDefinition = {
   id: "tpl_4",
   slug: "tpl_4",
-  name: "Red Sidebar",
-  description: "Red-accent sidebar with icon contact details.",
+  name: "Split",
+  description:
+    "Inset pale-red rail with a 25pt name in the main column, matching template-4.pdf.",
   version: 1,
   layoutFamily: "sidebar",
   pageSize: "a4",
@@ -21,18 +27,42 @@ export const tpl4Definition: TemplateDefinition = {
     heading: "var(--font-inter), Inter, system-ui, sans-serif",
   },
   cssClass: "tpl-4",
-  contentHeightReserve: 44,
+  // template-4.pdf: 30pt page inset; the pale rail bleeds only vertically.
+  pagePaddingRatio: { x: 1, y: 1 },
   buildBlocks(document: CvDocument, ctx) {
+    const state = createBlockBuilder();
+    const name = document.personal.fullName?.trim();
+    if (name) {
+      pushBlock(state, {
+        id: nextId(state, "red-name"),
+        kind: "header",
+        region: "main",
+        keepWithNext: true,
+        render: () => (
+          <header className="tpl-4-main-header">
+            <h1 className="tpl-4-name">{name}</h1>
+          </header>
+        ),
+      });
+    }
+
     return [
       ...buildSidebarBlocks(document, {
         withHeaderBand: false,
         withIcons: true,
+        flatSkillList: true,
       }),
+      ...state.blocks,
       ...buildMainSectionBlocks(document, ctx, {
         region: "main",
         entryStyle: "date-right",
         sectionHeadingVariant: "plain",
+        preferTemplateLabels: true,
+        summaryLabel: "Summary",
+        experienceLabel: "Experience",
         certificationsLabel: "Certificates",
+        projectsLabel: "PROJECTS",
+        projectsAsEntries: true,
         sectionOrder: [
           "summary",
           "education",
@@ -47,20 +77,11 @@ export const tpl4Definition: TemplateDefinition = {
     ];
   },
   renderPage(props) {
-    const { personal } = props.ctx.document;
-    const mainHeader =
-      props.pageIndex === 0 ? (
-        <header className="tpl-4-main-header">
-          <h1 className="tpl-4-name">{personal.fullName}</h1>
-        </header>
-      ) : null;
-
     return renderSidebarTemplatePage({
       ...props,
       definition: tpl4Definition,
       sidebarVariant: "red",
       withIcons: true,
-      mainHeader,
     });
   },
 };

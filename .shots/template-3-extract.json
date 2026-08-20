@@ -1,0 +1,1340 @@
+[
+  {
+    "n": 1,
+    "width": 595.28,
+    "height": 841.89,
+    "fonts": {
+      "g_d0_f1": 76,
+      "g_d0_f2": 5
+    },
+    "items": [
+      {
+        "str": "Kennedy Sithole",
+        "x": 25,
+        "y": 791.6,
+        "w": 196.4,
+        "h": 25,
+        "font": "g_d0_f1",
+        "size": 25
+      },
+      {
+        "str": "kevykenny29@gmail.com",
+        "x": 39,
+        "y": 768.4,
+        "w": 113.4,
+        "h": 9,
+        "font": "g_d0_f1",
+        "size": 9
+      },
+      {
+        "str": "+263782186683",
+        "x": 176.4,
+        "y": 768.4,
+        "w": 68,
+        "h": 9,
+        "font": "g_d0_f1",
+        "size": 9
+      },
+      {
+        "str": "40 Twickenham Dr, Mount Pleasant, Harare, Zimbabwe Harare",
+        "x": 268.3,
+        "y": 768.4,
+        "w": 273,
+        "h": 9,
+        "font": "g_d0_f1",
+        "size": 9
+      },
+      {
+        "str": "Summary",
+        "x": 25,
+        "y": 701.3,
+        "w": 72.5,
+        "h": 15,
+        "font": "g_d0_f1",
+        "size": 15
+      },
+      {
+        "str": "Dedicated Software Engineer with over 2 years of professional",
+        "x": 25,
+        "y": 677,
+        "w": 305.3,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "experience designing and developing scalable web and cross-",
+        "x": 25,
+        "y": 663.3,
+        "w": 312.7,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "platform mobile applications. Skilled in React, Next.js, Node.js, Express,",
+        "x": 25,
+        "y": 649.5,
+        "w": 339.1,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "PostgreSQL, MongoDB, and Supabase, with experience delivering AI-",
+        "x": 25,
+        "y": 635.8,
+        "w": 334.2,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "powered solutions and collaborating in Agile development teams. A",
+        "x": 25,
+        "y": 622,
+        "w": 335.4,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "first-class honors computer science graduate committed to building",
+        "x": 25,
+        "y": 608.3,
+        "w": 341.3,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "high-quality, user-focused software and continuously expanding",
+        "x": 25,
+        "y": 594.5,
+        "w": 321.1,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "technical expertise.",
+        "x": 25,
+        "y": 580.8,
+        "w": 95.2,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Education",
+        "x": 25,
+        "y": 542.8,
+        "w": 74.4,
+        "h": 15,
+        "font": "g_d0_f1",
+        "size": 15
+      },
+      {
+        "str": "Bachelor of Science Honours Degree In",
+        "x": 25,
+        "y": 518.5,
+        "w": 194.1,
+        "h": 10,
+        "font": "g_d0_f2",
+        "size": 10
+      },
+      {
+        "str": "Computer Science(HCS) - 1st Class",
+        "x": 25,
+        "y": 504.8,
+        "w": 178.3,
+        "h": 10,
+        "font": "g_d0_f2",
+        "size": 10
+      },
+      {
+        "str": "Aug 2021 - Aug 2025",
+        "x": 270.6,
+        "y": 518.5,
+        "w": 99.6,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "University Of Zimbabwe, Harare, Harare",
+        "x": 25,
+        "y": 491,
+        "w": 192.4,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Focused on AI, IoT, and full-stack web application development.",
+        "x": 45,
+        "y": 477.3,
+        "w": 314,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Built an AI-powered cattle sales platform with intelligent",
+        "x": 45,
+        "y": 463.5,
+        "w": 276.1,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "recommendations as a final thesis.",
+        "x": 45,
+        "y": 449.8,
+        "w": 173.5,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Experience",
+        "x": 25,
+        "y": 411.8,
+        "w": 80.1,
+        "h": 15,
+        "font": "g_d0_f1",
+        "size": 15
+      },
+      {
+        "str": "Software Developer Intern",
+        "x": 25,
+        "y": 387.5,
+        "w": 130.1,
+        "h": 10,
+        "font": "g_d0_f2",
+        "size": 10
+      },
+      {
+        "str": "Sep 2023 - Jun 2024",
+        "x": 270.6,
+        "y": 387.5,
+        "w": 99.7,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Home Snappers LLC",
+        "x": 25,
+        "y": 373.8,
+        "w": 98.5,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Actively participated in application development using",
+        "x": 45,
+        "y": 360,
+        "w": 271.2,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "JavaScript and modern frameworks.",
+        "x": 45,
+        "y": 346.3,
+        "w": 179.6,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Developed front-end solutions using Next.js and Ionic for cross-",
+        "x": 45,
+        "y": 332.5,
+        "w": 312.3,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "platform mobile applications.",
+        "x": 45,
+        "y": 318.8,
+        "w": 145.8,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Implemented back-end data management with Supabase and",
+        "x": 45,
+        "y": 305,
+        "w": 316.1,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "PostgreSQL database integration.",
+        "x": 45,
+        "y": 291.3,
+        "w": 165.2,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Part-Time Developer",
+        "x": 25,
+        "y": 267.5,
+        "w": 104.6,
+        "h": 10,
+        "font": "g_d0_f2",
+        "size": 10
+      },
+      {
+        "str": "Sep 2024 - Jun 2025",
+        "x": 270.3,
+        "y": 267.5,
+        "w": 100,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Home Snappers LLC",
+        "x": 25,
+        "y": 253.8,
+        "w": 98.5,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Developed full-stack applications using ReactJS, NextJS, Ionic,",
+        "x": 45,
+        "y": 240,
+        "w": 303.6,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Node.js, and Express for robust back-end services.",
+        "x": 45,
+        "y": 226.3,
+        "w": 245.9,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Integrated databases using Supabase with PostgreSQL and",
+        "x": 45,
+        "y": 212.5,
+        "w": 294.7,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "MongoDB for efficient data management and storage.",
+        "x": 45,
+        "y": 198.8,
+        "w": 269.9,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Implemented responsive UI components and styling using",
+        "x": 45,
+        "y": 185,
+        "w": 287.8,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Tailwind CSS for modern, user-friendly interfaces.",
+        "x": 45,
+        "y": 171.3,
+        "w": 241.4,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Collaborated closely with clients to enhance product features",
+        "x": 45,
+        "y": 157.5,
+        "w": 305.8,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "and drive continuous product improvement.",
+        "x": 45,
+        "y": 143.8,
+        "w": 219.1,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Software Engineer I",
+        "x": 25,
+        "y": 120,
+        "w": 96.2,
+        "h": 10,
+        "font": "g_d0_f2",
+        "size": 10
+      },
+      {
+        "str": "Jun 2025 - Present",
+        "x": 278.8,
+        "y": 120,
+        "w": 91.5,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Zimotely LLC",
+        "x": 25,
+        "y": 106.3,
+        "w": 60.6,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Develop and maintain full-stack features across a Turborepo",
+        "x": 45,
+        "y": 92.5,
+        "w": 301.9,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "monorepo, building admin and client-facing applications with",
+        "x": 45,
+        "y": 78.8,
+        "w": 307.8,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "React, Next.js, TypeScript, Shadcn UI, and Tailwind CSS.",
+        "x": 45,
+        "y": 65,
+        "w": 264.6,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Design and implement REST APIs with Node.js and Fastify,",
+        "x": 45,
+        "y": 51.3,
+        "w": 279.7,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "including data models, controllers, route guards, and role-based",
+        "x": 45,
+        "y": 37.5,
+        "w": 319.3,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Personal details",
+        "x": 420.3,
+        "y": 701.3,
+        "w": 117.1,
+        "h": 15,
+        "font": "g_d0_f1",
+        "size": 15
+      },
+      {
+        "str": "Driver's license",
+        "x": 420.3,
+        "y": 677,
+        "w": 72.2,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "BE (Class 4)",
+        "x": 420.3,
+        "y": 663.3,
+        "w": 58,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Website",
+        "x": 420.3,
+        "y": 639.5,
+        "w": 39.7,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "kennedy-sithole-portfolio.",
+        "x": 420.3,
+        "y": 625.8,
+        "w": 127.5,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "vercel.app",
+        "x": 420.3,
+        "y": 612,
+        "w": 52,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "LinkedIn",
+        "x": 420.3,
+        "y": 588.3,
+        "w": 39.2,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "linkedin.",
+        "x": 420.3,
+        "y": 574.5,
+        "w": 39.1,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "com/in/kennedysithole15",
+        "x": 420.3,
+        "y": 560.8,
+        "w": 123.6,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Skills",
+        "x": 420.3,
+        "y": 522.8,
+        "w": 33.7,
+        "h": 15,
+        "font": "g_d0_f1",
+        "size": 15
+      },
+      {
+        "str": "ReactJS",
+        "x": 420.3,
+        "y": 498.5,
+        "w": 39.2,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Next.js",
+        "x": 420.3,
+        "y": 474.8,
+        "w": 30.5,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Node.js",
+        "x": 420.3,
+        "y": 451,
+        "w": 35.5,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Express.js",
+        "x": 420.3,
+        "y": 427.3,
+        "w": 45.7,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "PostgreSQL",
+        "x": 420.3,
+        "y": 403.5,
+        "w": 55.1,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "MongoDB",
+        "x": 420.3,
+        "y": 379.8,
+        "w": 47.4,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Supabase",
+        "x": 420.3,
+        "y": 356,
+        "w": 50.4,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "JavaScript",
+        "x": 420.3,
+        "y": 332.3,
+        "w": 52,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Ionic",
+        "x": 420.3,
+        "y": 308.5,
+        "w": 23.5,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "TypeScript",
+        "x": 420.3,
+        "y": 284.8,
+        "w": 51.7,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Jira",
+        "x": 420.3,
+        "y": 261,
+        "w": 17.7,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Git (GitHub)",
+        "x": 420.3,
+        "y": 237.3,
+        "w": 58.4,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Vercel",
+        "x": 420.3,
+        "y": 213.5,
+        "w": 31.1,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Heroku",
+        "x": 420.3,
+        "y": 189.8,
+        "w": 34.2,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Qualities",
+        "x": 420.3,
+        "y": 151.8,
+        "w": 64.1,
+        "h": 15,
+        "font": "g_d0_f1",
+        "size": 15
+      },
+      {
+        "str": "Excellent leadership and",
+        "x": 432.8,
+        "y": 127.5,
+        "w": 120.3,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "team-building skills",
+        "x": 432.8,
+        "y": 113.8,
+        "w": 96.3,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Outstanding written and",
+        "x": 432.8,
+        "y": 90,
+        "w": 120.7,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "oral communication",
+        "x": 432.8,
+        "y": 76.3,
+        "w": 101.2,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Exceptional interpersonal",
+        "x": 432.8,
+        "y": 52.5,
+        "w": 124.6,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "abilities",
+        "x": 432.8,
+        "y": 38.8,
+        "w": 37.5,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      }
+    ],
+    "itemCount": 81,
+    "rects": [],
+    "rectCount": 0
+  },
+  {
+    "n": 2,
+    "width": 595.28,
+    "height": 841.89,
+    "fonts": {
+      "g_d0_f1": 48,
+      "g_d0_f2": 6
+    },
+    "items": [
+      {
+        "str": "access for admin and marketing workflows.",
+        "x": 45,
+        "y": 806.8,
+        "w": 215.1,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Integrate MongoDB with Mongoose for schema design,",
+        "x": 45,
+        "y": 793,
+        "w": 270.7,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "migrations, and backend data persistence across core platform",
+        "x": 45,
+        "y": 779.3,
+        "w": 317.5,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "features.",
+        "x": 45,
+        "y": 765.5,
+        "w": 42.9,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Implement secure AWS and third-party integrations, including",
+        "x": 45,
+        "y": 751.8,
+        "w": 306.1,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Stripe for payments.",
+        "x": 45,
+        "y": 738,
+        "w": 99.1,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Interact with AI APIs to enhance user experience and automate",
+        "x": 45,
+        "y": 724.3,
+        "w": 311.6,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "tasks.",
+        "x": 45,
+        "y": 710.5,
+        "w": 27.1,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Collaborate with cross-functional teams using Jira in an agile",
+        "x": 45,
+        "y": 696.8,
+        "w": 304.6,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "environment, delivering scalable features while maintaining code",
+        "x": 45,
+        "y": 683,
+        "w": 323.4,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "quality through reviews, testing, and consistent UI patterns.",
+        "x": 45,
+        "y": 669.3,
+        "w": 289.8,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "References",
+        "x": 25,
+        "y": 631.3,
+        "w": 82.8,
+        "h": 15,
+        "font": "g_d0_f1",
+        "size": 15
+      },
+      {
+        "str": "Mr. Hwande",
+        "x": 25,
+        "y": 607,
+        "w": 57.6,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Home Snappers LLC, Texas",
+        "x": 25,
+        "y": 593.3,
+        "w": 130.8,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "+1 (314) 541-3066, noel@homesnappers.com",
+        "x": 25,
+        "y": 579.5,
+        "w": 219.4,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Mr. Rupere",
+        "x": 25,
+        "y": 555.8,
+        "w": 51.6,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "University of Zimbabwe, Harare",
+        "x": 25,
+        "y": 542,
+        "w": 152.7,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "+263-4-333677",
+        "x": 25,
+        "y": 528.3,
+        "w": 75.4,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Mr. Munyaradzi",
+        "x": 25,
+        "y": 504.5,
+        "w": 73.7,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "University Of Zimbabwe, Norton",
+        "x": 25,
+        "y": 490.8,
+        "w": 153.6,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "+263 772 390 828",
+        "x": 25,
+        "y": 477,
+        "w": 85.5,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Certificates",
+        "x": 25,
+        "y": 439,
+        "w": 85.1,
+        "h": 15,
+        "font": "g_d0_f1",
+        "size": 15
+      },
+      {
+        "str": "Flutter and Dart Guide",
+        "x": 25,
+        "y": 414.8,
+        "w": 110.8,
+        "h": 10,
+        "font": "g_d0_f2",
+        "size": 10
+      },
+      {
+        "str": "Sep 2025",
+        "x": 325.1,
+        "y": 414.8,
+        "w": 45.2,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "JavaScript Essentials 1",
+        "x": 25,
+        "y": 391,
+        "w": 112.4,
+        "h": 10,
+        "font": "g_d0_f2",
+        "size": 10
+      },
+      {
+        "str": "Sep 2023",
+        "x": 325.4,
+        "y": 391,
+        "w": 44.9,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Huawei Talent Online Artificial",
+        "x": 25,
+        "y": 367.3,
+        "w": 150.1,
+        "h": 10,
+        "font": "g_d0_f2",
+        "size": 10
+      },
+      {
+        "str": "Intelligence and Application",
+        "x": 25,
+        "y": 353.5,
+        "w": 141.6,
+        "h": 10,
+        "font": "g_d0_f2",
+        "size": 10
+      },
+      {
+        "str": "Nov 2023",
+        "x": 325.3,
+        "y": 367.3,
+        "w": 44.9,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Achievements",
+        "x": 25,
+        "y": 315.5,
+        "w": 105.9,
+        "h": 15,
+        "font": "g_d0_f1",
+        "size": 15
+      },
+      {
+        "str": "Awarded a degree with first class and a University of Zimbabwe",
+        "x": 45,
+        "y": 291.3,
+        "w": 313.8,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "book prize.",
+        "x": 45,
+        "y": 277.5,
+        "w": 52.2,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Awarded a certificate as a Seed for the Future Alumni for",
+        "x": 45,
+        "y": 263.8,
+        "w": 280.1,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "participating in the Seeds for the Future Program in November",
+        "x": 45,
+        "y": 250,
+        "w": 307,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "2023.",
+        "x": 45,
+        "y": 236.3,
+        "w": 25.3,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "PROJECTS",
+        "x": 25,
+        "y": 198.3,
+        "w": 72.1,
+        "h": 15,
+        "font": "g_d0_f1",
+        "size": 15
+      },
+      {
+        "str": "Sell-Cattle",
+        "x": 25,
+        "y": 174,
+        "w": 54.1,
+        "h": 10,
+        "font": "g_d0_f2",
+        "size": 10
+      },
+      {
+        "str": "Jun 2025",
+        "x": 326.1,
+        "y": 174,
+        "w": 44.2,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "AI-Powered Digital Platform for Direct meat sales and farm",
+        "x": 25,
+        "y": 160.3,
+        "w": 289.7,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "optimization",
+        "x": 25,
+        "y": 146.5,
+        "w": 61.3,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "This digital platform utilizes AI to provide Zimbabwean cattle",
+        "x": 45,
+        "y": 132.8,
+        "w": 297.2,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "ranchers with direct access to consumers, offering competitive",
+        "x": 45,
+        "y": 119,
+        "w": 312.1,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "recommendations and eliminating the need for intermediaries to",
+        "x": 45,
+        "y": 105.3,
+        "w": 323.3,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "increase profits.",
+        "x": 45,
+        "y": 91.5,
+        "w": 78.2,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "TillMate",
+        "x": 25,
+        "y": 67.8,
+        "w": 39.1,
+        "h": 10,
+        "font": "g_d0_f2",
+        "size": 10
+      },
+      {
+        "str": "Jan 2026",
+        "x": 325.6,
+        "y": 67.8,
+        "w": 44.7,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "First Offline Point of Sale Mobile Application.",
+        "x": 25,
+        "y": 54,
+        "w": 212.6,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Offline-first mobile point-of-sale for small shops and side hustles.",
+        "x": 45,
+        "y": 40.3,
+        "w": 323,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Keen observational and",
+        "x": 432.8,
+        "y": 796.8,
+        "w": 117.7,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "listening skills",
+        "x": 432.8,
+        "y": 783,
+        "w": 65.8,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Willingness to learn new",
+        "x": 432.8,
+        "y": 759.3,
+        "w": 118.6,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "skills",
+        "x": 432.8,
+        "y": 745.5,
+        "w": 21.9,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "Dynamic approach to",
+        "x": 432.8,
+        "y": 721.8,
+        "w": 109.2,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "teamwork",
+        "x": 432.8,
+        "y": 708,
+        "w": 49.7,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      }
+    ],
+    "itemCount": 54,
+    "rects": [],
+    "rectCount": 0
+  },
+  {
+    "n": 3,
+    "width": 595.28,
+    "height": 841.89,
+    "fonts": {
+      "g_d0_f1": 8,
+      "g_d0_f2": 1
+    },
+    "items": [
+      {
+        "str": "Record sales, track stock and capital, and see real profit without",
+        "x": 45,
+        "y": 806.8,
+        "w": 315.3,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "spreadsheets—built for unreliable connectivity.",
+        "x": 45,
+        "y": 793,
+        "w": 230,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "SpeakFlow AI",
+        "x": 25,
+        "y": 769.3,
+        "w": 65.9,
+        "h": 10,
+        "font": "g_d0_f2",
+        "size": 10
+      },
+      {
+        "str": "Apr 2026",
+        "x": 326.8,
+        "y": 769.3,
+        "w": 43.5,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "AI confidence booster and English tutor.",
+        "x": 25,
+        "y": 755.5,
+        "w": 195.9,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "An AI English-speaking coach that guides you through structured",
+        "x": 45,
+        "y": 741.8,
+        "w": 322,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "lessons, live AI conversations, and personalized feedback on",
+        "x": 45,
+        "y": 728,
+        "w": 296.6,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "fluency, vocabulary, and confidence—helping you practice",
+        "x": 45,
+        "y": 714.3,
+        "w": 290.1,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      },
+      {
+        "str": "speaking every day and track real progress.",
+        "x": 45,
+        "y": 700.5,
+        "w": 216.3,
+        "h": 10,
+        "font": "g_d0_f1",
+        "size": 10
+      }
+    ],
+    "itemCount": 9,
+    "rects": [],
+    "rectCount": 0
+  }
+]

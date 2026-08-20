@@ -24,15 +24,15 @@ See also [cv-rendering.md](./cv-rendering.md) for pagination and export details.
 
 Definitions live in [`src/lib/templates/definitions/`](../src/lib/templates/definitions/):
 
-| Key | Reference PDF | Layout |
-|-----|---------------|--------|
-| `tpl_default` | template-default.pdf | Sidebar + main (blue) |
-| `tpl_0` | template-0.pdf | Sidebar + main (plain) |
-| `tpl_1` | template-1.pdf | Single column, uppercase sections |
-| `tpl_2` | template-2.pdf | Single column, date-left |
-| `tpl_3` | template-3.pdf | Form two-column |
-| `tpl_4` | template-4.pdf | Sidebar + main (red) |
-| `tpl_5` | template-5.pdf | Form two-column (compact) |
+| Key | Display name | Reference PDF | Layout |
+|-----|--------------|---------------|--------|
+| `tpl_default` | Default | template-default.pdf | Sidebar + main (blue) |
+| `tpl_0` | Contrast | template-2.pdf | Dark header + right rail |
+| `tpl_1` | Compact | template-0.pdf | Single column, uppercase sections |
+| `tpl_2` | Classic | template-3.pdf | Single column, date-left |
+| `tpl_3` | Formal | template-5.pdf | Form two-column |
+| `tpl_4` | Split | template-4.pdf | Sidebar + main (red) |
+| `tpl_5` | Timeline | template-1.pdf | Form two-column (compact) |
 
 Each `TemplateDefinition` owns:
 

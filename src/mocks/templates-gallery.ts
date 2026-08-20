@@ -119,14 +119,14 @@ export const savedTemplates: SavedTemplateEntry[] = [
   {
     id: "saved_1",
     templateId: "tpl_default",
-    name: "Classic Sidebar",
+    name: "Default",
     kind: "recent",
     updatedAt: "2026-08-05T16:00:00.000Z",
   },
   {
     id: "saved_2",
     templateId: "tpl_1",
-    name: "Professional",
+    name: "Compact",
     kind: "saved",
     updatedAt: "2026-08-04T11:20:00.000Z",
   },

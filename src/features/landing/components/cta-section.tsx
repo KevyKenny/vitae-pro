@@ -1,43 +1,27 @@
 "use client";
 
-import Link from "next/link";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { CreateCvLink } from "@/features/landing/components/create-cv-link";
 
 export function CTASection() {
   return (
-    <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 lg:px-8">
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="relative overflow-hidden rounded-[24px] border border-emerald/20 bg-emerald px-6 py-14 text-center text-paper shadow-l sm:px-12"
-      >
-        <div
-          className="pointer-events-none absolute inset-0 opacity-40"
-          aria-hidden
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 20% 20%, rgba(176,141,62,0.35), transparent 40%), radial-gradient(circle at 80% 80%, rgba(250,248,243,0.12), transparent 35%)",
-          }}
-        />
-        <div className="relative">
-          <h2 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
-            Your next opportunity starts with a better CV.
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-paper/80">
-            Draft with AI, design with intention, and apply with confidence.
-          </p>
-          <Button
-            asChild
-            size="lg"
-            shape="soft"
-            className="mt-8 bg-paper text-emerald hover:bg-paper/90"
-          >
-            <Link href="/auth/sign-up">Create Your CV Today</Link>
-          </Button>
-        </div>
-      </motion.div>
+    <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6 sm:pb-16 lg:px-8">
+      <div className="rounded-[18px] border border-emerald/20 bg-emerald px-5 py-10 text-center text-paper shadow-m sm:px-10 sm:py-12">
+        <h2 className="font-serif text-[1.65rem] font-semibold tracking-tight sm:text-3xl">
+          Ready to create your CV?
+        </h2>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-paper/80 sm:text-base">
+          Free to build. $1.99 to download for 14 days. Then $6/month.
+        </p>
+        <Button
+          asChild
+          size="lg"
+          shape="soft"
+          className="mt-6 h-12 w-full bg-paper text-emerald hover:bg-paper/90 sm:w-auto sm:min-w-[200px]"
+        >
+          <CreateCvLink>Create My CV</CreateCvLink>
+        </Button>
+      </div>
     </section>
   );
 }

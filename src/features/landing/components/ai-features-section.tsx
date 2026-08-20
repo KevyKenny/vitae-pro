@@ -54,7 +54,7 @@ export function AiFeaturesSection() {
       id="ai-tools"
       className="border-y border-line bg-paper-dim/50"
     >
-      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
             AI that coaches your career story

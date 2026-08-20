@@ -60,7 +60,7 @@ export const SETTINGS_NAV: {
   {
     href: "/settings/billing",
     label: "Billing",
-    description: "Plan & usage",
+    description: "Pay at download",
     icon: CreditCard,
   },
 ];

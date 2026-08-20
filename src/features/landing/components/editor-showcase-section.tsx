@@ -1,13 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { CreateCvLink } from "@/features/landing/components/create-cv-link";
 import { ProductMockup } from "@/features/landing/components/product-mockup";
 
 export function EditorShowcaseSection() {
   return (
-    <section id="features" className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+    <section id="features" className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
       <div className="grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]">
         <motion.div
           initial={{ opacity: 0, x: -12 }}
@@ -33,8 +33,8 @@ export function EditorShowcaseSection() {
               </li>
             ))}
           </ul>
-          <Button asChild shape="soft" className="mt-8">
-            <Link href="/auth/sign-up">Try the editor</Link>
+          <Button asChild shape="soft" className="mt-8 h-11">
+            <CreateCvLink>Try the editor</CreateCvLink>
           </Button>
         </motion.div>
         <ProductMockup className="lg:max-w-none" />

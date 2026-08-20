@@ -1,4 +1,4 @@
-import DOMPurify from "isomorphic-dompurify";
+import sanitizeHtml from "sanitize-html";
 
 const ALLOWED_TAGS = [
   "p",
@@ -20,10 +20,23 @@ const ALLOWED_ATTR = ["href", "rel", "target", "class"];
 /** Sanitize rich-text HTML before preview/PDF render. */
 export function sanitizeCvHtml(html: string): string {
   if (!html?.trim()) return "";
-  return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS,
-    ALLOWED_ATTR,
-    ALLOW_DATA_ATTR: false,
+  return sanitizeHtml(html, {
+    allowedTags: ALLOWED_TAGS,
+    allowedAttributes: {
+      a: ALLOWED_ATTR,
+      span: ["class"],
+      p: ["class"],
+      ul: ["class"],
+      ol: ["class"],
+      li: ["class"],
+      strong: ["class"],
+      b: ["class"],
+      em: ["class"],
+      i: ["class"],
+      u: ["class"],
+    },
+    allowedSchemes: ["http", "https", "mailto", "tel"],
+    allowProtocolRelative: false,
   });
 }
 

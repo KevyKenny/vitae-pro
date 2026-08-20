@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SaveIndicator } from "@/features/cv-editor/components/save-indicator";
 import { useEditor } from "@/features/cv-editor/context/editor-context";
-import { useCvExport } from "@/features/export/hooks/use-cv-export";
+import { usePaidCvDownload } from "@/features/export/hooks/use-paid-cv-download";
 
 export function EditorToolbar() {
   const {
@@ -39,7 +39,11 @@ export function EditorToolbar() {
     setPreviewOpen,
     setVersionsOpen,
   } = useEditor();
-  const { downloadCvPdf, status: exportStatus } = useCvExport();
+  const {
+    requestDownload,
+    status: exportStatus,
+    paymentDialog,
+  } = usePaidCvDownload();
   const exportBusy =
     exportStatus === "generating" || exportStatus === "preparing";
   const downloadLabel =
@@ -125,7 +129,7 @@ export function EditorToolbar() {
           shape="soft"
           className="hidden rounded-[8px] md:inline-flex"
           disabled={exportBusy}
-          onClick={() => void downloadCvPdf(cvId, document)}
+          onClick={() => requestDownload(cvId, document)}
         >
           <Download className="size-4" />
           {exportStatus === "preparing"
@@ -133,6 +137,18 @@ export function EditorToolbar() {
             : exportStatus === "generating"
               ? "Generating…"
               : "Download PDF"}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="icon-sm"
+          shape="soft"
+          className="md:hidden"
+          aria-label="Download PDF"
+          disabled={exportBusy}
+          onClick={() => requestDownload(cvId, document)}
+        >
+          <Download className="size-4" />
         </Button>
 
         <DropdownMenu>
@@ -163,7 +179,7 @@ export function EditorToolbar() {
             <DropdownMenuItem
               className="md:hidden"
               disabled={exportBusy}
-              onClick={() => void downloadCvPdf(cvId, document)}
+              onClick={() => requestDownload(cvId, document)}
             >
               <Download className="size-4" /> {downloadLabel}
             </DropdownMenuItem>
@@ -199,6 +215,7 @@ export function EditorToolbar() {
           Save
         </Button>
       </div>
+      {paymentDialog}
     </header>
   );
 }

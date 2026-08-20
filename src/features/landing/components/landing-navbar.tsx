@@ -2,25 +2,23 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { CreateCvLink } from "@/features/landing/components/create-cv-link";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 
 const SECTION_NAV = [
-  { label: "Features", href: "#features" },
-  { label: "Templates", href: "#templates" },
-  { label: "AI Tools", href: "#ai-tools" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Resources", href: "#faq" },
+  { label: "Templates", href: "/#templates" },
+  { label: "How it works", href: "/#how-it-works" },
+  { label: "AI tools", href: "/#ai-tools" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "FAQ", href: "/#faq" },
 ];
 
 export function LandingNavbar() {
-  const pathname = usePathname();
-  const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -31,10 +29,6 @@ export function LandingNavbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
-
   return (
     <header
       className={cn(
@@ -44,27 +38,23 @@ export function LandingNavbar() {
           : "border-transparent bg-transparent",
       )}
     >
-      <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4 sm:h-16 sm:px-6 lg:px-8">
         <Logo href="/" />
 
-        {isHome ? (
-          <nav
-            className="mx-auto hidden items-center gap-1 md:flex"
-            aria-label="Primary"
-          >
-            {SECTION_NAV.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="rounded-full px-3 py-2 text-sm font-medium text-ink-soft transition-colors hover:text-ink"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-        ) : (
-          <div className="mx-auto hidden md:block" aria-hidden />
-        )}
+        <nav
+          className="mx-auto hidden items-center gap-1 md:flex"
+          aria-label="Primary"
+        >
+          {SECTION_NAV.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="rounded-full px-3 py-2 text-sm font-medium text-ink-soft transition-colors hover:text-ink"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
 
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />
@@ -72,7 +62,7 @@ export function LandingNavbar() {
             <Link href="/auth/sign-in">Login</Link>
           </Button>
           <Button asChild shape="soft" className="hidden md:inline-flex">
-            <Link href="/auth/sign-up">Create Free CV</Link>
+            <CreateCvLink>Create My CV</CreateCvLink>
           </Button>
           <Button
             type="button"
@@ -98,24 +88,24 @@ export function LandingNavbar() {
             className="overflow-hidden border-t border-line bg-paper/95 backdrop-blur-md md:hidden"
           >
             <nav className="flex flex-col gap-1 px-4 py-4 safe-pb" aria-label="Mobile">
-              {isHome
-                ? SECTION_NAV.map((item) => (
-                    <a
-                      key={item.href}
-                      href={item.href}
-                      className="rounded-[8px] px-3 py-3.5 text-sm font-semibold text-ink transition-colors hover:bg-paper-dim"
-                      onClick={() => setOpen(false)}
-                    >
-                      {item.label}
-                    </a>
-                  ))
-                : null}
-              <div className={cn("grid gap-2", isHome && "mt-3")}>
-                <Button asChild variant="outline" shape="soft" className="h-11">
+              {SECTION_NAV.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="rounded-[8px] px-3 py-3.5 text-sm font-semibold text-ink transition-colors hover:bg-paper-dim"
+                  onClick={() => setOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
+              <div className="mt-3 grid gap-2">
+                <Button asChild variant="outline" shape="soft" className="h-12">
                   <Link href="/auth/sign-in">Login</Link>
                 </Button>
-                <Button asChild shape="soft" className="h-11">
-                  <Link href="/auth/sign-up">Create Free CV</Link>
+                <Button asChild shape="soft" className="h-12">
+                  <CreateCvLink onNavigate={() => setOpen(false)}>
+                    Create My CV
+                  </CreateCvLink>
                 </Button>
               </div>
             </nav>

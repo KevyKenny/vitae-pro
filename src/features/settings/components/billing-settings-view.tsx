@@ -1,124 +1,72 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { Check } from "lucide-react";
 import { toast } from "sonner";
 import { SettingsPageHeader } from "@/features/settings/components/settings-page-header";
-import { PlanCard, UsageMeter } from "@/features/settings/components/plan-card";
 import { SectionCard } from "@/components/shared/section-card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
-  mockBillingState,
-  subscriptionPlans,
-} from "@/mocks/settings";
-import type { PlanId } from "@/features/settings/types";
-import { formatRelativeTime } from "@/lib/utils";
+  CV_MONTHLY_PRICE_LABEL,
+  CV_STARTER_DURATION_DAYS,
+  CV_STARTER_PRICE_LABEL,
+  PRICING_HEADLINE,
+} from "@/lib/constants/pricing";
+
+const INCLUDED = [
+  "Create and edit CVs for free",
+  `Pay ${CV_STARTER_PRICE_LABEL} when you download — lasts ${CV_STARTER_DURATION_DAYS} days`,
+  `Then upgrade to ${CV_MONTHLY_PRICE_LABEL}/month to keep downloading`,
+  "AI assistance and templates included",
+];
 
 export function BillingSettingsView() {
-  const [planId, setPlanId] = useState<PlanId>(mockBillingState.currentPlanId);
-  const current = subscriptionPlans.find((p) => p.id === planId);
-  const usage = mockBillingState.usage;
-
   return (
     <div className="space-y-6">
       <SettingsPageHeader
         title="Billing"
-        description="Manage your plan, compare tiers, and track AI usage — UI only for now."
+        description="Create for free. Pay when you download."
       />
 
       <SectionCard>
-        <div className="flex flex-col gap-4 pb-2 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-[0.72rem] font-bold tracking-[0.04em] text-ink-faint uppercase">
-              Current plan
-            </p>
-            <p className="mt-1 font-serif text-2xl font-semibold text-ink">
-              {current?.name}
-            </p>
-            <p className="text-sm text-ink-soft">
-              Renews {formatRelativeTime(mockBillingState.renewsAt)}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="gold">Professional</Badge>
-            <Button
-              type="button"
-              variant="outline"
-              shape="soft"
-              className="rounded-[8px]"
-              onClick={() => toast.message("Manage subscription (UI only)")}
-            >
-              Manage Subscription
-            </Button>
-            <Button
-              type="button"
-              shape="soft"
-              className="rounded-[8px]"
-              onClick={() => {
-                setPlanId("premium");
-                toast.success("Upgrade queued (UI only)");
-              }}
-            >
-              Upgrade Plan
-            </Button>
-          </div>
-        </div>
-      </SectionCard>
-
-      <div>
-        <h2 className="mb-3 font-serif text-lg font-semibold text-ink">Usage</h2>
-        <div className="grid gap-3 sm:grid-cols-3">
-          <UsageMeter
-            label="AI generations"
-            used={usage.aiGenerations.used}
-            limit={usage.aiGenerations.limit}
-          />
-          <UsageMeter
-            label="CV exports"
-            used={usage.cvExports.used}
-            limit={usage.cvExports.limit}
-          />
-          <UsageMeter
-            label="Templates unlocked"
-            used={usage.templatesUnlocked.used}
-            limit={usage.templatesUnlocked.limit}
-          />
-        </div>
-      </div>
-
-      <div>
-        <div className="mb-3 flex items-end justify-between gap-3">
-          <h2 className="font-serif text-lg font-semibold text-ink">
-            Compare plans
-          </h2>
+        <p className="text-[0.72rem] font-bold tracking-[0.04em] text-ink-faint uppercase">
+          How pricing works
+        </p>
+        <h2 className="mt-2 font-serif text-2xl font-semibold text-ink">
+          {PRICING_HEADLINE}
+        </h2>
+        <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-soft">
+          Build your CV first. {CV_STARTER_PRICE_LABEL} unlocks downloads for{" "}
+          {CV_STARTER_DURATION_DAYS} days. After that, upgrade to{" "}
+          {CV_MONTHLY_PRICE_LABEL}/month.
+        </p>
+        <ul className="mt-5 space-y-2">
+          {INCLUDED.map((item) => (
+            <li key={item} className="flex gap-2 text-sm text-ink-soft">
+              <Check className="mt-0.5 size-4 shrink-0 text-emerald" aria-hidden />
+              {item}
+            </li>
+          ))}
+        </ul>
+        <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+          <Button asChild shape="soft" className="h-11 rounded-[8px]">
+            <Link href="/cvs/new">Create My CV</Link>
+          </Button>
           <Button
             type="button"
-            variant="ghost"
-            size="sm"
+            variant="outline"
             shape="soft"
-            onClick={() => toast.message("Full comparison (UI only)")}
+            className="h-11 rounded-[8px]"
+            onClick={() =>
+              toast.message("Payment checkout is coming soon", {
+                description: `${CV_STARTER_PRICE_LABEL} for ${CV_STARTER_DURATION_DAYS} days, then ${CV_MONTHLY_PRICE_LABEL}/month.`,
+              })
+            }
           >
-            Compare Plans
+            Manage payment method
           </Button>
         </div>
-        <div className="grid gap-4 lg:grid-cols-3">
-          {subscriptionPlans.map((plan) => (
-            <PlanCard
-              key={plan.id}
-              plan={plan}
-              current={plan.id === planId}
-              onSelect={(id) => {
-                setPlanId(id);
-                toast.success(
-                  id === planId
-                    ? "Already on this plan"
-                    : `Switched to ${id} (UI only)`,
-                );
-              }}
-            />
-          ))}
-        </div>
-      </div>
+      </SectionCard>
     </div>
   );
 }

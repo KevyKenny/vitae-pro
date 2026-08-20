@@ -21,6 +21,8 @@ import type {
   EditorTemplateId,
   SaveStatus,
 } from "@/features/cv-editor/types";
+import type { TemplateRendererKey } from "@/lib/templates/definitions/types";
+import { createTemplateDefaultCustomization } from "@/lib/templates/definitions/defaults";
 import {
   appendExperienceBullets,
   replaceExperienceBullets,
@@ -33,6 +35,8 @@ import { FileQuestion } from "lucide-react";
 import { cvErrorMessage, getCvWithContent, saveCvDocument } from "@/lib/cvs";
 import { applySectionCompletions } from "@/lib/cvs/completion";
 import { normalizeCvDocument } from "@/lib/cvs/personal-info";
+import { resolveCvTemplateCustomization } from "@/lib/templates";
+import type { TemplateCustomization } from "@/features/templates/types";
 import {
   aiApi,
   aiClientErrorMessage,
@@ -57,6 +61,7 @@ export type EditorAiRequest = {
 type EditorContextValue = {
   document: CvDocument;
   cvId: string;
+  customization: TemplateCustomization | null;
   activeSectionId: string;
   setActiveSectionId: (id: string) => void;
   saveStatus: SaveStatus;
@@ -81,7 +86,7 @@ type EditorContextValue = {
     options?: { sectionKey?: string; scheduleAutosave?: boolean },
   ) => void;
   setTitle: (title: string) => void;
-  setTemplate: (id: EditorTemplateId) => void;
+  setTemplate: (id: TemplateRendererKey) => void;
   setSummary: (summary: string) => void;
   reorderSections: (sections: CvSectionMeta[]) => void;
   toggleSectionVisibility: (id: string) => void;
@@ -131,6 +136,9 @@ export function EditorProvider({
   children: React.ReactNode;
 }) {
   const [document, setDocument] = useState<CvDocument | null>(null);
+  const [customization, setCustomization] = useState<TemplateCustomization | null>(
+    null,
+  );
   const [loadState, setLoadState] = useState<"loading" | "ready" | "error">(
     "loading",
   );
@@ -174,6 +182,13 @@ export function EditorProvider({
         if (cancelled) return;
         documentRef.current = doc;
         setDocument(doc);
+        void resolveCvTemplateCustomization(cvId, doc.templateSlug ?? doc.rendererKey ?? doc.templateId)
+          .then((custom) => {
+            if (!cancelled) setCustomization(custom);
+          })
+          .catch(() => {
+            if (!cancelled) setCustomization(null);
+          });
         setActiveSectionId(
           doc.sections[1]?.id ?? doc.sections[0]?.id ?? "",
         );
@@ -481,6 +496,7 @@ export function EditorProvider({
     return {
       document,
       cvId,
+      customization,
       activeSectionId,
       setActiveSectionId,
       saveStatus,
@@ -502,10 +518,19 @@ export function EditorProvider({
       updateDocument,
       setTitle: (title) =>
         updateDocument((prev) => ({ ...prev, title }), { sectionKey: "personal" }),
-      setTemplate: (templateId) =>
-        updateDocument((prev) => ({ ...prev, templateId }), {
-          sectionKey: "personal",
-        }),
+      setTemplate: (rendererKey: TemplateRendererKey) => {
+        const defaults = createTemplateDefaultCustomization(rendererKey);
+        setCustomization(defaults);
+        updateDocument(
+          (prev) => ({
+            ...prev,
+            rendererKey,
+            templateSlug: rendererKey,
+            templateId: "modern",
+          }),
+          { sectionKey: "personal" },
+        );
+      },
       setSummary: (summary) =>
         updateDocument((prev) => ({ ...prev, summary }), {
           sectionKey: "summary",
@@ -654,6 +679,7 @@ export function EditorProvider({
     aiSuggestion,
     clearSectionError,
     cvId,
+    customization,
     dirtySections,
     document,
     persistNow,

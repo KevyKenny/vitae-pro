@@ -23,17 +23,50 @@
 
 .doc-page {
   width: 210mm;
-  min-height: 297mm;
+  height: 297mm;
   box-sizing: border-box;
   padding: var(--doc-pad-y) var(--doc-pad-x);
   background: var(--doc-bg);
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .doc-page--letter {
   width: 8.5in;
-  min-height: 11in;
+  height: 11in;
+}
+
+.doc-page-content {
+  height: 100%;
+  overflow: hidden;
+}
+
+.doc-pages-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--doc-page-gap, 24px);
+}
+
+/* On screen each page has to read as a separate sheet, including once a preview
+   shell has scaled the stack down. The edge is a shadow rather than a border so
+   it cannot change the page's content box, which pagination is measured
+   against, and it is inset so a shell that crops the stack cannot clip it away.
+   It is drawn from the document palette, not the app theme: this line sits on
+   the paper, so it must not invert to near-black when the UI goes dark.
+   Print flattens both, below. */
+.doc-root:not(.doc-root--print) .doc-page {
+  box-shadow:
+    inset 0 0 0 1px var(--doc-line, #e4e0d3),
+    0 6px 18px rgba(0, 0, 0, 0.16);
+}
+
+.doc-root--a4 {
+  page: cv-a4;
+}
+
+.doc-root--letter {
+  page: cv-letter;
 }
 
 .doc-template-creative {
@@ -74,8 +107,12 @@
 
 .doc-section {
   margin-top: 0.85em;
-  break-inside: avoid;
-  page-break-inside: avoid;
+}
+
+.doc-section:first-child,
+.doc-page-content > header + .doc-section,
+.doc-page-content > .doc-section:first-child {
+  margin-top: 0;
 }
 
 .doc-section-title {
@@ -96,8 +133,17 @@
 
 .doc-entry {
   margin-top: 0.45em;
-  break-inside: avoid;
-  page-break-inside: avoid;
+}
+
+.doc-entry-title--continued {
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.doc-contact a,
+.doc-entry-meta a {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .doc-entry-title {
@@ -113,6 +159,8 @@
 }
 
 .doc-subject-table {
+  width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
 }
 
@@ -121,6 +169,13 @@
   font-size: 0.78em;
   color: var(--doc-ink-soft);
   vertical-align: top;
+  overflow-wrap: break-word;
+}
+
+.doc-subject-table th:last-child,
+.doc-subject-table td:last-child {
+  width: 3.6em;
+  font-variant-numeric: tabular-nums;
 }
 
 .doc-subject-table th {
@@ -184,6 +239,19 @@
 .doc-layout-sidebar {
   display: flex;
   gap: 1rem;
+  height: 100%;
+}
+
+.doc-layout-two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  height: 100%;
+}
+
+.doc-page-content--sidebar,
+.doc-page-content--two-column {
+  height: 100%;
 }
 
 .doc-sidebar {
@@ -202,12 +270,12 @@
 }
 
 @media print {
-  @page {
+  @page cv-a4 {
     size: A4;
     margin: 0;
   }
 
-  @page letter {
+  @page cv-letter {
     size: letter;
     margin: 0;
   }
@@ -219,22 +287,48 @@
     background: white !important;
   }
 
+  /*
+   * Carry the named page up to the root. Without this the document is the only
+   * `page: cv-*` region on an otherwise unnamed page, and the name change at
+   * its end forces a break — emitting a blank trailing sheet.
+   */
+  html:has(.doc-root--a4),
+  html:has(.doc-root--a4) body {
+    page: cv-a4;
+  }
+
+  html:has(.doc-root--letter),
+  html:has(.doc-root--letter) body {
+    page: cv-letter;
+  }
+
   .no-print {
     display: none !important;
+  }
+
+  .doc-pages-stack {
+    gap: 0 !important;
   }
 
   .doc-page {
     box-shadow: none !important;
     margin: 0 !important;
+    break-after: page;
     page-break-after: always;
   }
 
   .doc-page:last-child {
+    break-after: auto;
     page-break-after: auto;
   }
 
-  .doc-section,
-  .doc-entry {
+  .doc-section-title {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .tpl-entry-row,
+  .doc-entry-title {
     break-inside: avoid;
     page-break-inside: avoid;
   }

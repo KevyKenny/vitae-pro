@@ -1,4 +1,15 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
+import {
+  normalizeDocumentHref,
+  resolveDocumentLink,
+  type DocumentLinkKind,
+  type DocumentLinkOptions,
+  type DocumentLinkPlatform,
+} from "@/lib/document-links";
+
+function isExternalWebHref(href: string) {
+  return href.startsWith("http://") || href.startsWith("https://");
+}
 
 type DocLinkProps = {
   href: string;
@@ -6,27 +17,62 @@ type DocLinkProps = {
   className?: string;
 };
 
-function normalizeHref(raw: string): string | null {
-  const value = raw.trim();
-  if (!value) return null;
-  if (value.startsWith("mailto:") || value.startsWith("tel:")) return value;
-  if (value.includes("@") && !value.includes(" ")) {
-    return `mailto:${value}`;
-  }
-  if (/^https?:\/\//i.test(value)) return value;
-  if (value.startsWith("www.")) return `https://${value}`;
-  if (/^[a-z0-9.-]+\.[a-z]{2,}/i.test(value)) return `https://${value}`;
-  return null;
-}
-
 export function DocLink({ href, children, className }: DocLinkProps) {
-  const normalized = normalizeHref(href);
+  const normalized = normalizeDocumentHref(href);
   if (!normalized) {
     return <span className={className}>{children}</span>;
   }
+  const external = isExternalWebHref(normalized);
   return (
-    <a href={normalized} className={className} rel="noopener noreferrer">
+    <a
+      href={normalized}
+      className={className}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
+    >
       {children}
+    </a>
+  );
+}
+
+type DocResolvedLinkProps = {
+  raw: string;
+  className?: string;
+  kind?: DocumentLinkKind;
+  platformHint?: DocumentLinkPlatform;
+  preferPlatformLabel?: boolean;
+  preferProfileLabel?: boolean;
+  children?: ReactNode;
+};
+
+export function DocResolvedLink({
+  raw,
+  className,
+  kind,
+  platformHint,
+  preferPlatformLabel,
+  preferProfileLabel,
+  children,
+}: DocResolvedLinkProps) {
+  const options: DocumentLinkOptions = {
+    kind,
+    platformHint,
+    preferPlatformLabel,
+    preferProfileLabel,
+  };
+  const resolved = resolveDocumentLink(raw, options);
+  const label = children ?? resolved.label;
+  if (!resolved.href) {
+    return <span className={className}>{label}</span>;
+  }
+  return (
+    <a
+      href={resolved.href}
+      className={className}
+      target={resolved.kind === "web" ? "_blank" : undefined}
+      rel={resolved.kind === "web" ? "noopener noreferrer" : undefined}
+    >
+      {label}
     </a>
   );
 }

@@ -36,6 +36,8 @@ One document model feeds the editor preview, browser print, and server-generated
 
 ## Rendering layer
 
+See **[cv-rendering.md](./cv-rendering.md)** for pagination architecture, page geometry, preview scaling, and the print/PDF readiness contract.
+
 | File | Purpose |
 |------|---------|
 | `src/components/document/cv-document-view.tsx` | CV renderer (all sections) |
@@ -92,7 +94,7 @@ Completeness hints use `calculateCvCompletion()` — no extra OpenAI calls for d
 
 ## Testing checklist
 
-- [ ] CV PDF (1, 2, 3+ pages)
+- [ ] Preview page count = PDF page count
 - [ ] Cover letter PDF
 - [ ] Print from editor and dashboard
 - [ ] O Level / A Level subjects

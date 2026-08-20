@@ -22,7 +22,8 @@ import type {
   SubjectGrade,
   VolunteerExperience,
 } from "@/features/cv-editor/types";
-import type { EditorTemplateId } from "@/features/cv-editor/types";
+import { isTemplateRendererKey, resolveRendererKey } from "@/lib/templates/definitions";
+import { parseEditorStyle } from "@/lib/templates/mappers";
 import {
   toDbExperienceType,
   toDbQualificationType,
@@ -446,13 +447,20 @@ function mapSections(rows: SectionRow[]): CvSectionMeta[] {
 }
 
 export function assembleCvDocument(parts: CvDocumentParts): CvDocument {
-  const templateKey = (parts.cv.template_key ??
-    "modern") as EditorTemplateId;
+  const rawKey = parts.cv.template_key ?? "modern";
+  const rendererKey = isTemplateRendererKey(rawKey)
+    ? rawKey
+    : resolveRendererKey({ legacyTemplateId: parseEditorStyle(rawKey) });
+  const templateKey = parseEditorStyle(
+    isTemplateRendererKey(rawKey) ? "modern" : rawKey,
+  );
 
   const document: CvDocument = {
     id: parts.cv.id,
     title: parts.cv.title,
     templateId: templateKey,
+    templateSlug: rendererKey,
+    rendererKey,
     personal: mapPersonalRow(parts.personal),
     summary: parts.summary?.content ?? "",
     experience: parts.experiences
@@ -793,7 +801,7 @@ export function documentToPersistPayload(
     id: doc.id,
     user_id: userId,
     title: doc.title,
-    template_key: doc.templateId,
+    template_key: doc.rendererKey ?? doc.templateSlug ?? doc.templateId,
     completion,
     updated_at: new Date().toISOString(),
   };

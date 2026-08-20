@@ -67,6 +67,191 @@ function Bullets({
   );
 }
 
+export function experienceBulletLines(entry: ExperienceEntry): string[] {
+  if (entry.experienceType === "freelance") {
+    return entry.achievements.map((s) => s.trim()).filter(Boolean);
+  }
+  if ("responsibilities" in entry) {
+    return [...entry.responsibilities, ...entry.achievements]
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
+export function ExperienceEntryDocument({
+  entry,
+  part,
+  bullets,
+  continued,
+}: {
+  entry: ExperienceEntry;
+  part: "header" | "bullets" | "footer";
+  bullets?: string[];
+  continued?: boolean;
+}) {
+  const classes = documentClasses;
+
+  if (part === "bullets") {
+    const lines = bullets ?? experienceBulletLines(entry);
+    if (!lines.length) return null;
+    return <Bullets items={lines} classes={classes} />;
+  }
+
+  if (part === "footer") {
+    return (
+      <>
+        {entry.experienceType === "industrial-attachment" ||
+        entry.experienceType === "internship" ? (
+          <>
+            {entry.skillsGained.length ? (
+              <p className={classes.meta}>
+                Skills: {entry.skillsGained.join(" · ")}
+              </p>
+            ) : null}
+            {entry.includeSupervisorOnExport && entry.supervisor.name ? (
+              <p className={classes.meta}>
+                Referee: {entry.supervisor.name}
+                {entry.supervisor.position
+                  ? ` · ${entry.supervisor.position}`
+                  : ""}
+              </p>
+            ) : null}
+          </>
+        ) : null}
+      </>
+    );
+  }
+
+  return (
+    <div className={classes.entry}>
+      {continued ? (
+        <p className={`${classes.title} doc-entry-title--continued`}>
+          {experiencePrimaryTitle(entry)} (cont.)
+        </p>
+      ) : (
+        renderEntryHeader(entry, classes)
+      )}
+    </div>
+  );
+}
+
+function experiencePrimaryTitle(entry: ExperienceEntry): string {
+  switch (entry.experienceType) {
+    case "industrial-attachment":
+    case "internship":
+      return [experienceTypeLabel(entry.experienceType), entry.role || entry.department]
+        .filter(Boolean)
+        .join(" – ");
+    case "graduate-trainee":
+      return entry.programmeName || "Graduate Trainee";
+    case "volunteer":
+      return `Volunteer – ${entry.role || "Role"}`;
+    case "freelance":
+      return `Freelance – ${entry.projectName || "Project"}`;
+    default:
+      return [entry.position, entry.company].filter(Boolean).join(" · ");
+  }
+}
+
+function renderEntryHeader(
+  entry: ExperienceEntry,
+  classes: typeof documentClasses,
+) {
+  switch (entry.experienceType) {
+    case "industrial-attachment":
+    case "internship": {
+      const typeLabel = experienceTypeLabel(entry.experienceType);
+      const title = [typeLabel, entry.role || entry.department]
+        .filter(Boolean)
+        .join(" – ");
+      const when =
+        entry.dateMode === "duration" && entry.duration
+          ? `Duration: ${entry.duration}`
+          : formatDateRange(entry);
+      return (
+        <>
+          <p className={classes.title}>{title}</p>
+          <p className={classes.meta}>
+            {[entry.company, entry.department, entry.location]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+          {when ? <p className={classes.meta}>{when}</p> : null}
+        </>
+      );
+    }
+    case "graduate-trainee":
+      return (
+        <>
+          <p className={classes.title}>
+            {entry.programmeName || "Graduate Trainee"}
+            {entry.department ? ` – ${entry.department}` : ""}
+          </p>
+          <p className={classes.meta}>
+            {[entry.company, entry.location].filter(Boolean).join(" · ")}
+          </p>
+          <p className={classes.meta}>{formatDateRange(entry)}</p>
+          {entry.rotationDetails ? (
+            <p className={classes.body}>{entry.rotationDetails}</p>
+          ) : null}
+        </>
+      );
+    case "volunteer":
+      return (
+        <>
+          <p className={classes.title}>
+            Volunteer – {entry.role || "Role"}
+          </p>
+          <p className={classes.meta}>
+            {[entry.organization, entry.cause, entry.location]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+          <p className={classes.meta}>{formatDateRange(entry)}</p>
+          {entry.impact ? <p className={classes.body}>{entry.impact}</p> : null}
+        </>
+      );
+    case "freelance":
+      return (
+        <>
+          <p className={classes.title}>
+            Freelance – {entry.projectName || "Project"}
+          </p>
+          <p className={classes.meta}>
+            {[entry.clientName, entry.portfolioLink].filter(Boolean).join(" · ")}
+          </p>
+          <p className={classes.meta}>
+            {entry.dateMode === "duration" && entry.duration
+              ? `Duration: ${entry.duration}`
+              : formatDateRange(entry)}
+          </p>
+          {entry.technologies.length ? (
+            <p className={classes.meta}>{entry.technologies.join(" · ")}</p>
+          ) : null}
+        </>
+      );
+    default:
+      return (
+        <>
+          <p className={classes.title}>
+            {entry.position}
+            {entry.company ? ` · ${entry.company}` : ""}
+          </p>
+          <p className={classes.meta}>
+            {[
+              experienceTypeLabel(entry.experienceType),
+              formatDateRange(entry),
+              entry.location,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+        </>
+      );
+  }
+}
+
 function renderEntry(
   entry: ExperienceEntry,
   classes: typeof previewClasses,

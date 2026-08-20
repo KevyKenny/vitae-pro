@@ -3,6 +3,7 @@ import type { EditorTemplateId } from "@/features/cv-editor/types";
 import type { TemplateCustomization } from "@/features/templates/types";
 import { templateFonts } from "@/mocks/templates-gallery";
 import type { DocumentPageSize, DocumentStyleVars } from "@/components/document/types";
+import type { TemplateDefinition } from "@/lib/templates/definitions/types";
 
 const TEMPLATE_PRIMARY: Record<EditorTemplateId, string> = {
   modern: "#1F4D3D",
@@ -20,22 +21,38 @@ const TEMPLATE_ACCENT: Record<EditorTemplateId, string> = {
   creative: "#B08D3E",
 };
 
+const FONT_STACKS: Record<string, string> = {
+  inter: "var(--font-inter), Inter, system-ui, sans-serif",
+  roboto: "var(--font-roboto), Roboto, system-ui, sans-serif",
+  "open-sans": "'Open Sans', var(--font-inter), sans-serif",
+  lato: "Lato, var(--font-inter), sans-serif",
+  merriweather: "Merriweather, var(--font-serif), serif",
+  fraunces: "var(--font-fraunces), Fraunces, serif",
+  montserrat: "var(--font-montserrat), Montserrat, system-ui, sans-serif",
+  poppins: "var(--font-poppins), Poppins, system-ui, sans-serif",
+};
+
 function resolveFontStack(
   fontId: TemplateCustomization["fontFamily"] | undefined,
+  definition?: TemplateDefinition,
 ): string {
+  if (fontId && FONT_STACKS[fontId]) return FONT_STACKS[fontId];
   const match = templateFonts.find((f) => f.id === fontId);
-  return match?.stack ?? templateFonts[0].stack;
+  if (match?.stack) return match.stack;
+  return definition?.fonts.body ?? FONT_STACKS.inter;
 }
 
 function resolveHeadingFont(
   headingStyle: TemplateCustomization["headingStyle"] | undefined,
   bodyFont: string,
+  definition?: TemplateDefinition,
 ): string {
+  if (definition?.fonts.heading) return definition.fonts.heading;
   if (headingStyle === "sans") {
-    return "var(--font-sans), Inter, system-ui, sans-serif";
+    return "var(--font-inter), Inter, system-ui, sans-serif";
   }
   if (headingStyle === "mixed") {
-    return "var(--font-serif), Fraunces, Georgia, serif";
+    return "var(--font-fraunces), Fraunces, Georgia, serif";
   }
   return bodyFont;
 }
@@ -44,24 +61,42 @@ export function resolveCvDocumentStyle(
   templateId: EditorTemplateId,
   customization?: Partial<TemplateCustomization> | null,
   pageSize: DocumentPageSize = "a4",
+  definition?: TemplateDefinition,
 ): DocumentStyleVars {
-  const fontFamily = resolveFontStack(customization?.fontFamily);
-  const margins = customization?.margins ?? 32;
+  const defaults = definition?.defaultCustomization;
+  const fontFamily = resolveFontStack(
+    customization?.fontFamily ?? defaults?.fontFamily,
+    definition,
+  );
+  const margins = customization?.margins ?? defaults?.margins ?? 32;
+  const padRatio = definition?.pagePaddingRatio ?? { x: 0.9, y: 1 };
 
   return {
-    accent: customization?.accentColor ?? TEMPLATE_ACCENT[templateId],
-    primary: customization?.primaryColor ?? TEMPLATE_PRIMARY[templateId],
-    background: customization?.backgroundColor ?? "#FFFFFF",
-    text: customization?.textColor ?? "#1B1D1B",
+    accent:
+      customization?.accentColor ??
+      defaults?.accentColor ??
+      TEMPLATE_ACCENT[templateId],
+    primary:
+      customization?.primaryColor ??
+      defaults?.primaryColor ??
+      TEMPLATE_PRIMARY[templateId],
+    background:
+      customization?.backgroundColor ?? defaults?.backgroundColor ?? "#FFFFFF",
+    text: customization?.textColor ?? defaults?.textColor ?? "#1B1D1B",
     fontFamily,
-    fontHeading: resolveHeadingFont(customization?.headingStyle, fontFamily),
-    fontSize: customization?.fontSize ?? 11,
-    lineHeight: customization?.bodySpacing ?? 1.45,
-    padX: Math.round(margins * 0.9),
-    padY: Math.round(margins),
-    sectionSpacing: customization?.sectionSpacing ?? 12,
-    layout: customization?.layout ?? "single",
-    pageSize: customization?.pageSize === "a4" ? "a4" : pageSize,
+    fontHeading: resolveHeadingFont(
+      customization?.headingStyle ?? defaults?.headingStyle,
+      fontFamily,
+      definition,
+    ),
+    fontSize: customization?.fontSize ?? defaults?.fontSize ?? 11,
+    lineHeight: customization?.bodySpacing ?? defaults?.bodySpacing ?? 1.45,
+    padX: Math.round(margins * padRatio.x),
+    padY: Math.round(margins * padRatio.y),
+    sectionSpacing:
+      customization?.sectionSpacing ?? defaults?.sectionSpacing ?? 12,
+    layout: customization?.layout ?? defaults?.layout ?? "single",
+    pageSize,
   };
 }
 
@@ -70,6 +105,7 @@ export function documentStyleToCssVars(
 ): CSSProperties {
   return {
     ["--doc-accent" as string]: style.accent,
+    ["--doc-primary" as string]: style.primary,
     ["--doc-ink" as string]: style.text,
     ["--doc-bg" as string]: style.background,
     ["--doc-font" as string]: style.fontFamily,

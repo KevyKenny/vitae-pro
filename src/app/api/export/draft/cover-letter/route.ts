@@ -19,7 +19,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Invalid draft token." }, { status: 400 });
   }
 
-  const document = consumeCoverLetterDraft(parsed.data.token, user.id);
+  const document = await consumeCoverLetterDraft(parsed.data.token, user.id);
   if (!document) {
     return NextResponse.json({ error: "Draft expired or not found." }, { status: 404 });
   }

@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TemplateBadges } from "@/features/templates/components/template-badges";
-import { MiniPreview } from "@/features/templates/components/template-card";
+import { TemplateThumbnail } from "@/features/templates/components/template-thumbnail";
 import { useUser } from "@/features/auth/hooks/use-auth";
 import type { GalleryTemplate } from "@/features/templates/types";
 import { listUserCvs } from "@/lib/cvs";
@@ -167,12 +167,7 @@ export function TemplatePreview({ template }: { template: GalleryTemplate }) {
         className="rounded-[18px] border border-line bg-paper-dim p-6 shadow-s"
       >
         <div className="mx-auto aspect-[3/4] max-w-md">
-          <div
-            className="h-full rounded-[12px] border border-line-strong bg-surface p-6 shadow-m"
-            style={{ borderTopColor: template.accent, borderTopWidth: 4 }}
-          >
-            <MiniPreview accent={template.previewAccent} />
-          </div>
+          <TemplateThumbnail templateId={template.id} className="h-full border-line-strong shadow-m" />
         </div>
         <p className="mt-4 text-center text-sm text-ink-faint">
           Large preview · Apply template in the customizer for live CV content

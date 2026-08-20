@@ -163,7 +163,7 @@ export function TemplateGallery() {
             animate={{ opacity: 1, y: 0 }}
             className="mx-auto aspect-[3/4] w-full max-w-[260px] rounded-[14px] border border-line-strong bg-paper-dim p-4 shadow-m"
           >
-            <MiniPreview accent={featured.previewAccent} />
+            <MiniPreview templateId={featured.id} />
           </motion.div>
         </div>
       </section>

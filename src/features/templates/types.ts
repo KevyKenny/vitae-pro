@@ -41,7 +41,8 @@ export type FontFamilyId =
   | "open-sans"
   | "lato"
   | "merriweather"
-  | "fraunces";
+  | "fraunces"
+  | "montserrat";
 
 export type GallerySectionId =
   | "summary"

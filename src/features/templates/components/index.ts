@@ -1,5 +1,6 @@
 export { TemplateGallery } from "./template-gallery";
 export { TemplateCard, MiniPreview } from "./template-card";
+export { TemplateThumbnail } from "./template-thumbnail";
 export { TemplatePreview } from "./template-preview";
 export { TemplateFilter } from "./template-filter";
 export { SearchBar } from "./search-bar";

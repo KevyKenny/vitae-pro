@@ -110,9 +110,8 @@ export function CVEditorLayout() {
           <PanelShell
             id="cv-preview-panel"
             className={cn(
-              "min-h-0 lg:h-full",
+              "min-h-0 bg-paper-dim lg:h-full",
               mobilePane !== "preview" && "hidden lg:flex",
-              "pb-mobile-bar lg:pb-0",
             )}
           >
             <CVPreview className="h-full" />

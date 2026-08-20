@@ -1,4 +1,5 @@
 export { CvDocumentView } from "@/components/document/cv-document-view";
+export { CvPage } from "@/components/document/cv-page";
 export { CoverLetterDocumentView } from "@/components/document/cover-letter-document-view";
 export { DocContactLine, DocLink } from "@/components/document/document-links";
 export {

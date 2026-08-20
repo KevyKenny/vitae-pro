@@ -173,7 +173,9 @@ function renderTertiaryEntry(
   metaClass: string,
   bodyClass: string,
   variant: "preview" | "document",
+  options?: { includeDescription?: boolean },
 ) {
+  const includeDescription = options?.includeDescription ?? true;
   const title =
     entry.qualification.trim() ||
     qualificationLabel(entry.qualificationType);
@@ -194,7 +196,9 @@ function renderTertiaryEntry(
       {entry.achievements ? (
         <p className={bodyClass}>{entry.achievements}</p>
       ) : null}
-      {entry.description && !isBlankHtml(entry.description) ? (
+      {includeDescription &&
+      entry.description &&
+      !isBlankHtml(entry.description) ? (
         variant === "document" ? (
           <div
             className="doc-body prose-cv mt-1"
@@ -212,4 +216,108 @@ function renderTertiaryEntry(
 
 function stripHtml(html: string): string {
   return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+/** Header/meta for document pagination blocks; omits subject tables and rich descriptions. */
+export function EducationEntryDocumentHeader({
+  entry,
+}: {
+  entry: EducationEntry;
+}) {
+  const titleClass = "doc-entry-title";
+  const metaClass = "doc-entry-meta";
+  const bodyClass = "doc-body";
+
+  switch (entry.qualificationType) {
+    case "o-level":
+    case "a-level": {
+      const board = examBoardLabel(
+        entry.examinationBoard,
+        entry.examinationBoardOther,
+      );
+      const level =
+        entry.qualificationType === "o-level"
+          ? "Ordinary Level"
+          : "Advanced Level";
+      return (
+        <div className="doc-entry">
+          <p className={titleClass}>
+            {board} – {level}
+          </p>
+          {entry.schoolName ? (
+            <p className={metaClass}>{entry.schoolName}</p>
+          ) : null}
+          {entry.yearCompleted ? (
+            <p className={metaClass}>Completed: {entry.yearCompleted}</p>
+          ) : null}
+          {entry.candidateNumber ? (
+            <p className={metaClass}>Candidate number: {entry.candidateNumber}</p>
+          ) : null}
+        </div>
+      );
+    }
+    case "certificate":
+      return (
+        <div className="doc-entry">
+          <p className={titleClass}>
+            {entry.certificateName || qualificationLabel(entry.qualificationType)}
+          </p>
+          <p className={metaClass}>
+            {[entry.institution, entry.year].filter(Boolean).join(" · ")}
+          </p>
+          {entry.description ? (
+            <p className={bodyClass}>{entry.description}</p>
+          ) : null}
+        </div>
+      );
+    case "professional":
+      return (
+        <div className="doc-entry">
+          <p className={titleClass}>
+            {entry.certificationName ||
+              qualificationLabel(entry.qualificationType)}
+          </p>
+          <p className={metaClass}>
+            {[entry.issuingOrganization, entry.issueDate]
+              .filter(Boolean)
+              .join(" · ")}
+            {entry.expiryDate ? ` · Expires ${entry.expiryDate}` : ""}
+          </p>
+          {entry.credentialId ? (
+            <p className={metaClass}>ID: {entry.credentialId}</p>
+          ) : null}
+        </div>
+      );
+    case "vocational":
+    case "short-course":
+    case "apprenticeship":
+      return (
+        <div className="doc-entry">
+          <p className={titleClass}>
+            {entry.programmeName || qualificationLabel(entry.qualificationType)}
+          </p>
+          <p className={metaClass}>
+            {[entry.trainingProvider, entry.duration, entry.completionDate]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+          {entry.skillsAcquired ? (
+            <p className={bodyClass}>{entry.skillsAcquired}</p>
+          ) : null}
+        </div>
+      );
+    default:
+      return (
+        <div className="doc-entry">
+          {renderTertiaryEntry(
+            entry,
+            titleClass,
+            metaClass,
+            bodyClass,
+            "document",
+            { includeDescription: false },
+          )}
+        </div>
+      );
+  }
 }

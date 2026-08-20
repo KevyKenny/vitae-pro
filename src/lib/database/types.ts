@@ -694,6 +694,26 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["cv_versions"]["Insert"]>;
         Relationships: [];
       };
+      export_drafts: {
+        Row: {
+          token: string;
+          user_id: string;
+          document_type: string;
+          payload: Json;
+          expires_at: string;
+          created_at: string;
+        };
+        Insert: {
+          token?: string;
+          user_id: string;
+          document_type: string;
+          payload: Json;
+          expires_at: string;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["export_drafts"]["Insert"]>;
+        Relationships: [];
+      };
       user_template_customizations: {
         Row: {
           id: string;

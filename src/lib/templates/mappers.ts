@@ -152,6 +152,7 @@ function parseFontFamilyId(
     "lato",
     "merriweather",
     "fraunces",
+    "montserrat",
   ];
   if (typeof value === "string" && allowed.includes(value as TemplateCustomization["fontFamily"])) {
     return value as TemplateCustomization["fontFamily"];

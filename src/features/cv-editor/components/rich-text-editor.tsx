@@ -20,7 +20,6 @@ const aiActions = [
   "Rewrite",
   "Make More Professional",
   "Make More Concise",
-  "Generate", 
 ];
 
 export function RichTextEditor({
@@ -61,7 +60,7 @@ export function RichTextEditor({
       <Textarea
         value={value}
         onChange={(e) => onChange(e.target.value.slice(0, maxLength))}
-        rows={5}
+        rows={6}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         className={cn(

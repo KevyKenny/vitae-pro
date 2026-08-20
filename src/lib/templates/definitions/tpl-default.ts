@@ -30,6 +30,8 @@ export const tplDefaultDefinition: TemplateDefinition = {
       ...buildSidebarBlocks(document, {
         withHeaderBand: true,
         withIcons: true,
+        skillsLabel: "Technical Skills",
+        skillCategoryIds: ["technical", "frameworks", "tools"],
         skillGroupLabel: (group) => {
           if (group.id === "technical") return "Programming Languages";
           if (group.id === "frameworks") return "Frameworks";

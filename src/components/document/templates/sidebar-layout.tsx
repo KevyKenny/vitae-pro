@@ -28,6 +28,11 @@ export type SidebarBlockOptions = {
   groupSkills?: boolean;
   /** Override a skill-category heading, e.g. technical → Programming Languages. */
   skillGroupLabel?: (group: { id: string; label: string }) => string;
+  /**
+   * When set, only these skill category ids are rendered under Skills
+   * (e.g. technical / frameworks / tools for the Default template).
+   */
+  skillCategoryIds?: string[];
   /** One skill name per line, no category labels (template-4.pdf). */
   flatSkillList?: boolean;
 };
@@ -102,6 +107,7 @@ export function appendSidebarBlocks(
     qualitiesLabel = "Qualities",
     groupSkills = true,
     flatSkillList = false,
+    skillCategoryIds,
   } = options;
 
   if (withHeaderBand) {
@@ -158,9 +164,19 @@ export function appendSidebarBlocks(
     });
   }
 
-  const skillGroups = groupedSkills(document).filter(
-    (group) => !group.label.toLowerCase().includes("soft"),
-  );
+  const allowedSkillCategories = skillCategoryIds
+    ? new Set(skillCategoryIds)
+    : null;
+  const skillGroups = groupedSkills(document)
+    .filter((group) => !group.label.toLowerCase().includes("soft"))
+    .filter((group) =>
+      allowedSkillCategories ? allowedSkillCategories.has(group.id) : true,
+    )
+    .map((group) => ({
+      ...group,
+      skills: group.skills.filter((skill) => skill.name?.trim()),
+    }))
+    .filter((group) => group.skills.length > 0);
 
   if (skillGroups.length > 0) {
     pushBlock(state, {

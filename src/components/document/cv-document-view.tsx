@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import { DocumentReadyMarker } from "@/components/document/document-ready";
 import { renderContentBlock } from "@/components/document/pagination/build-cv-blocks";
 import { useDocumentPages } from "@/components/document/pagination/use-document-pages";
@@ -48,16 +49,18 @@ export function CvDocumentView({
 
   const pageStack = (
     <div className="doc-pages-stack">
-      {Array.from({ length: pageCount }, (_, pageIndex) =>
-        definition.renderPage({
-          pageIndex,
-          pageCount,
-          regionPages,
-          blockMap,
-          ctx: { ...renderCtx, mode },
-          mode,
-        }),
-      )}
+      {Array.from({ length: pageCount }, (_, pageIndex) => (
+        <Fragment key={`${definition.id}-${pageIndex}`}>
+          {definition.renderPage({
+            pageIndex,
+            pageCount,
+            regionPages,
+            blockMap,
+            ctx: { ...renderCtx, mode },
+            mode,
+          })}
+        </Fragment>
+      ))}
     </div>
   );
 

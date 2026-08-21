@@ -34,6 +34,36 @@ export type LetterSectionKey =
   | "closing"
   | "signature";
 
+export const LETTER_BODY_SECTIONS: LetterSectionKey[] = [
+  "greeting",
+  "opening",
+  "experience",
+  "skills",
+  "closing",
+  "signature",
+];
+
+export type LetterWorkspacePane =
+  | "job"
+  | "applicant"
+  | "style"
+  | LetterSectionKey;
+
+export function isLetterSectionKey(
+  pane: string,
+): pane is LetterSectionKey {
+  return (LETTER_BODY_SECTIONS as string[]).includes(pane);
+}
+
+export function letterHasDraft(body: CoverLetterBody): boolean {
+  return Boolean(
+    body.opening.trim() ||
+      body.experience.trim() ||
+      body.skills.trim() ||
+      body.closing.trim(),
+  );
+}
+
 export type JobInfo = {
   companyName: string;
   jobTitle: string;

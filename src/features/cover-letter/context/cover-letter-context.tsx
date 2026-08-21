@@ -17,6 +17,7 @@ import {
 import type {
   ApplicationStatus,
   CoverLetterDocument,
+  CoverLetterBody,
   CoverLetterSuggestion,
   JobInfo,
   LetterAiSuggestion,
@@ -24,8 +25,13 @@ import type {
   LetterSectionKey,
   LetterTemplateId,
   LetterTone,
+  LetterWorkspacePane,
   SaveStatus,
   SavedCoverLetterSummary,
+} from "@/features/cover-letter/types";
+import {
+  isLetterSectionKey,
+  letterHasDraft,
 } from "@/features/cover-letter/types";
 import type { CvTailoringResult, JobAnalysisResult } from "@/lib/ai/types";
 import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
@@ -60,9 +66,14 @@ type CoverLetterContextValue = {
   setTemplatesOpen: (open: boolean) => void;
   jobFormOpen: boolean;
   setJobFormOpen: (open: boolean) => void;
+  activePane: LetterWorkspacePane;
+  setActivePane: (pane: LetterWorkspacePane) => void;
   activeSection: LetterSectionKey | null;
   setActiveSection: (key: LetterSectionKey | null) => void;
   aiSuggestion: LetterAiSuggestion | null;
+  pendingGeneratedBody: Partial<CoverLetterBody> | null;
+  applyGeneratedLetter: () => void;
+  discardGeneratedLetter: () => void;
   generating: boolean;
   generationStepIndex: number;
   analyzing: boolean;
@@ -146,12 +157,16 @@ export function CoverLetterProvider({
   const [aiOpen, setAiOpen] = useState(false);
   const [templatesOpen, setTemplatesOpen] = useState(false);
   const [jobFormOpen, setJobFormOpen] = useState(false);
+  const [activePane, setActivePaneState] = useState<LetterWorkspacePane>("job");
   const [activeSection, setActiveSection] = useState<LetterSectionKey | null>(
     "opening",
   );
   const [aiSuggestion, setAiSuggestion] = useState<LetterAiSuggestion | null>(
     null,
   );
+  const [pendingGeneratedBody, setPendingGeneratedBody] = useState<
+    Partial<CoverLetterBody> | null
+  >(null);
   const [generating, setGenerating] = useState(false);
   const [generationStepIndex, setGenerationStepIndex] = useState(-1);
   const [analyzing, setAnalyzing] = useState(false);
@@ -163,6 +178,8 @@ export function CoverLetterProvider({
   const saveTimer = useRef<number | null>(null);
   const documentRef = useRef<CoverLetterDocument | null>(null);
   const savingRef = useRef(false);
+  const pendingAutosaveRef = useRef(false);
+  const mutationSeqRef = useRef(0);
   const aiAbortRef = useRef<AbortController | null>(null);
   const lastSectionAiRef = useRef<{
     action: string;
@@ -206,6 +223,12 @@ export function CoverLetterProvider({
         setDocument(doc);
         setSaveStatus("saved");
         setLoadState("ready");
+        if (letterHasDraft(doc.body)) {
+          setActivePaneState("opening");
+          setActiveSection("opening");
+        } else {
+          setActivePaneState("job");
+        }
       } catch (error) {
         if (cancelled) return;
         setLoadError(
@@ -231,18 +254,31 @@ export function CoverLetterProvider({
     }
   }, []);
 
-  const persistNow = useCallback(async () => {
+  const persistNow = useCallback(async function persistCoverLetter() {
     const current = documentRef.current;
-    if (!current || savingRef.current) return;
+    if (!current) return;
+
+    if (savingRef.current) {
+      pendingAutosaveRef.current = true;
+      return;
+    }
+
+    const seqAtStart = mutationSeqRef.current;
+    const snapshot = current;
     savingRef.current = true;
     setSaveStatus("saving");
     try {
-      const saved = await saveCoverLetterDocument(current, {
-        cvId: current.cvId ?? null,
+      const saved = await saveCoverLetterDocument(snapshot, {
+        cvId: snapshot.cvId ?? null,
       });
-      documentRef.current = saved;
-      setDocument(saved);
-      setSaveStatus("saved");
+      if (mutationSeqRef.current === seqAtStart) {
+        documentRef.current = saved;
+        setDocument(saved);
+        setSaveStatus("saved");
+        return;
+      }
+      setSaveStatus("unsaved");
+      pendingAutosaveRef.current = true;
     } catch (error) {
       setSaveStatus("failed");
       toast.error("Autosave failed", {
@@ -253,12 +289,19 @@ export function CoverLetterProvider({
         action: {
           label: "Retry",
           onClick: () => {
-            void persistNow();
+            void persistCoverLetter();
           },
         },
       });
     } finally {
       savingRef.current = false;
+      if (pendingAutosaveRef.current) {
+        pendingAutosaveRef.current = false;
+        if (saveTimer.current) window.clearTimeout(saveTimer.current);
+        saveTimer.current = window.setTimeout(() => {
+          void persistCoverLetter();
+        }, 400);
+      }
     }
   }, []);
 
@@ -272,6 +315,7 @@ export function CoverLetterProvider({
 
   const updateDocument = useCallback(
     (updater: (prev: CoverLetterDocument) => CoverLetterDocument) => {
+      mutationSeqRef.current += 1;
       setDocument((prev) => {
         if (!prev) return prev;
         const next = {
@@ -285,6 +329,13 @@ export function CoverLetterProvider({
     },
     [scheduleSave],
   );
+
+  const setActivePane = useCallback((pane: LetterWorkspacePane) => {
+    setActivePaneState(pane);
+    if (isLetterSectionKey(pane)) {
+      setActiveSection(pane);
+    }
+  }, []);
 
   const runSectionAi = useCallback(
     (action: string, sectionKey: LetterSectionKey) => {
@@ -341,6 +392,7 @@ export function CoverLetterProvider({
             confidence: result.confidence,
           });
           setActiveSection(sectionKey);
+          setActivePaneState(sectionKey);
           setAiOpen(true);
         } catch (error) {
           if (error instanceof DOMException && error.name === "AbortError") {
@@ -374,9 +426,12 @@ export function CoverLetterProvider({
       setTemplatesOpen,
       jobFormOpen,
       setJobFormOpen,
+      activePane,
+      setActivePane,
       activeSection,
       setActiveSection,
       aiSuggestion,
+      pendingGeneratedBody,
       generating,
       generationStepIndex,
       analyzing,
@@ -521,18 +576,28 @@ export function CoverLetterProvider({
 
             const company = doc.job.companyName || "the company";
             const role = doc.job.jobTitle || "the role";
+            const hadDraft = letterHasDraft(doc.body);
 
-            updateDocument((prev) => ({
-              ...prev,
-              body: {
-                ...prev.body,
-                ...result.body,
-              },
-              title: `${company} — ${role}`,
-            }));
-            toast.success("Cover letter generated", {
-              description: "Review and edit before sending.",
-            });
+            if (hadDraft) {
+              setPendingGeneratedBody(result.body);
+              setActivePaneState("opening");
+              toast.message("AI draft ready", {
+                description: "Review the suggestion, then apply it if you want to replace your letter.",
+              });
+            } else {
+              updateDocument((prev) => ({
+                ...prev,
+                body: {
+                  ...prev.body,
+                  ...result.body,
+                },
+                title: `${company} — ${role}`,
+              }));
+              setActivePaneState("opening");
+              toast.success("Cover letter generated", {
+                description: "Review and edit before sending.",
+              });
+            }
           } catch (error) {
             if (error instanceof DOMException && error.name === "AbortError") {
               toast.message("Generation cancelled");
@@ -604,6 +669,24 @@ export function CoverLetterProvider({
         toast.success("Suggestion applied");
       },
       discardAiSuggestion: () => setAiSuggestion(null),
+      applyGeneratedLetter: () => {
+        if (!pendingGeneratedBody) return;
+        const current = documentRef.current;
+        updateDocument((prev) => ({
+          ...prev,
+          body: {
+            ...prev.body,
+            ...pendingGeneratedBody,
+          },
+          title: current
+            ? `${current.job.companyName || "Company"} — ${current.job.jobTitle || "Role"}`
+            : prev.title,
+        }));
+        setPendingGeneratedBody(null);
+        setActivePaneState("opening");
+        toast.success("AI draft applied");
+      },
+      discardGeneratedLetter: () => setPendingGeneratedBody(null),
       regenerateAi: () => {
         const last = lastSectionAiRef.current;
         if (last) {
@@ -700,8 +783,11 @@ export function CoverLetterProvider({
     aiOpen,
     templatesOpen,
     jobFormOpen,
+    activePane,
+    setActivePane,
     activeSection,
     aiSuggestion,
+    pendingGeneratedBody,
     generating,
     generationStepIndex,
     analyzing,
@@ -733,9 +819,7 @@ export function CoverLetterProvider({
             "This cover letter could not be loaded. It may have been deleted or you may not have access."
           }
           actionLabel="Back to Cover Letters"
-          onAction={() => {
-            window.location.href = "/cover-letters";
-          }}
+          actionHref="/cover-letters"
           className="max-w-md"
         />
         <div className="sr-only">

@@ -15,10 +15,7 @@ import {
   getTemplateBySlugOrId,
   templateErrorMessage,
 } from "@/lib/templates";
-import {
-  galleryTemplates,
-  getGalleryTemplateById,
-} from "@/mocks/templates-gallery";
+import { getGalleryTemplateById } from "@/mocks/templates-gallery";
 
 export function TemplateDetailClient({ id }: { id: string }) {
   const [template, setTemplate] = useState<GalleryTemplate | null>(null);
@@ -113,14 +110,5 @@ export function TemplateDetailClient({ id }: { id: string }) {
       />
       <TemplatePreview template={template} />
     </PageContainer>
-  );
-}
-
-/** Resolve a display name for metadata without requiring auth. */
-export function resolveTemplateTitle(id: string): string {
-  return (
-    getGalleryTemplateById(id)?.name ??
-    galleryTemplates.find((t) => t.id === id)?.name ??
-    "Template"
   );
 }

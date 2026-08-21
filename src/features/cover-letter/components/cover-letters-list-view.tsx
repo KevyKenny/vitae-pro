@@ -62,8 +62,25 @@ export function CoverLettersListView() {
   }, []);
 
   useEffect(() => {
-    void refresh();
-  }, [refresh]);
+    let cancelled = false;
+    void listUserCoverLetters()
+      .then((items) => {
+        if (cancelled) return;
+        setLetters(items.map(mapListItemToSummary));
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        toast.error(
+          coverLetterErrorMessage(error, "Could not load your cover letters."),
+        );
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const sorted = useMemo(
     () =>

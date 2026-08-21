@@ -1,7 +1,5 @@
-import {
-  TemplateDetailClient,
-  resolveTemplateTitle,
-} from "@/features/templates/components/template-detail-client";
+import { TemplateDetailClient } from "@/features/templates/components/template-detail-client";
+import { resolveTemplateTitle } from "@/lib/templates/title";
 
 type PageProps = {
   params: Promise<{ id: string }>;

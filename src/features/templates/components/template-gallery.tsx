@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { LayoutTemplate } from "lucide-react";
@@ -9,11 +9,6 @@ import { PageContainer } from "@/components/layout/page-container";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { LoadingSkeleton } from "@/components/shared/loading-skeleton";
-import { SearchBar } from "@/features/templates/components/search-bar";
-import {
-  TemplateFilter,
-  type TemplateFiltersState,
-} from "@/features/templates/components/template-filter";
 import { TemplateCard } from "@/features/templates/components/template-card";
 import { TemplateComparison } from "@/features/templates/components/template-comparison";
 import { SavedTemplateCard } from "@/features/templates/components/saved-template-card";
@@ -30,15 +25,7 @@ import {
 } from "@/lib/templates";
 import { toast } from "sonner";
 
-const DEFAULT_FILTERS: TemplateFiltersState = {
-  style: "all",
-  careerLevel: "all",
-  industry: "all",
-};
-
 export function TemplateGallery() {
-  const [query, setQuery] = useState("");
-  const [filters, setFilters] = useState<TemplateFiltersState>(DEFAULT_FILTERS);
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [templates, setTemplates] = useState<GalleryTemplate[]>([]);
   const [saved, setSaved] = useState<SavedTemplateEntry[]>([]);
@@ -76,31 +63,6 @@ export function TemplateGallery() {
 
   const featured =
     templates.find((t) => t.isFeatured) ?? templates[0] ?? galleryTemplates[0];
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return templates.filter((t) => {
-      if (filters.style !== "all" && t.style !== filters.style) return false;
-      if (
-        filters.careerLevel !== "all" &&
-        !t.careerLevels.includes(filters.careerLevel)
-      )
-        return false;
-      if (
-        filters.industry !== "all" &&
-        !t.industries.includes(filters.industry)
-      )
-        return false;
-      if (!q) return true;
-      return (
-        t.name.toLowerCase().includes(q) ||
-        t.style.includes(q) ||
-        t.industries.some((i) => i.includes(q)) ||
-        t.careerLevels.some((c) => c.includes(q)) ||
-        t.description.toLowerCase().includes(q)
-      );
-    });
-  }, [query, filters, templates]);
 
   const compareTemplates = templates.filter((t) =>
     compareIds.includes(t.id),
@@ -228,34 +190,24 @@ export function TemplateGallery() {
         )}
       </section>
 
-      {/* Search & filters */}
-      <section className="mb-6 space-y-5" id="gallery-grid">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="font-serif text-xl font-semibold text-ink">
-            Browse all templates
-          </h2>
-          <SearchBar value={query} onChange={setQuery} className="sm:max-w-xs" />
-        </div>
-        <TemplateFilter filters={filters} onChange={setFilters} />
+      <section className="mb-6" id="gallery-grid">
+        <h2 className="font-serif text-xl font-semibold text-ink">
+          Browse all templates
+        </h2>
       </section>
 
-      {filtered.length === 0 ? (
+      {templates.length === 0 ? (
         <EmptyState
           icon={LayoutTemplate}
-          title="No templates match"
-          description="Try clearing filters or searching a different style / industry."
-          actionLabel="Reset filters"
-          onAction={() => {
-            setFilters(DEFAULT_FILTERS);
-            setQuery("");
-          }}
+          title="No templates yet"
+          description="Templates will appear here once they are available."
         />
       ) : (
         <motion.div
           layout
           className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
         >
-          {filtered.map((template) => (
+          {templates.map((template) => (
             <TemplateCard
               key={template.id}
               template={template}

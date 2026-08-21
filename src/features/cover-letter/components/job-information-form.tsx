@@ -16,7 +16,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useCoverLetter } from "@/features/cover-letter/context/cover-letter-context";
 import { JobAnalysisCard } from "@/features/cover-letter/components/job-analysis-card";
 import { CvTailorCard } from "@/features/cover-letter/components/cv-tailor-card";
-import { CandidateProfileCard } from "@/features/cover-letter/components/candidate-profile-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { listUserCvs, type CvListItem } from "@/lib/cvs";
 import { cn } from "@/lib/utils";
@@ -61,11 +60,20 @@ export function JobInformationForm({
   return (
     <aside
       className={cn(
-        "flex h-full min-w-0 flex-col overflow-y-auto bg-paper",
-        embedded ? "border-0 px-4 py-4" : "border-r border-line px-4 py-5 sm:px-5 md:px-7 md:py-6",
+        "min-w-0 bg-surface",
+        embedded ? "px-5 py-5 sm:px-7 sm:py-6" : "flex h-full flex-col overflow-y-auto border-r border-line px-4 py-5 sm:px-5 md:px-7 md:py-6",
       )}
     >
-      {!embedded ? (
+      {embedded ? (
+        <div className="border-b border-line pb-4">
+          <h3 className="font-sans text-[0.92rem] font-semibold text-ink">
+            Job details
+          </h3>
+          <p className="mt-1 text-sm text-ink-soft">
+            Company, role, and posting — used to draft and tailor the letter.
+          </p>
+        </div>
+      ) : (
         <div className="mb-5 sm:mb-6">
           <h1 className="font-serif text-[1.25rem] font-semibold tracking-tight text-ink sm:text-[1.35rem]">
             Cover Letter
@@ -75,9 +83,9 @@ export function JobInformationForm({
             it.
           </p>
         </div>
-      ) : null}
+      )}
 
-      <div className="space-y-6 pb-8 sm:space-y-7 sm:pb-10">
+      <div className="mt-5 space-y-6 pb-8 sm:space-y-7 sm:pb-10">
         <section className="space-y-3">
           <p className="text-[0.72rem] font-bold tracking-[0.04em] text-ink-faint uppercase">
             Company information
@@ -133,9 +141,9 @@ export function JobInformationForm({
 
         <section className="space-y-3">
           <div className="flex items-end justify-between gap-2">
-            <p className="text-[0.72rem] font-bold tracking-[0.04em] text-ink-faint uppercase">
+            <Label htmlFor="job-description" className="text-[0.72rem] font-bold tracking-[0.04em] text-ink-faint uppercase">
               Job description
-            </p>
+            </Label>
             <span className="text-[0.7rem] text-ink-faint">{descLen} chars</span>
           </div>
           {!job.jobDescription.trim() ? (
@@ -147,6 +155,7 @@ export function JobInformationForm({
             />
           ) : null}
           <Textarea
+            id="job-description"
             value={job.jobDescription}
             onChange={(e) => updateJob({ jobDescription: e.target.value })}
             placeholder="Paste the job description here..."
@@ -187,7 +196,7 @@ export function JobInformationForm({
 
         <section className="space-y-3">
           <p className="text-[0.72rem] font-bold tracking-[0.04em] text-ink-faint uppercase">
-            Candidate information
+            Associated CV
           </p>
           <Field label="Associated CV" id="associated-cv">
             <Select
@@ -209,7 +218,6 @@ export function JobInformationForm({
               </SelectContent>
             </Select>
           </Field>
-          <CandidateProfileCard />
         </section>
 
         <Button
@@ -223,7 +231,7 @@ export function JobInformationForm({
           }}
         >
           <Sparkles className="size-4" />
-          {generating ? "Generating…" : "Generate with AI"}
+          {generating ? "Generating…" : "Generate cover letter"}
         </Button>
       </div>
     </aside>

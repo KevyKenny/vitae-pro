@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { LETTER_PANE_LABELS } from "@/features/cover-letter/components/letter-section-navigator";
 import { useCoverLetter } from "@/features/cover-letter/context/cover-letter-context";
 
 export function AIWritingPanel() {
@@ -34,7 +35,9 @@ export function AIWritingPanel() {
           <p className="text-sm text-ink-soft">
             Section:{" "}
             <span className="font-semibold text-ink">
-              {activeSection ?? "—"}
+              {activeSection
+                ? LETTER_PANE_LABELS[activeSection]
+                : "—"}
             </span>
           </p>
         </div>
@@ -146,8 +149,8 @@ export function AIWritingPanel() {
           </div>
         ) : (
           <p className="text-sm text-ink-soft">
-            Select an AI action on any paragraph to see a contextual rewrite
-            here.
+            Choose an AI action on a paragraph. Suggestions appear here for you
+            to accept or reject — they never replace your writing automatically.
           </p>
         )}
       </div>

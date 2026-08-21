@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { JobInformationForm } from "@/features/cover-letter/components/job-information-form";
 import { CoverLetterEditor } from "@/features/cover-letter/components/cover-letter-editor";
 import { CoverLetterPreview } from "@/features/cover-letter/components/cover-letter-preview";
 import { CoverLetterToolbar } from "@/features/cover-letter/components/cover-letter-toolbar";
 import { AIWritingPanel } from "@/features/cover-letter/components/ai-writing-panel";
 import { TemplateCard } from "@/features/cover-letter/components/template-card";
+import {
+  LetterMobileSectionBar,
+  LetterSectionNavigator,
+} from "@/features/cover-letter/components/letter-section-navigator";
 import { useCoverLetter } from "@/features/cover-letter/context/cover-letter-context";
 import { letterTemplates } from "@/mocks/cover-letter-builder";
 import {
@@ -23,8 +25,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { MobileBottomBar } from "@/components/shared/mobile-bottom-bar";
-import { Download, Eye, LayoutTemplate, PencilLine, Sparkles } from "lucide-react";
-import { toast } from "sonner";
+import { Eye, LayoutTemplate, PencilLine, Sparkles } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { cn } from "@/lib/utils";
 
@@ -38,52 +39,51 @@ export function CoverLetterLayout() {
     setAiOpen,
     templatesOpen,
     setTemplatesOpen,
-    jobFormOpen,
-    setJobFormOpen,
     document,
     setTemplate,
   } = useCoverLetter();
-  const [mobilePane, setMobilePane] = useState<MobilePane>("edit");
 
-  useEffect(() => {
-    if (previewOpen) setMobilePane("preview");
-  }, [previewOpen]);
+  const mobilePane: MobilePane = previewOpen ? "preview" : "edit";
 
   function selectPane(pane: MobilePane) {
-    setMobilePane(pane);
     setPreviewOpen(pane === "preview");
   }
 
   return (
     <div className="flex h-dvh min-w-0 flex-col bg-paper-dim">
       <CoverLetterToolbar onRequestPreview={() => selectPane("preview")} />
+      {mobilePane === "edit" ? <LetterMobileSectionBar /> : null}
 
-      <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden">
-        <div className="hidden h-full w-[min(380px,36%)] shrink-0 border-r border-line bg-surface lg:block xl:w-[400px]">
-          <JobInformationForm />
-        </div>
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <LetterSectionNavigator />
 
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden xl:flex-row">
-          <div
+        <main
+          className={cn(
+            "grid min-h-0 min-w-0 flex-1",
+            "auto-rows-auto grid-cols-1 gap-0 overflow-hidden",
+            "lg:grid-cols-2 lg:grid-rows-1 lg:gap-4 lg:p-4",
+          )}
+        >
+          <PanelShell
             className={cn(
-              "min-h-0 min-w-0 flex-1 overflow-hidden bg-surface",
-              "pb-mobile-bar xl:pb-0",
-              mobilePane !== "edit" && "hidden xl:flex xl:flex-col",
+              "min-h-0 lg:h-full",
+              mobilePane !== "edit" && "hidden lg:flex",
+              "pb-mobile-bar lg:pb-0",
             )}
           >
             <CoverLetterEditor />
-          </div>
+          </PanelShell>
 
-          <div
+          <PanelShell
+            id="cover-letter-preview-panel"
             className={cn(
-              "min-h-0 min-w-0 flex-1 overflow-hidden bg-surface",
-              "pb-mobile-bar xl:border-l xl:border-line xl:pb-0 xl:max-w-[440px]",
-              mobilePane !== "preview" && "hidden xl:flex xl:flex-col",
+              "min-h-0 bg-paper-dim lg:h-full",
+              mobilePane !== "preview" && "hidden lg:flex",
             )}
           >
-            <CoverLetterPreview className="h-full border-l-0" />
-          </div>
-        </div>
+            <CoverLetterPreview className="h-full" />
+          </PanelShell>
+        </main>
       </div>
 
       <Sheet open={aiOpen} onOpenChange={setAiOpen}>
@@ -96,20 +96,6 @@ export function CoverLetterLayout() {
           </SheetHeader>
           <div className="h-full [&_aside]:w-full [&_aside]:border-l-0 [&_aside]:shadow-none">
             <AIWritingPanel />
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      <Sheet open={jobFormOpen} onOpenChange={setJobFormOpen}>
-        <SheetContent
-          side="bottom"
-          className="flex h-[min(92dvh,740px)] w-full max-w-full flex-col gap-0 overflow-hidden p-0 safe-pb"
-        >
-          <SheetHeader className="shrink-0 border-b border-line px-4 py-3 text-left">
-            <SheetTitle className="font-serif text-lg">Job details</SheetTitle>
-          </SheetHeader>
-          <div className="min-h-0 flex-1 overflow-y-auto">
-            <JobInformationForm embedded />
           </div>
         </SheetContent>
       </Sheet>
@@ -148,18 +134,9 @@ export function CoverLetterLayout() {
       <MobileBottomBar>
         <Button
           type="button"
-          variant="outline"
-          shape="soft"
-          className="min-w-0 flex-1 rounded-[8px] px-2"
-          onClick={() => setJobFormOpen(true)}
-        >
-          Job
-        </Button>
-        <Button
-          type="button"
           variant={mobilePane === "edit" ? "primary" : "outline"}
           shape="soft"
-          className="min-w-0 flex-1 rounded-[8px] px-2"
+          className="flex-1 rounded-[8px]"
           aria-pressed={mobilePane === "edit"}
           onClick={() => selectPane("edit")}
         >
@@ -170,7 +147,7 @@ export function CoverLetterLayout() {
           type="button"
           variant={mobilePane === "preview" ? "primary" : "outline"}
           shape="soft"
-          className="min-w-0 flex-1 rounded-[8px] px-2"
+          className="flex-1 rounded-[8px]"
           aria-pressed={mobilePane === "preview"}
           onClick={() => selectPane("preview")}
         >
@@ -183,20 +160,35 @@ export function CoverLetterLayout() {
           shape="soft"
           className="rounded-[8px]"
           onClick={() => setAiOpen(true)}
-          aria-label="AI assistant"
         >
           <Sparkles className="size-4" />
-        </Button>
-        <Button
-          type="button"
-          shape="soft"
-          className="rounded-[8px]"
-          onClick={() => toast.success("Download (UI only)")}
-          aria-label="Download"
-        >
-          <Download className="size-4" />
+          AI
         </Button>
       </MobileBottomBar>
     </div>
+  );
+}
+
+function PanelShell({
+  children,
+  className,
+  id,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  id?: string;
+}) {
+  return (
+    <section
+      id={id}
+      className={cn(
+        "flex min-h-0 min-w-0 flex-col overflow-hidden bg-surface",
+        "border-b border-line lg:border-b-0",
+        "lg:rounded-[14px] lg:border lg:border-line lg:shadow-s",
+        className,
+      )}
+    >
+      {children}
+    </section>
   );
 }

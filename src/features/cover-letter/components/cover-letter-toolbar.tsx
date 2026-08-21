@@ -6,9 +6,11 @@ import {
   Download,
   Eye,
   LayoutTemplate,
-  MoreHorizontal,
+  MoreVertical,
+  Pencil,
   Printer,
   Redo2,
+  Save,
   Settings,
   Undo2,
 } from "lucide-react";
@@ -62,6 +64,14 @@ export function CoverLetterToolbar({
   } = useCoverLetter();
   const { downloadCoverLetterPdf, printCoverLetter, status: exportStatus } =
     useCoverLetterExport();
+  const exportBusy =
+    exportStatus === "generating" || exportStatus === "preparing";
+  const downloadLabel =
+    exportStatus === "preparing"
+      ? "Preparing…"
+      : exportStatus === "generating"
+        ? "Generating…"
+        : "Download";
 
   function handlePreview() {
     onRequestPreview?.();
@@ -69,38 +79,36 @@ export function CoverLetterToolbar({
   }
 
   return (
-    <header className="sticky top-0 z-40 shrink-0 border-b border-line bg-surface/95 backdrop-blur safe-pt">
-      <div className="flex h-14 min-w-0 items-center gap-2 px-3 sm:h-14 sm:gap-3 md:px-5">
-        <div className="flex min-w-0 flex-1 items-center gap-1.5 sm:gap-2">
-          <Button
-            asChild
-            variant="ghost"
-            size="icon-sm"
-            shape="soft"
-            aria-label="Back to list"
-            className="shrink-0"
-          >
-            <Link href="/cover-letters">
-              <ArrowLeft className="size-4" />
-            </Link>
-          </Button>
-          <Logo compact href="/dashboard" className="hidden shrink-0 sm:inline-flex" />
-          <div className="min-w-0 flex-1">
-            <p className="hidden text-[0.68rem] font-bold tracking-[0.04em] text-ink-faint uppercase sm:block">
-              Cover Letter Builder
-            </p>
-            <Input
-              value={document.title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="h-8 max-w-full truncate border-transparent bg-transparent px-0 text-sm font-semibold shadow-none focus-visible:border-line focus-visible:bg-surface focus-visible:px-2"
-              aria-label="Cover letter name"
-            />
-          </div>
+    <header className="flex h-14 shrink-0 items-center gap-2 border-b border-line bg-surface px-3 sm:gap-3 sm:px-4">
+      <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
+        <Logo href="/dashboard" compact className="shrink-0" />
+        <Button
+          asChild
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          shape="soft"
+          className="shrink-0 text-ink-soft"
+        >
+          <Link href="/cover-letters" aria-label="Back to cover letters">
+            <ArrowLeft className="size-4" />
+          </Link>
+        </Button>
+        <div className="hidden h-5 w-px bg-line sm:block" />
+        <div className="flex min-w-0 items-center gap-1">
+          <Input
+            value={document.title}
+            onChange={(e) => setTitle(e.target.value)}
+            aria-label="Cover letter name"
+            className="h-9 max-w-[160px] border-transparent bg-transparent px-1.5 font-serif text-[1.05rem] font-semibold shadow-none focus-visible:border-line-strong focus-visible:bg-paper sm:max-w-[220px]"
+          />
+          <Pencil className="size-3.5 shrink-0 text-ink-faint" aria-hidden />
         </div>
-
         <SaveIndicator status={saveStatus} onRetry={retrySave} />
+      </div>
 
-        <div className="hidden items-center gap-1.5 md:flex">
+      <div className="ml-auto flex items-center gap-1.5">
+        <div className="mr-1 hidden items-center gap-2 md:flex">
           <ApplicationStatusBadge status={document.applicationStatus} />
           <Select
             value={document.applicationStatus}
@@ -122,160 +130,134 @@ export function CoverLetterToolbar({
           </Select>
         </div>
 
-        <div className="flex shrink-0 items-center gap-1">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            shape="soft"
-            className="hidden sm:inline-flex"
-            aria-label="Undo"
-            onClick={() => toast.message("Undo (UI only)")}
-          >
-            <Undo2 className="size-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            shape="soft"
-            className="hidden sm:inline-flex"
-            aria-label="Redo"
-            onClick={() => toast.message("Redo (UI only)")}
-          >
-            <Redo2 className="size-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="icon-sm"
-            shape="soft"
-            className="xl:hidden"
-            aria-label="Preview"
-            onClick={handlePreview}
-          >
-            <Eye className="size-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="icon-sm"
-            shape="soft"
-            className="sm:hidden"
-            aria-label="Templates"
-            onClick={() => setTemplatesOpen(true)}
-          >
-            <LayoutTemplate className="size-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            shape="soft"
-            className="hidden rounded-[8px] sm:inline-flex"
-            onClick={() => setTemplatesOpen(true)}
-          >
-            <LayoutTemplate className="size-3.5" />
-            Template
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            shape="soft"
-            className="hidden rounded-[8px] sm:inline-flex"
-            onClick={() => printCoverLetter(document.id, document)}
-          >
-            <Printer className="size-3.5" />
-            Print
-          </Button>
-          <Button
-            type="button"
-            size="sm"
-            shape="soft"
-            className="hidden rounded-[8px] sm:inline-flex"
-            disabled={exportStatus === "generating" || exportStatus === "preparing"}
-            onClick={() => void downloadCoverLetterPdf(document.id, document)}
-          >
-            <Download className="size-3.5" />
-            {exportStatus === "preparing"
-              ? "Preparing…"
-              : exportStatus === "generating"
-                ? "Generating…"
-                : "Download"}
-          </Button>
+        <Button
+          type="button"
+          variant="outline"
+          shape="soft"
+          className="hidden rounded-[8px] sm:inline-flex"
+          aria-label="Focus Preview"
+          onClick={handlePreview}
+        >
+          <Eye className="size-4" />
+          Preview
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          shape="soft"
+          className="hidden rounded-[8px] md:inline-flex"
+          disabled={exportBusy}
+          onClick={() => void downloadCoverLetterPdf(document.id, document)}
+        >
+          <Download className="size-4" />
+          {exportStatus === "preparing"
+            ? "Preparing…"
+            : exportStatus === "generating"
+              ? "Generating…"
+              : "Download PDF"}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="icon-sm"
+          shape="soft"
+          className="md:hidden"
+          aria-label="Download PDF"
+          disabled={exportBusy}
+          onClick={() => void downloadCoverLetterPdf(document.id, document)}
+        >
+          <Download className="size-4" />
+        </Button>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon-sm"
-                shape="soft"
-                aria-label="More actions"
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              shape="soft"
+              aria-label="More actions"
+            >
+              <MoreVertical className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-52">
+            <div className="px-2 py-1.5 md:hidden">
+              <p className="mb-1.5 text-[0.68rem] font-bold tracking-[0.04em] text-ink-faint uppercase">
+                Status
+              </p>
+              <Select
+                value={document.applicationStatus}
+                onValueChange={(v) =>
+                  setApplicationStatus(v as ApplicationStatus)
+                }
               >
-                <MoreHorizontal className="size-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-52">
-              <div className="px-2 py-1.5 md:hidden">
-                <p className="mb-1.5 text-[0.68rem] font-bold tracking-[0.04em] text-ink-faint uppercase">
-                  Status
-                </p>
-                <Select
-                  value={document.applicationStatus}
-                  onValueChange={(v) =>
-                    setApplicationStatus(v as ApplicationStatus)
-                  }
+                <SelectTrigger
+                  className="h-9 w-full rounded-[8px] text-xs"
+                  aria-label="Application status"
                 >
-                  <SelectTrigger
-                    className="h-9 w-full rounded-[8px] text-xs"
-                    aria-label="Application status"
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {STATUSES.map((s) => (
-                      <SelectItem key={s} value={s} className="capitalize">
-                        {s.charAt(0).toUpperCase() + s.slice(1)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <DropdownMenuSeparator className="md:hidden" />
-              <DropdownMenuItem
-                className="sm:hidden"
-                onClick={() => toast.message("Undo (UI only)")}
-              >
-                <Undo2 className="size-4" /> Undo
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="sm:hidden"
-                onClick={() => toast.message("Redo (UI only)")}
-              >
-                <Redo2 className="size-4" /> Redo
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="sm:hidden"
-                onClick={() => void downloadCoverLetterPdf(document.id, document)}
-              >
-                <Download className="size-4" /> Download
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="sm:hidden"
-                onClick={() => printCoverLetter(document.id, document)}
-              >
-                <Printer className="size-4" /> Print
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => toast.message("Letter settings (UI only)")}
-              >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUSES.map((s) => (
+                    <SelectItem key={s} value={s} className="capitalize">
+                      {s.charAt(0).toUpperCase() + s.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <DropdownMenuSeparator className="md:hidden" />
+            <DropdownMenuItem className="sm:hidden" onClick={() => retrySave()}>
+              <Save className="size-4" /> Save
+            </DropdownMenuItem>
+            <DropdownMenuItem className="sm:hidden" onClick={handlePreview}>
+              <Eye className="size-4" /> Preview
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="md:hidden"
+              disabled={exportBusy}
+              onClick={() => void downloadCoverLetterPdf(document.id, document)}
+            >
+              <Download className="size-4" /> {downloadLabel}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTemplatesOpen(true)}>
+              <LayoutTemplate className="size-4" /> Template
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => printCoverLetter(document.id, document)}
+            >
+              <Printer className="size-4" /> Print
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="hidden sm:flex"
+              onClick={() => toast.message("Undo (UI only)")}
+            >
+              <Undo2 className="size-4" /> Undo
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="hidden sm:flex"
+              onClick={() => toast.message("Redo (UI only)")}
+            >
+              <Redo2 className="size-4" /> Redo
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/settings">
                 <Settings className="size-4" /> Settings
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <Button
+          type="button"
+          shape="soft"
+          className="hidden rounded-[8px] sm:inline-flex"
+          onClick={() => retrySave()}
+        >
+          Save
+        </Button>
       </div>
     </header>
   );

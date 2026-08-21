@@ -12,3 +12,7 @@ export { ApplicationStatusBadge } from "./application-status-badge";
 export { SuggestionCard } from "./suggestion-card";
 export { SavedCoverLetterCard } from "./saved-cover-letter-card";
 export { CoverLettersListView } from "./cover-letters-list-view";
+export {
+  LetterSectionNavigator,
+  LetterMobileSectionBar,
+} from "./letter-section-navigator";
